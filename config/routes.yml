@@ -1,0 +1,8 @@
+shopeame_config_form:
+  path: /shopeame/configuration
+  methods: [GET, POST]
+  defaults:
+    _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::index'
+    # El nombre que se muestra arriba a la izquierda en la barra de navegación
+    _legacy_controller: Shopeame
+    _legacy_link: Shopeame

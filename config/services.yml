@@ -1,0 +1,34 @@
+services:
+  _defaults:
+    public: true
+
+  # Aquí se configuran los formularios de src/form 
+  # https://devdocs.prestashop-project.org/9/modules/creation/adding-configuration-page-modern/
+  # el fichero src/form/ConfigForm.php
+  prestashop.module.shopeame.form.type.config_form:
+    class: 'PrestaShop\Module\Shopeame\Form\ConfigForm'
+    parent: 'form.type.translatable.aware'
+    public: true
+    tags:
+      - { name: form.type }
+
+  # el fichero src/form/ConfigFormManager.php
+  prestashop.module.shopeame.form.config_form_manager:
+    class: PrestaShop\Module\Shopeame\Form\ConfigFormManager
+    arguments: ['@prestashop.adapter.legacy.configuration']
+
+  # el fichero src/form/ConfigFormProvider.php
+  prestashop.module.shopeame.form.config_form_provider:
+    class: 'PrestaShop\Module\Shopeame\Form\ConfigFormProvider'
+    arguments:
+      - '@prestashop.module.shopeame.form.config_form_manager'
+
+  # crear registro del formulario
+  prestashop.module.shopeame.form.config_form_handler:
+    class: 'PrestaShop\PrestaShop\Core\Form\Handler'
+    arguments:
+      - '@form.factory'
+      - '@prestashop.core.hook.dispatcher'
+      - '@prestashop.module.shopeame.form.config_form_provider'
+      - 'PrestaShop\Module\Shopeame\Form\ConfigForm'
+      - 'ShopeameConfig'

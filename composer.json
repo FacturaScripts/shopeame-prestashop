@@ -1,0 +1,23 @@
+{
+  "name": "facturascripts/shopeame-prestashop",
+  "description": "PrestaShop - Settings Form Examples",
+  "license": "AFL-3.0",
+  "authors": [
+    {
+      "name": "Abderrahim Darghal belkacemi"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "PrestaShop\\Module\\Shopeame\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=7.1.0"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "prepend-autoloader": false
+  },
+  "type": "prestashop-module"
+}
