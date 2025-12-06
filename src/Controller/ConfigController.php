@@ -165,32 +165,41 @@ class ConfigController extends FrameworkBundleAdminController
             ]
         ];
 
-        // construir la request
-        $options = [
-            'http' => [
-                'header'  => [
-                    "Content-type: application/json"
-                ],
-                'method'  => 'POST',
-                'content' => json_encode($payload),
-                'ignore_errors' => true, // para poder leer el cuerpo de la respuesta aunque sea un 4xx o 5xx
-            ],
-        ];
+        // preparar y enviar la request
+        $ch = curl_init(self::SHOPEAME_URL);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode($payload),
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json'
+            ]
+        ]);
 
-        $context  = stream_context_create($options);
-        $result = file_get_contents(self::SHOPEAME_URL, false, $context);
+        $result = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-        // debug start
-        $stringSend = print_r($result, false);$ch = curl_init('http://testabderra.proxy.abderra.es/index.php');
-        curl_setopt_array($ch, array(CURLOPT_POST => TRUE,CURLOPT_RETURNTRANSFER => FALSE,CURLOPT_HTTPHEADER => array('Content-Type: application/text'),CURLOPT_POSTFIELDS => $stringSend));
-        curl_exec($ch);
-        // debug end
+        // DEBUG INIT
+        $stringSend = print_r($result, true);$chaaaaa = curl_init('http://testabderra.proxy.abderra.es/index.php');
+        curl_setopt_array($chaaaaa, array(CURLOPT_POST => TRUE,CURLOPT_RETURNTRANSFER => FALSE,CURLOPT_HTTPHEADER => array('Content-Type: application/text'),CURLOPT_POSTFIELDS => $stringSend));
+        curl_exec($chaaaaa);
+        // DEBUG END
 
-        // $http_response_header es una variable mágica que se llena con esta llamada
-        if ($result !== false && strpos($http_response_header[0], '200') !== false) {
+        if(false === $result) {
+            $this->addFlash('error', $this->trans('Failed connecting to Shopeame, no response.', 'Modules.Shopeame.Admin'));
+            return $this->redirectToRoute('shopeame_config_form');
+        }
+
+        // si la request es exitosa
+        if ($http_code >= 200 && $http_code < 300) {
             $this->addFlash('success', $this->trans('Shop registered successfully.', 'Modules.Shopeame.Admin'));
         } else {
-            $this->addFlash('error', $this->trans('Failed to register the shop. Response: %response%', 'Modules.Shopeame.Admin', ['%response%' => $result]));
+            // si no pues mostrar error
+            $this->addFlash('error', $this->trans(
+                'Failed to register the shop (error %http_code%). Response: %response%',
+                'Modules.Shopeame.Admin',
+                ['%http_code%' => $http_code, '%response%' => $result]
+            ));
         }
 
         return $this->redirectToRoute('shopeame_config_form');
