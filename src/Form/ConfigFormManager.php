@@ -7,6 +7,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use Configuration;
 use PrestaShop\PrestaShop\Core\Configuration\DataConfigurationInterface;
 use PrestaShop\PrestaShop\Core\ConfigurationInterface;
 
@@ -17,6 +18,7 @@ final class ConfigFormManager implements DataConfigurationInterface
 {
     public const UIID_KEY = 'UUID';
     public const WEBHOOK_TOKEN_KEY = 'webhookToken';
+    public const API_KEY = 'shopeame_api_key';
     public const UUID_LENGHT = 13;
     public const WEBHOOK_TOKEN_LENGHT = 32;
 
@@ -37,10 +39,10 @@ final class ConfigFormManager implements DataConfigurationInterface
     {
         $return = [];
 
-        $return[self::UIID_KEY] = $this->configuration->get(static::UIID_KEY);
-        $return[self::WEBHOOK_TOKEN_KEY] = $this->configuration->get(static::WEBHOOK_TOKEN_KEY);
-
-        print_r($return, false);
+        $return[self::UIID_KEY] = $this->configuration->get('UUID');
+        $return[self::WEBHOOK_TOKEN_KEY] = $this->configuration->get('webhookToken');
+        // injectar el valor de la api key para que aparezca en el formulario como no editable
+        $return[self::API_KEY] = Configuration::get('SHOEAME_API_KEY') ?? "";
 
         return $return;
     }

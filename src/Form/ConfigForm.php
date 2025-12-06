@@ -19,6 +19,11 @@ class ConfigForm extends TranslatorAwareType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            // injectar el campo de la api key para que aparezca en el formulario como no editable
+            ->add('shopeame_api_key', TextType::class, [
+                'label' => $this->trans('API Key', 'Modules.Shopeame.Admin'),
+                'disabled' => true,
+            ])
             ->add('UUID', TextType::class, [
                 'label' => $this->trans('ERP UUID', 'Modules.Shopeame.Admin'),
                 'help' => $this->trans('It is 13 characters long', 'Modules.Shopeame.Admin'),

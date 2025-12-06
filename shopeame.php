@@ -63,6 +63,7 @@ class Shopeame extends Module
         return (
             parent::install()
             && Configuration::updateValue('shopeame_value', '')
+            && Configuration::updateValue('PS_WEBSERVICE', 1)
         );
     }
 
