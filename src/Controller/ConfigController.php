@@ -19,6 +19,8 @@ use PrestaShop\Module\Shopeame\Form\ConfigFormManager;
 use WebserviceKey;
 use Configuration;
 use Context;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 /**
  * Controlador encargado de la página de configuración del plugin Shopeame
@@ -161,47 +163,50 @@ class ConfigController extends FrameworkBundleAdminController
             "token" => $webhookToken,
             "shop_url" => $shopUrl,
             "shop" => [
+                "url" => $shopUrl,
                 "api_key" => $apiKey 
             ]
         ];
 
-        // preparar y enviar la request
-        $ch = curl_init(self::SHOPEAME_URL);
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => json_encode($payload),
-            CURLOPT_HTTPHEADER => [
-                'Content-Type: application/json'
-            ]
-        ]);
+        $this->addFlash('info', print_r($payload, true));
 
-        $result = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        // crear la request
+        $client = HttpClient::create();
+        try {
+            // enviar la request
+            $response = $client->request('POST', self::SHOPEAME_URL, [
+                'json' => $payload,
+                'timeout' => 10,
+            ]);
 
-        // DEBUG INIT
-        $stringSend = print_r($result, true);$chaaaaa = curl_init('http://testabderra.proxy.abderra.es/index.php');
-        curl_setopt_array($chaaaaa, array(CURLOPT_POST => TRUE,CURLOPT_RETURNTRANSFER => FALSE,CURLOPT_HTTPHEADER => array('Content-Type: application/text'),CURLOPT_POSTFIELDS => $stringSend));
-        curl_exec($chaaaaa);
-        // DEBUG END
-
-        if(false === $result) {
-            $this->addFlash('error', $this->trans('Failed connecting to Shopeame, no response.', 'Modules.Shopeame.Admin'));
-            return $this->redirectToRoute('shopeame_config_form');
-        }
-
-        // si la request es exitosa
-        if ($http_code >= 200 && $http_code < 300) {
-            $this->addFlash('success', $this->trans('Shop registered successfully.', 'Modules.Shopeame.Admin'));
-        } else {
-            // si no pues mostrar error
+        } catch (TransportExceptionInterface $e) {
+            // si la request falla, mostrar error
             $this->addFlash('error', $this->trans(
-                'Failed to register the shop (error %http_code%). Response: %response%',
+                'Failed connecting to Shopeame. Error: %error%', 
                 'Modules.Shopeame.Admin',
-                ['%http_code%' => $http_code, '%response%' => $result]
+                ['%error%' => $e->getMessage()]
             ));
         }
 
+        // obtener el código de estado
+        $http_code = $response->getStatusCode();
+
+        // Si la request es exitosa (200-299)
+        if ($http_code >= 200 && $http_code < 300) {
+            $this->addFlash('success', $this->trans('Shop registered successfully.', 'Modules.Shopeame.Admin'));
+        } else {
+            // Si no, mostrar error.
+            // Usamos false en getContent para que NO lance excepción en errores 4xx/5xx y podamos leer el mensaje
+            $content = $response->getContent(false); 
+            
+            $this->addFlash('error', $this->trans(
+                'Failed to register the shop (error %http_code%). Response: %response%',
+                'Modules.Shopeame.Admin',
+                ['%http_code%' => $http_code, '%response%' => $content]
+            ));
+        }
+
+        // volver al formulario
         return $this->redirectToRoute('shopeame_config_form');
     }
 }
