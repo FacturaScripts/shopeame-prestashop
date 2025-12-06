@@ -28,6 +28,9 @@
         <button class="btn btn-primary float-right" id="save-button">
           {{ 'Save'|trans({}, 'Admin.Actions') }}
         </button>
+        <a href="{{ path('shopeame_register_shop') }}" class="btn btn-primary" id="register-shop-btn" style="display: none; margin-left: 5px;">
+          {{ 'Register Shop'|trans({}, 'Modules.Shopeame.Admin') }}
+        </a>
       </div>
     </div>
   </div>
@@ -36,5 +39,15 @@
 
 {% block javascripts %}
   {{ parent() }}
-  <script src="{{ asset('../modules/shopeame/views/js/form.js') }}"></script>
+  <script>
+    // mostrar botón si está el formulario OK
+    const canRegister = {{ canEnableRegisterButton ? 'true' : 'false' }};
+    if (canRegister) {
+      const registerBtn = document.getElementById('register-shop-btn');
+      registerBtn.style.display = 'inline-block';
+    }
+    // document.addEventListener('DOMContentLoaded', () => {
+      
+    // });
+  </script>
 {% endblock %}

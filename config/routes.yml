@@ -14,3 +14,11 @@ shopeame_config_form:
     # El nombre que se muestra arriba a la izquierda en la barra de navegación
     _legacy_controller: Shopeame
     _legacy_link: Shopeame
+
+shopeame_register_shop:
+  path: /shopeame/register
+  methods: [GET]
+  defaults:
+    _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::registerShop'
+    _legacy_controller: Shopeame
+    _legacy_link: Shopeame
