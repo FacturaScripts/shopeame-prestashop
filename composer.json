@@ -1,7 +1,7 @@
 {
   "name": "facturascripts/shopeame-prestashop",
-  "description": "PrestaShop - Settings Form Examples",
-  "license": "AFL-3.0",
+  "description": "PrestaShop module for Shopeame",
+  "license": "GPL-3.0-or-later",
   "authors": [
     {
       "name": "Abderrahim Darghal belkacemi"

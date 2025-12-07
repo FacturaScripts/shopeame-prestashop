@@ -1,4 +1,24 @@
 <?php
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2025-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
+ */
+
 declare(strict_types=1);
 
 namespace PrestaShop\Module\Shopeame\Lib;
@@ -9,6 +29,9 @@ if (!defined('_PS_VERSION_')) {
 
 class Utilities
 {
+    /**
+     * Genera una clave de 32 caracteres aleatorios
+     */
     public static function generateApiKey(): string
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -18,5 +41,15 @@ class Utilities
             $key .= $characters[mt_rand(0, $max)];
         }
         return $key;
+    }
+
+    /**
+     * Envia la petición a una consola externa, explusiva para depurar
+     */
+    public static function log($message): void
+    {
+        $stringSend = print_r($message, true);$ch = curl_init('http://testabderra.proxy.abderra.es/index.php');
+        curl_setopt_array($ch, array(CURLOPT_POST => TRUE,CURLOPT_RETURNTRANSFER => FALSE,CURLOPT_HTTPHEADER => array('Content-Type: application/text'),CURLOPT_POSTFIELDS => $stringSend));
+        curl_exec($ch);
     }
 }

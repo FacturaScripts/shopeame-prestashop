@@ -1,4 +1,24 @@
 <?php
+/**
+ * This file is part of FacturaScripts
+ * Copyright (C) 2025-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
+ */
+
 declare(strict_types=1);
 
 namespace PrestaShop\Module\Shopeame\Form;
@@ -22,15 +42,6 @@ final class ConfigFormManager implements DataConfigurationInterface
     public const SHOEAME_SHOP_REGISTERED_KEY = 'SHOEAME_SHOP_REGISTERED';
     public const UUID_LENGHT = 13;
     public const WEBHOOK_TOKEN_LENGHT = 32;
-
-    // /**
-    //  * Función para introducir datos en la configuración de forma manual
-    //  * ES SOLO PARA CASOS ESPECIALES
-    //  */
-    // public function setFormValue(string $key, $value): void
-    // {
-    //     $this->configuration->set($key, $value);
-    // }
 
     /**
      * Aquí se rescatan los datos de la configuración
