@@ -9,6 +9,22 @@
     <div class="card-body">
       <div style="text-align: center">
         <p>
+          <strong>{{ 'Connection Status'|trans({}, 'Modules.Shopeame.Admin') }}:</strong>
+          {% if registeredShop %}
+            <span style="color: green;">{{ 'Registered'|trans({}, 'Modules.Shopeame.Admin') }}</span>
+          {% elseif errored is not same as(false) %}
+            {% if errored == 'unauthorized' %}
+              <span style="color: orange;">{{ 'Invalid credentials'|trans({}, 'Modules.Shopeame.Admin') }}</span>
+            {% else %}
+              <span style="color: red;">{{ 'Error: %error%'|trans({'%error%': errored}, 'Modules.Shopeame.Admin') }}</span>
+            {% endif %}
+          {% else %}
+            <span style="color: red;">{{ 'Not Registered'|trans({}, 'Modules.Shopeame.Admin') }}</span>
+          {% endif %}
+        </p>
+      </div>
+      <div style="text-align: center">
+        <p>
           {{ 'Follow Shopea.me instructions to configure this form.'|trans({}, 'Modules.Shopeame.Admin') }}
         </p>
       </div>
@@ -19,10 +35,10 @@
     <div class="card-footer">
       <div class="d-flex justify-content-end">
         <a href="{{ path('shopeame_generate_api_key') }}" class="btn btn-secondary" id="generate-api-key-button">
-          {% if apiKey is defined and apiKey is not empty %}
-            {{ 'Regenerate API Key'|trans({}, 'Modules.Shopeame.Admin') }}
-          {% else %}
+          {% if enableGenerateApiKeyButton %}
             {{ 'Generate API Key'|trans({}, 'Modules.Shopeame.Admin') }}
+          {% else %}
+            {{ 'Regenerate API Key'|trans({}, 'Modules.Shopeame.Admin') }}
           {% endif %}
         </a>
         <button class="btn btn-primary float-right" id="save-button">
@@ -41,13 +57,16 @@
   {{ parent() }}
   <script>
     // mostrar botón si está el formulario OK
-    const canRegister = {{ canEnableRegisterButton ? 'true' : 'false' }};
+    const canRegister = {{ enableRegisterButton ? 'true' : 'false' }};
     if (canRegister) {
       const registerBtn = document.getElementById('register-shop-btn');
       registerBtn.style.display = 'inline-block';
     }
-    // document.addEventListener('DOMContentLoaded', () => {
-      
-    // });
+
+    const enableApiKeyBtn = {{ enableGenerateApiKeyButton ? 'true' : 'false' }};
+    if (enableApiKeyBtn) {
+      const registerBtn = document.getElementById('generate-api-key-button');
+      registerBtn.style.display = 'inline-block';
+    }
   </script>
 {% endblock %}

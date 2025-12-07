@@ -9,28 +9,28 @@ if (!defined('_PS_VERSION_')) {
 
 use Configuration;
 use PrestaShop\PrestaShop\Core\Configuration\DataConfigurationInterface;
-use PrestaShop\PrestaShop\Core\ConfigurationInterface;
 
 /**
  * Clase encargada de rescatar, validar y actualizar la configuración
  */
 final class ConfigFormManager implements DataConfigurationInterface
 {
-    public const UIID_KEY = 'UUID';
-    public const WEBHOOK_TOKEN_KEY = 'webhookToken';
-    public const API_KEY = 'shopeame_api_key';
+    // Claves de la configuración
+    public const UIID_KEY = 'SHOPEAME_UUID';
+    public const WEBHOOK_TOKEN_KEY = 'SHOPEAME_WEBHOOK_TOKEN';
+    public const API_KEY = 'SHOEAME_API_KEY';
+    public const SHOEAME_SHOP_REGISTERED_KEY = 'SHOEAME_SHOP_REGISTERED';
     public const UUID_LENGHT = 13;
     public const WEBHOOK_TOKEN_LENGHT = 32;
 
-    /**
-     * @var ConfigurationInterface
-     */
-    private $configuration;
-
-    public function __construct(ConfigurationInterface $configuration)
-    {
-        $this->configuration = $configuration;
-    }
+    // /**
+    //  * Función para introducir datos en la configuración de forma manual
+    //  * ES SOLO PARA CASOS ESPECIALES
+    //  */
+    // public function setFormValue(string $key, $value): void
+    // {
+    //     $this->configuration->set($key, $value);
+    // }
 
     /**
      * Aquí se rescatan los datos de la configuración
@@ -39,10 +39,10 @@ final class ConfigFormManager implements DataConfigurationInterface
     {
         $return = [];
 
-        $return[self::UIID_KEY] = $this->configuration->get('UUID');
-        $return[self::WEBHOOK_TOKEN_KEY] = $this->configuration->get('webhookToken');
+        $return[self::UIID_KEY] = Configuration::get(self::UIID_KEY) ?? "";
+        $return[self::WEBHOOK_TOKEN_KEY] = Configuration::get(self::WEBHOOK_TOKEN_KEY) ?? "";
         // injectar el valor de la api key para que aparezca en el formulario como no editable
-        $return[self::API_KEY] = Configuration::get('SHOEAME_API_KEY') ?? "";
+        $return[self::API_KEY] = Configuration::get(self::API_KEY) ?? "";
 
         return $return;
     }
@@ -55,14 +55,17 @@ final class ConfigFormManager implements DataConfigurationInterface
     {
         $errors = [];
 
+        // filtrar y actualizar datos
         if ($this->validateConfiguration($configuration)) {
-            if (strlen($configuration[self::UIID_KEY]) === self::UUID_LENGHT) {
-                $this->configuration->set(static::UIID_KEY, $configuration[static::UIID_KEY]);
+            $uuid = trim($configuration[self::UIID_KEY]);
+            if (strlen($uuid) === self::UUID_LENGHT) {
+                Configuration::updateValue(static::UIID_KEY, $uuid);
             } else {
                 $errors[] = "The UUID is not valid";
             }
-            if(strlen($configuration[self::WEBHOOK_TOKEN_KEY]) === self::WEBHOOK_TOKEN_LENGHT) {
-                $this->configuration->set(static::WEBHOOK_TOKEN_KEY, $configuration[static::WEBHOOK_TOKEN_KEY]);
+            $webhookToken = trim($configuration[self::WEBHOOK_TOKEN_KEY]);
+            if(strlen($webhookToken) === self::WEBHOOK_TOKEN_LENGHT) {
+                Configuration::updateValue(static::WEBHOOK_TOKEN_KEY, $webhookToken);
             } else {
                 $errors[] = "The Webhook is not valid";
             }

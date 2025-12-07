@@ -16,11 +16,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use PrestaShop\Module\Shopeame\Lib\Utilities;
 use PrestaShop\Module\Shopeame\Form\ConfigFormManager;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use WebserviceKey;
 use Configuration;
 use Context;
-use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 /**
  * Controlador encargado de la página de configuración del plugin Shopeame
@@ -37,9 +37,9 @@ class ConfigController extends FrameworkBundleAdminController
     public function index(Request $request): Response
     {
         // primero revisar si existe la api key para mostrar información actualizada
-        $apiKey = Configuration::get('SHOEAME_API_KEY') ?? "";
+        $apiKey = Configuration::get(ConfigFormManager::API_KEY) ?? "";
         if($apiKey !== "" && false === WebserviceKey::keyExists($apiKey)) {
-            Configuration::updateValue('SHOEAME_API_KEY', "");
+            Configuration::updateValue(ConfigFormManager::API_KEY, "");
             $apiKey = "";
         }
 
@@ -64,16 +64,34 @@ class ConfigController extends FrameworkBundleAdminController
             $this->flashErrors($errors);
         }
 
-        $formData = $form->getData();
-        $uuid = $formData[ConfigFormManager::UIID_KEY];
-        $webhookToken = $formData[ConfigFormManager::UIID_KEY];
-        $canEnableRegisterButton = (!empty($uuid) && !empty($webhookToken) && $apiKey !== "");
+        // preparar la vista
+        $uuid = Configuration::get(ConfigFormManager::UIID_KEY) ?? "";
+        $webhookToken = Configuration::get(ConfigFormManager::WEBHOOK_TOKEN_KEY) ?? "";
+        $apiKey = Configuration::get(ConfigFormManager::API_KEY) ?? "";
+        $validFields = (!empty($uuid) && !empty($webhookToken) && $apiKey !== "");
+        // esta configuración para revisar si está sincronizado el negocio
+        $registeredShop = Configuration::get(ConfigFormManager::SHOEAME_SHOP_REGISTERED_KEY) ?? false;
+        $errored = false;
+
+        // comprobar si la tienda está conectada
+        $requestReturn = $this->checkRegisteredShop($uuid, $webhookToken);
+        if($requestReturn !== false) {
+            // registrar el error
+            $errored = $requestReturn['error'] === "" ? false : $requestReturn['error'];
+
+            // si no hay error entonces comprobar si la tienda esta registrada
+            Configuration::updateValue(ConfigFormManager::SHOEAME_SHOP_REGISTERED_KEY, $requestReturn['exists']);
+            $registeredShop = $requestReturn['exists'];
+        }
 
         // mostrar la vista con el formulario y la api key
         return $this->render('@Modules/shopeame/views/templates/admin/form.html.twig', [
             'configForm' => $form->createView(),
             'apiKey' => $apiKey,
-            'canEnableRegisterButton' => $canEnableRegisterButton,
+            'enableGenerateApiKeyButton' => $apiKey === "",
+            'enableRegisterButton' => $validFields && !$registeredShop,
+            'registeredShop' => $registeredShop,
+            'errored' => $errored // si unauthorized entonces mostrar no autorizado si no mostrar: "Error: %error%"
         ]);
     }
 
@@ -83,7 +101,7 @@ class ConfigController extends FrameworkBundleAdminController
      */
     public function generateApiKey(): RedirectResponse
     {
-        $oldKey = Configuration::get('SHOEAME_API_KEY') ?? "";
+        $oldKey = Configuration::get(ConfigFormManager::API_KEY) ?? "";
 
         // eliminar la vieja key si existe
         if($oldKey !== "" && WebserviceKey::keyExists($oldKey)) {
@@ -96,7 +114,7 @@ class ConfigController extends FrameworkBundleAdminController
         }
 
         // poner a null la key en la configuración
-        Configuration::updateValue('SHOEAME_API_KEY', "");
+        Configuration::updateValue(ConfigFormManager::API_KEY, "");
 
         // generar la clave
         $webserviceKey = new WebserviceKey();
@@ -131,7 +149,7 @@ class ConfigController extends FrameworkBundleAdminController
         }
 
         // actualizar la configuración
-        if(false === Configuration::updateValue('SHOEAME_API_KEY', $webserviceKey->key)) {
+        if(false === Configuration::updateValue(ConfigFormManager::API_KEY, $webserviceKey->key)) {
             // si falla el guardado que vuelva a la página de config con el error
             $this->addFlash('error', $this->trans('Failed to save the API key.', 'Modules.Shopeame.Admin'));
             return $this->redirectToRoute('shopeame_config_form');
@@ -144,31 +162,27 @@ class ConfigController extends FrameworkBundleAdminController
     }
 
     /**
-     * Registra la tienda en shopea.me (entry del boton )
+     * Registra la tienda en shopea.me (entry del boton de registrar tienda)
      * @return RedirectResponse
      */
     public function registerShop(): RedirectResponse
     {
         // obtener parámetros
-        $formData = $this->get('prestashop.module.shopeame.form.config_form_handler')->getForm()->getData();
-        $uiid = $formData[ConfigFormManager::UIID_KEY];
-        $webhookToken = $formData[ConfigFormManager::WEBHOOK_TOKEN_KEY];
-        $apiKey = Configuration::get('SHOEAME_API_KEY') ?? "";
+        $uuid = Configuration::get(ConfigFormManager::UIID_KEY) ?? "";
+        $webhookToken = Configuration::get(ConfigFormManager::WEBHOOK_TOKEN_KEY) ?? "";
+        $apiKey = Configuration::get(ConfigFormManager::API_KEY) ?? "";
         $shopUrl = Context::getContext()->shop->getBaseURL(true);
 
         // cuerpo de la request
         $payload = [
             "event" => "register_prestashop",
-            "erp" => $uiid,
+            "erp" => $uuid,
             "token" => $webhookToken,
-            "shop_url" => $shopUrl,
             "shop" => [
                 "url" => $shopUrl,
                 "api_key" => $apiKey 
             ]
         ];
-
-        $this->addFlash('info', print_r($payload, true));
 
         // crear la request
         $client = HttpClient::create();
@@ -194,19 +208,74 @@ class ConfigController extends FrameworkBundleAdminController
         // Si la request es exitosa (200-299)
         if ($http_code >= 200 && $http_code < 300) {
             $this->addFlash('success', $this->trans('Shop registered successfully.', 'Modules.Shopeame.Admin'));
+
+            // actualizar si está correcta la respuesta
+            $content = $response->toArray();
+            if(isset($content['success']) && $content['success'] === true) {
+
+                // actualizar la configuración
+                Configuration::updateValue(ConfigFormManager::UIID_KEY, $content['shop_uuid']);
+                Configuration::updateValue(ConfigFormManager::WEBHOOK_TOKEN_KEY, $content['webhook_token']);
+            }
+
         } else {
             // Si no, mostrar error.
-            // Usamos false en getContent para que NO lance excepción en errores 4xx/5xx y podamos leer el mensaje
             $content = $response->getContent(false); 
             
             $this->addFlash('error', $this->trans(
-                'Failed to register the shop (error %http_code%). Response: %response%',
+                'Failed to register the shop: %response%',
                 'Modules.Shopeame.Admin',
-                ['%http_code%' => $http_code, '%response%' => $content]
+                ['%response%' => $content["error"]]
             ));
         }
+        
+        //debug line: $this->addFlash('info', print_r($response->getContent(false), true));
 
         // volver al formulario
         return $this->redirectToRoute('shopeame_config_form');
+    }
+
+    /**
+     * Función que conecta con shopea.me y verifica si la tienda esta registrada
+     * @param string $uuid
+     * @param string $webhookToken
+     * @return string "registered" o "unregistered" o "error"
+     */
+    private function checkRegisteredShop($uuid, $webhookToken): false|array
+    {
+        // cuerpo de la request
+        $payload = [
+            "event" => "check_shop",
+            "token" => $webhookToken,
+            "shop" => $uuid
+        ];
+
+        // crear la request
+        $client = HttpClient::create();
+        try {
+            // enviar la request
+            $response = $client->request('POST', self::SHOPEAME_URL, [
+                'json' => $payload,
+                'timeout' => 10,
+            ]);
+        } catch (TransportExceptionInterface $e) {
+            // si la request falla, mostrar error
+            $this->addFlash('error', $this->trans(
+                'Failed connecting to Shopeame. Error: %error%',
+                'Modules.Shopeame.Admin',
+                ['%error%' => $e->getMessage()]
+            ));
+
+            return false;
+        }
+
+        $content = $response->toArray(false);
+        $existsShop = (bool)$content["exists"];
+        $error = key_exists("error", $content) ? $content["error"] : "";
+
+        return [
+            "exists" => $existsShop,
+            "error" => $error
+        ];
     }
 }

@@ -10,7 +10,6 @@ if (!defined('_PS_VERSION_')) {
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-
 /**
  * Clase encargada de construir el formulario de la configuración
  */
@@ -20,15 +19,15 @@ class ConfigForm extends TranslatorAwareType
     {
         $builder
             // injectar el campo de la api key para que aparezca en el formulario como no editable
-            ->add('shopeame_api_key', TextType::class, [
+            ->add(ConfigFormManager::API_KEY, TextType::class, [
                 'label' => $this->trans('API Key', 'Modules.Shopeame.Admin'),
                 'disabled' => true,
             ])
-            ->add('UUID', TextType::class, [
+            ->add(ConfigFormManager::UIID_KEY, TextType::class, [
                 'label' => $this->trans('ERP UUID', 'Modules.Shopeame.Admin'),
                 'help' => $this->trans('It is 13 characters long', 'Modules.Shopeame.Admin'),
             ])
-            ->add('webhookToken', TextType::class, [
+            ->add(ConfigFormManager::WEBHOOK_TOKEN_KEY, TextType::class, [
                 'label' => $this->trans('Webhook Token', 'Modules.Shopeame.Admin'),
                 'help' => $this->trans('It is 32 characters long', 'Modules.Shopeame.Admin'),
             ]);
