@@ -42,14 +42,4 @@ class Utilities
         }
         return $key;
     }
-
-    /**
-     * Envia la petición a una consola externa, explusiva para depurar
-     */
-    public static function log($message): void
-    {
-        $stringSend = print_r($message, true);$ch = curl_init('http://testabderra.proxy.abderra.es/index.php');
-        curl_setopt_array($ch, array(CURLOPT_POST => TRUE,CURLOPT_RETURNTRANSFER => FALSE,CURLOPT_HTTPHEADER => array('Content-Type: application/text'),CURLOPT_POSTFIELDS => $stringSend));
-        curl_exec($ch);
-    }
 }

@@ -121,6 +121,10 @@ class ConfigController extends FrameworkBundleAdminController
      */
     public function generateApiKey(): RedirectResponse
     {
+        // primero activar el webservice
+        Configuration::updateValue('PS_WEBSERVICE', 1);
+
+        // luego rescatar la última clave
         $oldKey = Configuration::get(ConfigFormManager::API_KEY) ?? "";
 
         // eliminar la vieja key si existe

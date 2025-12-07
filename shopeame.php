@@ -30,11 +30,8 @@ if (!defined('_PS_VERSION_')) {
 //     require_once $autoloadPath;
 // }
 
-require_once _PS_MODULE_DIR_ . 'shopeame/lib/Utilities.php';
-
 use PrestaShop\Module\Shopeame\Controller\ConfigController;
 use PrestaShop\Module\Shopeame\Form\ConfigFormManager;
-use PrestaShop\Module\Shopeame\Lib\Utilities;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
@@ -78,12 +75,15 @@ class Shopeame extends Module
      */
     public function install()
     {
-        // revisar si está activada alguna funcionalidad (creo que tengo que revisar la de webservice)https://devdocs.prestashop-project.org/9/development/multistore/
+        // por si hay que activar alguna funcionalidad
+        // https://devdocs.prestashop-project.org/9/development/multistore/
         // if (Shop::isFeatureActive()) {
         //     Shop::setContext(Shop::CONTEXT_ALL);
         // }
 
-        // realizar instalación del padre y añadir valores de configuración
+        // el webservice se activa al momento de crear la api key
+
+        // realizar instalación del padre y añadir hooks o eventos
         return (
             parent::install()
             && $this->registerHook('actionValidateOrder')
@@ -98,14 +98,12 @@ class Shopeame extends Module
      */
     public function hookActionValidateOrder($params)
     {
-        Utilities::log("create order hook triggered");
         // si no se ha registrado la tienda entonces no hacer nada
         $registeredShop = Configuration::get(ConfigFormManager::SHOEAME_SHOP_REGISTERED_KEY) ?? false;
         if(!$registeredShop) {
             return;
         }
 
-        Utilities::log("create order hook passed registeredShop check");
         // recoger todos los parámetros
         $cart = $params['cart'];
         $order = $params['order'];
@@ -124,29 +122,22 @@ class Shopeame extends Module
             PrestaShopLogger::addLog('Shopeame new_order event error: Invalid hook params received, aborting.', 3);
             return;
         }
-        // TODO: borrar los "logs" añadidos para depurar
-        // Utilities::Log($cart);
-        Utilities::Log($order);
-        Utilities::Log($customer);
-        // Utilities::Log($currency);
-        // Utilities::Log($orderStatus);
-        Utilities::log("create order hook passed hasValidParams check");
 
         // notificar shopeame del pedido
         // cuerpo de la request
+        // el objeto order contiene todos los ID: https://devdocs.prestashop-project.org/9/webservice/resources/orders/#order
         $payload = [
             "event" => "new_order",
             "shop" => Configuration::get(ConfigFormManager::UIID_KEY),
             "token" => Configuration::get(ConfigFormManager::WEBHOOK_TOKEN_KEY),
-            "order" => [
-                "id" => $order->id,
-                "reference" => $order->reference,
-                "cliente" => $customer->id
-            ]
+            "order" => $order,
+            "products" => $order->getProducts()
         ];
 
         // enviar la request
-        // $this->sendEventRequest($payload);
+        $this->sendEventRequest($payload);
+
+        return true;
     }
 
     /**
@@ -154,25 +145,20 @@ class Shopeame extends Module
      */
     public function hookActionOrderStatusPostUpdate($params)
     {
-        Utilities::log("edit order hook triggered");
         // si no se ha registrado la tienda entonces no hacer nada
         $registeredShop = Configuration::get(ConfigFormManager::SHOEAME_SHOP_REGISTERED_KEY) ?? false;
         if(!$registeredShop) {
             return;
         }
-        Utilities::log("edit order hook passed registeredShop check");
 
         // recoger todos los parámetros
-        $order = $params['order'];
+        $order = new Order($params['id_order']);
+
         // comprobar que esté todo ok
         if (!Validate::isLoadedObject($order)) {
             PrestaShopLogger::addLog('Shopeame new_order event error: Invalid hook params received, aborting.', 3);
             return;
         }
-
-        // TODO: borrar los "logs" añadidos para depurar
-        Utilities::Log($order);
-        Utilities::log("edit order hook passed hasValidParams check");
 
         // notificar shopeame de la modificación del pedido
         // cuerpo de la request
@@ -180,15 +166,14 @@ class Shopeame extends Module
             "event" => "update_order",
             "shop" => Configuration::get(ConfigFormManager::UIID_KEY),
             "token" => Configuration::get(ConfigFormManager::WEBHOOK_TOKEN_KEY),
-            "order" => [
-                "id" => $order->id,
-                "reference" => $order->reference,
-                // "cliente" => $customer->id
-            ]
+            "order" => $order,
+            "products" => $order->getProducts()
         ];
 
         // enviar la request
-        // $this->sendEventRequest($payload);
+        $this->sendEventRequest($payload);
+
+        return true;
     }
 
     /**
@@ -196,13 +181,11 @@ class Shopeame extends Module
      */
     public function hookActionOrderEdited($params)
     {
-        Utilities::log("edit order hook triggered");
         // si no se ha registrado la tienda entonces no hacer nada
         $registeredShop = Configuration::get(ConfigFormManager::SHOEAME_SHOP_REGISTERED_KEY) ?? false;
         if(!$registeredShop) {
             return;
         }
-        Utilities::log("edit order hook passed registeredShop check");
 
         // recoger todos los parámetros
         $order = $params['order'];
@@ -212,25 +195,19 @@ class Shopeame extends Module
             return;
         }
 
-        // TODO: borrar los "logs" añadidos para depurar
-        Utilities::Log($order);
-        Utilities::log("edit order hook passed hasValidParams check");
-
         // notificar shopeame de la modificación del pedido
-        // cuerpo de la request
         $payload = [
             "event" => "update_order",
             "shop" => Configuration::get(ConfigFormManager::UIID_KEY),
             "token" => Configuration::get(ConfigFormManager::WEBHOOK_TOKEN_KEY),
-            "order" => [
-                "id" => $order->id,
-                "reference" => $order->reference,
-                // "cliente" => $customer->id
-            ]
+            "order" => $order,
+            "products" => $order->getProducts()
         ];
 
         // enviar la request
-        // $this->sendEventRequest($payload);
+        $this->sendEventRequest($payload);
+
+        return true;
     }
 
     /**
@@ -255,31 +232,31 @@ class Shopeame extends Module
      * Envía una request a shopea.me con el payload especificado
      */
     private function sendEventRequest($payload) {
-    // crear la request
-    $client = HttpClient::create();
-    try {
-        // enviar la request
-        $response = $client->request('POST', ConfigController::SHOPEAME_URL, [
-            'json' => $payload,
-            'timeout' => 10,
-        ]);
-    } catch (TransportExceptionInterface $e) {
-        // si la request falla, añadirlo a los logs
-        // los log level son: 1 = info, 2 = warning, 3 = error
-        PrestaShopLogger::addLog('Shopeame new_order event send error: ' . $e->getMessage(), 3, $e->getCode());
-        return;
-    }
+        // crear la request
+        $client = HttpClient::create();
+        try {
+            // enviar la request
+            $response = $client->request('POST', ConfigController::SHOPEAME_URL, [
+                'json' => $payload,
+                'timeout' => 10,
+            ]);
+        } catch (TransportExceptionInterface $e) {
+            // si la request falla, añadirlo a los logs
+            // los log level son: 1 = info, 2 = warning, 3 = error
+            PrestaShopLogger::addLog('Shopeame ' . $payload['event'] . ' event send error: ' . $e->getMessage(), 3, $e->getCode());
+            return;
+        }
 
-    $content = $response->toArray(false);
-    $message = key_exists("message", $content) ? $content["message"] : "";
-    $error = key_exists("error", $content) ? $content["error"] : "";
+        $content = $response->toArray(false);
+        $message = key_exists("message", $content) ? $content["message"] : "";
+        $error = key_exists("error", $content) ? $content["error"] : "";
 
-    // loguear la respuesta
-    if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
-        PrestaShopLogger::addLog('Shopeame new_order event success: ' . $message, 2);
-    } else {
-        PrestaShopLogger::addLog('Shopeame new_order event bad response: ' . $error, 2, $response->getStatusCode());
-    }
+        // loguear la respuesta
+        if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
+            PrestaShopLogger::addLog('Shopeame ' . $payload['event'] . ' event success: ' . $message, 1);
+        } else {
+            PrestaShopLogger::addLog('Shopeame ' . $payload['event'] . ' event bad response: ' . $error, 2, $response->getStatusCode());
+        }
     }
 }
 
