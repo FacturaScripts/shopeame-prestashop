@@ -4,7 +4,7 @@
   {{ form_start(configForm) }}
   <div class="card">
     <h3 class="card-header">
-      <i class="material-icons">settings</i> {{ 'Text form types'|trans({}, 'Modules.Shopeame.Admin') }}
+      <i class="material-icons">settings</i> {{ 'Shopeame control Panel'|trans({}, 'Modules.Shopeame.Admin') }}
     </h3>
     <div class="card-body">
       <div style="text-align: center">
@@ -33,20 +33,24 @@
       </div>
     </div>
     <div class="card-footer">
-      <div class="d-flex justify-content-end">
-        <a href="{{ path('shopeame_generate_api_key') }}" class="btn btn-secondary" id="generate-api-key-button">
-          {% if enableGenerateApiKeyButton %}
-            {{ 'Generate API Key'|trans({}, 'Modules.Shopeame.Admin') }}
-          {% else %}
-            {{ 'Regenerate API Key'|trans({}, 'Modules.Shopeame.Admin') }}
-          {% endif %}
-        </a>
-        <button class="btn btn-primary float-right" id="save-button">
-          {{ 'Save'|trans({}, 'Admin.Actions') }}
-        </button>
-        <a href="{{ path('shopeame_register_shop') }}" class="btn btn-primary" id="register-shop-btn" style="display: none; margin-left: 5px;">
-          {{ 'Register Shop'|trans({}, 'Modules.Shopeame.Admin') }}
-        </a>
+      <div class="d-flex justify-content-between">
+        <div>
+          <a href="{{ path('shopeame_generate_api_key') }}" class="btn btn-secondary" id="generate-api-key-button" style="display: none;">
+            {% if enableGenerateApiKeyButton %}
+              {{ 'Generate API Key'|trans({}, 'Modules.Shopeame.Admin') }}
+            {% else %}
+              {{ 'Regenerate API Key'|trans({}, 'Modules.Shopeame.Admin') }}
+            {% endif %}
+          </a>
+          <a href="{{ path('shopeame_register_shop') }}" class="btn btn-primary" id="register-shop-btn" style="display: none; margin-left: 5px;">
+            {{ 'Register Shop'|trans({}, 'Modules.Shopeame.Admin') }}
+          </a>
+        </div>
+        <div>
+          <button class="btn btn-primary" id="save-button">
+            {{ 'Save'|trans({}, 'Admin.Actions') }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
