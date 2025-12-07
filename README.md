@@ -4,3 +4,5 @@ Flujo del programa:
 - Lo mismo para con el botón de registrar tienda
 
 Las rutas están definidas en `config/routes.php`
+
+El nombre de la carpeta tiene que ser **shopeame**
