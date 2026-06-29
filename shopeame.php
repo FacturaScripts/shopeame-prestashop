@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * 
- * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
+ * @author FacturaCity SL <abdedarghal111@gmail.com>
  */
 
 declare(strict_types=1);
@@ -47,9 +47,9 @@ class Shopeame extends Module
         // sección de la aplicación https://devdocs.prestashop-project.org/9/modules/concepts/module-class/#tab
         $this->tab = 'administration';
         // versión de la app
-        $this->version = '0.0.1';
+        $this->version = '1';
         // autor
-        $this->author = 'Abderrahim Darghal Belkacemi';
+        $this->author = 'Shopeame';
         // para que cargue en la página modules
         $this->need_instance = 0; // si está a 1, lo carga cuando está en la página modules
         // versiones de prestashop compatibles
@@ -65,9 +65,9 @@ class Shopeame extends Module
 
         // traducciones
         $this->displayName = $this->trans('Shopeame', [], 'Modules.Shopeame.Admin');
-        $this->description = $this->trans('Plugin to connect PrestaShop to Shopea.me', [], 'Modules.Shopeame.Admin');
+        $this->description = $this->trans('Plugin para conectar PrestaShop con Shopea.me', [], 'Modules.Shopeame.Admin');
 
-        $this->confirmUninstall = $this->trans('Are you sure you want to uninstall?', [], 'Modules.Shopeame.Admin');
+        $this->confirmUninstall = $this->trans('¿Seguro que quieres desinstalar el módulo?', [], 'Modules.Shopeame.Admin');
     }
 
     /**
@@ -89,7 +89,43 @@ class Shopeame extends Module
             && $this->registerHook('actionValidateOrder')
             && $this->registerHook('actionOrderStatusPostUpdate')
             && $this->registerHook('actionOrderEdited')
+            && $this->installTab()
         );
+    }
+
+    /**
+     * Crea (o actualiza) la pestaña del módulo en el menú del back-office, bajo "Configurar".
+     */
+    private function installTab(): bool
+    {
+        $idTab = (int) Tab::getIdFromClassName('Shopeame');
+        $tab = $idTab ? new Tab($idTab) : new Tab();
+        $tab->class_name = 'Shopeame';
+        $tab->module = $this->name;
+        $tab->id_parent = (int) Tab::getIdFromClassName('CONFIGURE');
+        $tab->active = 1;
+        $tab->icon = 'settings';
+
+        $names = [];
+        foreach (Language::getLanguages(false) as $lang) {
+            $names[$lang['id_lang']] = 'Shopeame';
+        }
+        $tab->name = $names;
+
+        return $idTab ? (bool) $tab->save() : (bool) $tab->add();
+    }
+
+    /**
+     * Elimina la pestaña del módulo del menú del back-office.
+     */
+    private function uninstallTab(): bool
+    {
+        $idTab = (int) Tab::getIdFromClassName('Shopeame');
+        if ($idTab) {
+            $tab = new Tab($idTab);
+            return (bool) $tab->delete();
+        }
+        return true;
     }
 
     /**
@@ -119,19 +155,17 @@ class Shopeame extends Module
         );
         // comprobar que esté todo ok
         if (!$hasValidParams) {
-            PrestaShopLogger::addLog('Shopeame new_order event error: Invalid hook params received, aborting.', 3);
+            PrestaShopLogger::addLog('Error en el evento new_order de Shopeame: parámetros del hook no válidos, se aborta.', 3);
             return;
         }
 
         // notificar shopeame del pedido
-        // cuerpo de la request
-        // el objeto order contiene todos los ID: https://devdocs.prestashop-project.org/9/webservice/resources/orders/#order
+        // enviamos solo el id; ShopeameServer descarga el pedido por la API y lo parsea
         $payload = [
             "event" => "new_order",
             "shop" => Configuration::get(ConfigFormManager::UIID_KEY),
             "token" => Configuration::get(ConfigFormManager::WEBHOOK_TOKEN_KEY),
-            "order" => $order,
-            "products" => $order->getProducts()
+            "order_id" => (int) $order->id
         ];
 
         // enviar la request
@@ -156,18 +190,17 @@ class Shopeame extends Module
 
         // comprobar que esté todo ok
         if (!Validate::isLoadedObject($order)) {
-            PrestaShopLogger::addLog('Shopeame new_order event error: Invalid hook params received, aborting.', 3);
+            PrestaShopLogger::addLog('Error en el evento new_order de Shopeame: parámetros del hook no válidos, se aborta.', 3);
             return;
         }
 
         // notificar shopeame de la modificación del pedido
-        // cuerpo de la request
+        // enviamos solo el id; ShopeameServer descarga el pedido por la API y lo parsea
         $payload = [
             "event" => "update_order",
             "shop" => Configuration::get(ConfigFormManager::UIID_KEY),
             "token" => Configuration::get(ConfigFormManager::WEBHOOK_TOKEN_KEY),
-            "order" => $order,
-            "products" => $order->getProducts()
+            "order_id" => (int) $order->id
         ];
 
         // enviar la request
@@ -191,17 +224,17 @@ class Shopeame extends Module
         $order = $params['order'];
         // comprobar que esté todo ok
         if (!Validate::isLoadedObject($order)) {
-            PrestaShopLogger::addLog('Shopeame new_order event error: Invalid hook params received, aborting.', 3);
+            PrestaShopLogger::addLog('Error en el evento new_order de Shopeame: parámetros del hook no válidos, se aborta.', 3);
             return;
         }
 
         // notificar shopeame de la modificación del pedido
+        // enviamos solo el id; ShopeameServer descarga el pedido por la API y lo parsea
         $payload = [
             "event" => "update_order",
             "shop" => Configuration::get(ConfigFormManager::UIID_KEY),
             "token" => Configuration::get(ConfigFormManager::WEBHOOK_TOKEN_KEY),
-            "order" => $order,
-            "products" => $order->getProducts()
+            "order_id" => (int) $order->id
         ];
 
         // enviar la request
@@ -215,7 +248,7 @@ class Shopeame extends Module
      */
     public function uninstall()
     {
-        return parent::uninstall();
+        return $this->uninstallTab() && parent::uninstall();
     }
 
     /**
@@ -236,14 +269,14 @@ class Shopeame extends Module
         $client = HttpClient::create();
         try {
             // enviar la request
-            $response = $client->request('POST', ConfigController::SHOPEAME_URL, [
+            $response = $client->request('POST', ConfigController::webHooksUrl(), array_merge([
                 'json' => $payload,
                 'timeout' => 10,
-            ]);
+            ], ConfigController::httpTlsOptions()));
         } catch (TransportExceptionInterface $e) {
             // si la request falla, añadirlo a los logs
             // los log level son: 1 = info, 2 = warning, 3 = error
-            PrestaShopLogger::addLog('Shopeame ' . $payload['event'] . ' event send error: ' . $e->getMessage(), 3, $e->getCode());
+            PrestaShopLogger::addLog('Error al enviar el evento ' . $payload['event'] . ' de Shopeame: ' . $e->getMessage(), 3, $e->getCode());
             return;
         }
 
@@ -253,9 +286,9 @@ class Shopeame extends Module
 
         // loguear la respuesta
         if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
-            PrestaShopLogger::addLog('Shopeame ' . $payload['event'] . ' event success: ' . $message, 1);
+            PrestaShopLogger::addLog('Evento ' . $payload['event'] . ' de Shopeame enviado correctamente: ' . $message, 1);
         } else {
-            PrestaShopLogger::addLog('Shopeame ' . $payload['event'] . ' event bad response: ' . $error, 2, $response->getStatusCode());
+            PrestaShopLogger::addLog('Respuesta incorrecta al evento ' . $payload['event'] . ' de Shopeame: ' . $error, 2, $response->getStatusCode());
         }
     }
 }

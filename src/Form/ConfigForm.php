@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of FacturaScripts
- * Copyright (C) 2025-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Copyright (C) 2025-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * 
- * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
+ * @author FacturaCity SL <abdedarghal111@gmail.com>
  */
 
 declare(strict_types=1);
@@ -38,18 +38,15 @@ class ConfigForm extends TranslatorAwareType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // injectar el campo de la api key para que aparezca en el formulario como no editable
-            ->add(ConfigFormManager::API_KEY, TextType::class, [
-                'label' => $this->trans('API Key', 'Modules.Shopeame.Admin'),
-                'disabled' => true,
-            ])
+            // la clave de API (clave del webservice) se muestra en la tarjeta "Opción 1" de la
+            // vista, no como campo del formulario; aquí solo van los datos del ERP (Opción 2)
             ->add(ConfigFormManager::UIID_KEY, TextType::class, [
-                'label' => $this->trans('ERP UUID', 'Modules.Shopeame.Admin'),
-                'help' => $this->trans('It is 13 characters long', 'Modules.Shopeame.Admin'),
+                'label' => $this->trans('UUID del ERP', 'Modules.Shopeame.Admin'),
+                'help' => $this->trans('Tiene 13 caracteres', 'Modules.Shopeame.Admin'),
             ])
             ->add(ConfigFormManager::WEBHOOK_TOKEN_KEY, TextType::class, [
-                'label' => $this->trans('Webhook Token', 'Modules.Shopeame.Admin'),
-                'help' => $this->trans('It is 32 characters long', 'Modules.Shopeame.Admin'),
+                'label' => $this->trans('Token del webhook', 'Modules.Shopeame.Admin'),
+                'help' => $this->trans('Tiene 32 caracteres', 'Modules.Shopeame.Admin'),
             ]);
     }
 }

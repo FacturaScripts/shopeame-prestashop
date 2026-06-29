@@ -22,3 +22,19 @@ shopeame_register_shop:
     _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::registerShop'
     _legacy_controller: Shopeame
     _legacy_link: Shopeame
+
+shopeame_unlink_shop:
+  path: /shopeame/unlink
+  methods: [GET]
+  defaults:
+    _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::unlinkShop'
+    _legacy_controller: Shopeame
+    _legacy_link: Shopeame
+
+shopeame_check_shop:
+  path: /shopeame/check
+  methods: [GET]
+  defaults:
+    _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::checkShop'
+    _legacy_controller: Shopeame
+    _legacy_link: Shopeame

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * 
- * @author Abderrahim Darghal Belkacemi <abdedarghal111@gmail.com>
+ * @author FacturaCity SL <abdedarghal111@gmail.com>
  */
 
 # Esto es para evitar el acceso a este path directamente o para leer el config.xml que se genera por cualquiera

@@ -1,76 +1,105 @@
 {% extends '@PrestaShop/Admin/layout.html.twig' %}
 
 {% block content %}
-  {{ form_start(configForm) }}
-  <div class="card">
-    <h3 class="card-header">
-      <i class="material-icons">settings</i> {{ 'Shopeame control Panel'|trans({}, 'Modules.Shopeame.Admin') }}
-    </h3>
-    <div class="card-body">
-      <div style="text-align: center">
+  {% if registeredShop %}
+    {# ===== Tienda vinculada ===== #}
+    <div class="card mb-3">
+      <h3 class="card-header">
+        <i class="material-icons">check_circle</i> {{ 'Tienda vinculada'|trans({}, 'Modules.Shopeame.Admin') }}
+      </h3>
+      <div class="card-body">
         <p>
-          <strong>{{ 'Connection Status'|trans({}, 'Modules.Shopeame.Admin') }}:</strong>
-          {% if registeredShop %}
-            <span style="color: green;">{{ 'Registered'|trans({}, 'Modules.Shopeame.Admin') }}</span>
-          {% elseif errored is not same as(false) %}
-            {% if errored == 'unauthorized' %}
-              <span style="color: orange;">{{ 'Invalid credentials'|trans({}, 'Modules.Shopeame.Admin') }}</span>
-            {% else %}
-              <span style="color: red;">{{ 'Error: %error%'|trans({'%error%': errored}, 'Modules.Shopeame.Admin') }}</span>
-            {% endif %}
+          {{ 'La tienda %url% está vinculada con shopea.me. Sus pedidos se sincronizan automáticamente.'|trans({'%url%': shopUrl}, 'Modules.Shopeame.Admin') }}
+          <a href="{{ shopLinkUrl }}" target="_blank">{{ 'Ver la tienda en shopea.me'|trans({}, 'Modules.Shopeame.Admin') }}</a>.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-header">
+        <i class="material-icons">settings</i> {{ 'Acciones'|trans({}, 'Modules.Shopeame.Admin') }}
+      </h3>
+      <div class="card-body">
+        <a href="{{ path('shopeame_check_shop') }}" class="btn btn-secondary" style="margin-right:5px;">
+          {{ 'Comprobar conexión'|trans({}, 'Modules.Shopeame.Admin') }}
+        </a>
+        <a href="{{ path('shopeame_unlink_shop') }}" class="btn btn-danger"
+           onclick="return confirm('{{ '¿Seguro que quieres desvincular la tienda?'|trans({}, 'Modules.Shopeame.Admin')|e('js') }}');">
+          {{ 'Desvincular tienda'|trans({}, 'Modules.Shopeame.Admin') }}
+        </a>
+      </div>
+    </div>
+  {% else %}
+    {# ===== No vinculada =====
+       Nota: no mostramos el resultado del check_shop automático aquí. Mientras la tienda no está
+       registrada, el UUID/token guardados son los del ERP (Opción 2), así que el check devuelve
+       "unauthorized" de forma esperada; mostrarlo como error confundía al usuario. #}
+    <p>
+      {{ 'Conecta tu tienda PrestaShop con shopea.me. Para ello necesitas tener previamente registrado tu ERP en shopea.me. Después tienes dos formas de vincularla.'|trans({}, 'Modules.Shopeame.Admin') }}
+    </p>
+
+    {# ----- Opción 1: copiar los datos en shopea.me ----- #}
+    <div class="card mb-3">
+      <h3 class="card-header">
+        {{ 'Opción 1: copiar los datos en shopea.me'|trans({}, 'Modules.Shopeame.Admin') }}
+      </h3>
+      <div class="card-body">
+        <p>{{ 'Copia estos datos y pégalos en shopea.me al conectar una tienda de tipo PrestaShop.'|trans({}, 'Modules.Shopeame.Admin') }}</p>
+        <table class="table">
+          <tbody>
+            <tr>
+              <th style="width:260px;">{{ 'URL de la tienda'|trans({}, 'Modules.Shopeame.Admin') }}</th>
+              <td>
+                <code id="shopeame-url">{{ shopUrl }}</code>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('shopeame-url').textContent)">
+                  {{ 'Copiar'|trans({}, 'Modules.Shopeame.Admin') }}
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <th>{{ 'Clave del webservice'|trans({}, 'Modules.Shopeame.Admin') }}</th>
+              <td>
+                {% if apiKey is not empty %}
+                  <code id="shopeame-key">{{ apiKey }}</code>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('shopeame-key').textContent)">
+                    {{ 'Copiar'|trans({}, 'Modules.Shopeame.Admin') }}
+                  </button>
+                {% else %}
+                  <em>{{ '— genera la clave de API —'|trans({}, 'Modules.Shopeame.Admin') }}</em>
+                {% endif %}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <a href="{{ path('shopeame_generate_api_key') }}" class="btn btn-secondary">
+          {% if enableGenerateApiKeyButton %}
+            {{ 'Generar clave de API'|trans({}, 'Modules.Shopeame.Admin') }}
           {% else %}
-            <span style="color: red;">{{ 'Not Registered'|trans({}, 'Modules.Shopeame.Admin') }}</span>
+            {{ 'Regenerar clave de API'|trans({}, 'Modules.Shopeame.Admin') }}
           {% endif %}
-        </p>
-      </div>
-      <div style="text-align: center">
-        <p>
-          {{ 'Follow Shopea.me instructions to configure this form.'|trans({}, 'Modules.Shopeame.Admin') }}
-        </p>
-      </div>
-      <div class="form-wrapper">
-        {{ form_widget(configForm) }}
+        </a>
       </div>
     </div>
-    <div class="card-footer">
-      <div class="d-flex justify-content-between">
-        <div>
-          <a href="{{ path('shopeame_generate_api_key') }}" class="btn btn-secondary" id="generate-api-key-button" style="display: none;">
-            {% if enableGenerateApiKeyButton %}
-              {{ 'Generate API Key'|trans({}, 'Modules.Shopeame.Admin') }}
-            {% else %}
-              {{ 'Regenerate API Key'|trans({}, 'Modules.Shopeame.Admin') }}
-            {% endif %}
-          </a>
-          <a href="{{ path('shopeame_register_shop') }}" class="btn btn-primary" id="register-shop-btn" style="display: none; margin-left: 5px;">
-            {{ 'Register Shop'|trans({}, 'Modules.Shopeame.Admin') }}
-          </a>
-        </div>
-        <div>
-          <button class="btn btn-primary" id="save-button">
-            {{ 'Save'|trans({}, 'Admin.Actions') }}
+
+    {# ----- Opción 2: vincular indicando tu ERP ----- #}
+    <div class="card">
+      <h3 class="card-header">
+        {{ 'Opción 2: vincular indicando tu ERP'|trans({}, 'Modules.Shopeame.Admin') }}
+      </h3>
+      <div class="card-body">
+        <p>{{ 'Introduce el UUID y el token de tu ERP (los obtienes en shopea.me una vez registrado el ERP), guarda y pulsa Registrar tienda.'|trans({}, 'Modules.Shopeame.Admin') }}</p>
+        {{ form_start(configForm) }}
+          {{ form_row(configForm.SHOPEAME_UUID) }}
+          {{ form_row(configForm.SHOPEAME_WEBHOOK_TOKEN) }}
+          <button class="btn btn-primary" id="link-button">
+            {{ 'Vincular tienda'|trans({}, 'Modules.Shopeame.Admin') }}
           </button>
-        </div>
+        {{ form_end(configForm) }}
       </div>
     </div>
-  </div>
-  {{ form_end(configForm) }}
+  {% endif %}
 {% endblock %}
 
 {% block javascripts %}
   {{ parent() }}
-  <script>
-    // mostrar botón si está el formulario OK
-    const canRegister = {{ enableRegisterButton ? 'true' : 'false' }};
-    if (canRegister) {
-      const registerBtn = document.getElementById('register-shop-btn');
-      registerBtn.style.display = 'inline-block';
-    }
-
-    const enableApiKeyBtn = {{ enableGenerateApiKeyButton ? 'true' : 'false' }};
-    if (enableApiKeyBtn) {
-      const registerBtn = document.getElementById('generate-api-key-button');
-      registerBtn.style.display = 'inline-block';
-    }
-  </script>
 {% endblock %}

@@ -1,42 +1,55 @@
-# Módulo Shopeame
+# Shopeame para PrestaShop
 
-Se ha intentado comentar y documentar absolutamente todo para que esté claro.
+Módulo que conecta una tienda **PrestaShop** (8.0 – 9.x) con **[shopea.me](https://shopea.me)**
+(ShopeameServer), para que shopea.me sincronice el catálogo y los pedidos de la tienda con el ERP
+(FacturaScripts / factura.city).
 
-El sistema constra de que el nombre de la carpeta (es el nombre del script principal).
-En el script principal se controla los hooks y el botón de configurar.
+## Qué hace
 
-El resto ya son en la carpeta config para las rutas y el formulario (he seguido el tutorial de prestashop) pero
-está bastante enrevesado.
+- Añade una entrada **Shopeame** en el menú del back-office, bajo la sección **Configurar**.
+- **Vinculación con shopea.me**, de dos formas:
+  1. **Copiar credenciales**: la pantalla muestra la *URL de la tienda* y la *clave del webservice*
+     de PrestaShop (que el módulo **genera automáticamente**, activando el webservice) con botones
+     para copiarlas y pegarlas en shopea.me al conectar una tienda de tipo PrestaShop.
+  2. **Vincular indicando el ERP**: el usuario introduce el *UUID* y el *token* de su ERP (los
+     obtiene en shopea.me) y, con un solo botón **Vincular tienda**, el módulo guarda esos datos,
+     genera la clave del webservice si hace falta y se registra en shopea.me (evento
+     `register_prestashop`), guardando el `shop_uuid` y `webhook_token` devueltos.
+- **Estado vinculada**: indica que la tienda está conectada, con enlace directo a su configuración
+  en shopea.me, y botones para **comprobar conexión** y **desvincular**.
+- **Pedidos en tiempo real**: mediante los hooks `actionValidateOrder`, `actionOrderStatusPostUpdate`
+  y `actionOrderEdited` envía el `order_id` a ShopeameServer; el servidor descarga el pedido y lo
+  sincroniza con el ERP.
 
-Las rutas son sencillas, creas una ruta en el fichero y le indicas que clase y función la llama.
+## Instalación
 
-### Flujo del programa:
+> ⚠️ **La carpeta del módulo debe llamarse `shopeame`**, es decir, `modules/shopeame/`. El nombre
+> del módulo es `shopeame` y PrestaShop exige que la carpeta coincida con él. (El repositorio se
+> llama `shopeame-prestashop`, pero al desplegarlo la carpeta tiene que ser `shopeame`.)
 
-- Cuando le das al botón de configurar plugin, se ejecuta shopeame.php y llama a la función index del controlador
-- Cuando se pulsa el botón de generar api se ejecuta el controlador con la función indicada
-- Lo mismo para con el botón de registrar tienda
+Tras instalar/activar el módulo, aparecerá en **Configurar → Shopeame**. Si actualizas desde una
+versión anterior, **reinstala** el módulo (desinstalar + instalar) para que la entrada de menú se
+coloque bajo «Configurar».
 
-Las rutas están definidas en `config/routes.php`
+## Configuración para desarrollo
 
-### Nombre de la carpeta:
-El nombre de la carpeta tiene que ser **shopeame**
+La URL del servidor de shopea.me se controla con la constante `SHOPEAME_SERVER_URL`. Por defecto se
+usa `https://shopea.me` (producción). Para apuntar a una instalación local, créala en
+`config/defines_custom.inc.php` (PrestaShop carga ese archivo si existe):
 
-### Incoherencias en el código:
-Todos los elementos que parecen redundantes como 
 ```php
-declare(strict_types=1);
+<?php
+define('SHOPEAME_SERVER_URL', 'https://localshopea.danielfg.es');
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+// Modo desarrollo: acepta el certificado TLS local autofirmado (no verifica el SSL).
+// Por defecto (sin definir) se asume PRODUCCIÓN. NO usar en producción.
+define('SHOPEAME_DEV', true);
 ```
-Son redundantes a nivel de programa pero necesarias a nivel de seguridad (según la documentación de prestashop).
 
-### Traducciones
-Respecto a las traducciones, se gestionan de manera extraña, aquí está la documentación:
-https://devdocs.prestashop-project.org/9/modules/creation/module-translation/new-system/
-Las traducciones en prestashop funcionan de manera diferente, según leí o si no recuerdo mal
-1. Se escribe la traducción en inglés
-2. Prestashop autodetecta que faltan traducciones
-3. En el panel creas las traducciones y te agrega en el plugin los archivos de traducción??????
-4. Exportas el plugin con las traducciones que eligas
+- **URL**: si `SHOPEAME_SERVER_URL` no se define, se usa `https://shopea.me`. La usan tanto el
+  registro y la comprobación/desvinculación como los hooks de pedidos
+  (`ConfigController::webHooksUrl()` y el enlace «ver tienda» `serverUrl()`).
+- **TLS**: las peticiones usan el `HttpClient` de Symfony, que por defecto verifica el certificado.
+  Con `SHOPEAME_DEV = true` se desactiva esa verificación (`verify_peer`/`verify_host => false`)
+  para poder conectar con un servidor local con certificado autofirmado. Si tu CA local (p. ej. la
+  de ServBay) ya está en el almacén del sistema, no necesitas `SHOPEAME_DEV`.
