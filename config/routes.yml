@@ -25,9 +25,17 @@ shopeame_register_shop:
 
 shopeame_unlink_shop:
   path: /shopeame/unlink
-  methods: [GET]
+  methods: [POST]
   defaults:
     _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::unlinkShop'
+    _legacy_controller: Shopeame
+    _legacy_link: Shopeame
+
+shopeame_clear_local_shop:
+  path: /shopeame/clear-local
+  methods: [POST]
+  defaults:
+    _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::clearLocalShop'
     _legacy_controller: Shopeame
     _legacy_link: Shopeame
 

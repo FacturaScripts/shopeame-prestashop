@@ -23,10 +23,20 @@
         <a href="{{ path('shopeame_check_shop') }}" class="btn btn-secondary" style="margin-right:5px;">
           {{ 'Comprobar conexión'|trans({}, 'Modules.Shopeame.Admin') }}
         </a>
-        <a href="{{ path('shopeame_unlink_shop') }}" class="btn btn-danger"
-           onclick="return confirm('{{ '¿Seguro que quieres desvincular la tienda?'|trans({}, 'Modules.Shopeame.Admin')|e('js') }}');">
-          {{ 'Desvincular tienda'|trans({}, 'Modules.Shopeame.Admin') }}
-        </a>
+        <form method="post" action="{{ path('shopeame_unlink_shop') }}" class="d-inline-block" style="margin-right:5px;"
+              onsubmit="return confirm('{{ 'Esta acción desvinculará la tienda de Shopeame. ¿Quieres continuar?'|trans({}, 'Modules.Shopeame.Admin')|e('js') }}');">
+          <input type="hidden" name="_token" value="{{ csrf_token('shopeame_shop_actions') }}">
+          <button type="submit" class="btn btn-danger">
+            {{ 'Desvincular tienda'|trans({}, 'Modules.Shopeame.Admin') }}
+          </button>
+        </form>
+        <form method="post" action="{{ path('shopeame_clear_local_shop') }}" class="d-inline-block"
+              onsubmit="return confirm('{{ 'Esta acción solo borrará los datos de conexión guardados en la app y no modificará Shopeame. ¿Quieres continuar?'|trans({}, 'Modules.Shopeame.Admin')|e('js') }}');">
+          <input type="hidden" name="_token" value="{{ csrf_token('shopeame_shop_actions') }}">
+          <button type="submit" class="btn btn-outline-danger">
+            {{ 'Borrar datos de la app'|trans({}, 'Modules.Shopeame.Admin') }}
+          </button>
+        </form>
       </div>
     </div>
   {% else %}

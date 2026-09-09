@@ -10,16 +10,24 @@ Módulo que conecta una tienda **PrestaShop** (8.0 – 9.x) con **[shopea.me](ht
 - **Vinculación con shopea.me**, de dos formas:
   1. **Copiar credenciales**: la pantalla muestra la *URL de la tienda* y la *clave del webservice*
      de PrestaShop (que el módulo **genera automáticamente**, activando el webservice) con botones
-     para copiarlas y pegarlas en shopea.me al conectar una tienda de tipo PrestaShop.
+     para copiarlas y pegarlas en shopea.me al conectar una tienda de tipo PrestaShop. Después del
+     alta, ShopeameServer intenta devolver sus credenciales al controlador
+     `index.php?fc=module&module=shopeame&controller=link`.
   2. **Vincular indicando el ERP**: el usuario introduce el *UUID* y el *token* de su ERP (los
      obtiene en shopea.me) y, con un solo botón **Vincular tienda**, el módulo guarda esos datos,
      genera la clave del webservice si hace falta y se registra en shopea.me (evento
-     `register_prestashop`), guardando el `shop_uuid` y `webhook_token` devueltos.
+     `register_prestashop`), guardando el `shop_uuid` y `webhook_token` devueltos. Si ya estaba
+     vinculada, recupera esos datos sin crear un nuevo enlace en ShopeameServer.
 - **Estado vinculada**: indica que la tienda está conectada, con enlace directo a su configuración
-  en shopea.me, y botones para **comprobar conexión** y **desvincular**.
+  en shopea.me, y botones para **comprobar conexión**, **desvincular** o **borrar los datos de la
+  app**. Esta última acción elimina solo el UUID, el token y el estado de vinculación locales,
+  conserva la clave del webservice y no envía ninguna petición a ShopeameServer.
 - **Pedidos en tiempo real**: mediante los hooks `actionValidateOrder`, `actionOrderStatusPostUpdate`
   y `actionOrderEdited` envía el `order_id` a ShopeameServer; el servidor descarga el pedido y lo
   sincroniza con el ERP.
+
+La recepción automática requiere HTTPS y una firma HMAC-SHA256 vigente creada con la clave del
+webservice. Si el módulo no está instalado o no responde, se mantiene el copiado manual.
 
 ## Instalación
 

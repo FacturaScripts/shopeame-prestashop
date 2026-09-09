@@ -133,15 +133,18 @@ class ConfigController extends FrameworkBundleAdminController
         $registeredShop = Configuration::get(ConfigFormManager::SHOEAME_SHOP_REGISTERED_KEY) ?? false;
         $errored = false;
 
-        // comprobar si la tienda está conectada
-        $requestReturn = $this->checkRegisteredShop($uuid, $webhookToken);
-        if($requestReturn !== false) {
-            // registrar el error
-            $errored = $requestReturn['error'] === "" ? false : $requestReturn['error'];
+        // Comprobar la conexión únicamente cuando existen credenciales locales completas.
+        // Así, borrar los datos locales nunca provoca una petición posterior a ShopeameServer.
+        if (!empty($uuid) && !empty($webhookToken)) {
+            $requestReturn = $this->checkRegisteredShop($uuid, $webhookToken);
+            if($requestReturn !== false) {
+                // registrar el error
+                $errored = $requestReturn['error'] === "" ? false : $requestReturn['error'];
 
-            // si no hay error entonces comprobar si la tienda esta registrada
-            Configuration::updateValue(ConfigFormManager::SHOEAME_SHOP_REGISTERED_KEY, $requestReturn['exists']);
-            $registeredShop = $requestReturn['exists'];
+                // si no hay error entonces comprobar si la tienda esta registrada
+                Configuration::updateValue(ConfigFormManager::SHOEAME_SHOP_REGISTERED_KEY, $requestReturn['exists']);
+                $registeredShop = $requestReturn['exists'];
+            }
         }
 
         // mostrar la vista con el formulario y la api key
@@ -291,15 +294,13 @@ class ConfigController extends FrameworkBundleAdminController
 
         // Si la request es exitosa (200-299)
         if ($http_code >= 200 && $http_code < 300) {
-            $this->addFlash('success', $this->trans('Tienda registrada correctamente.', 'Modules.Shopeame.Admin'));
-
             // actualizar si está correcta la respuesta
             $content = $response->toArray();
             if(isset($content['success']) && $content['success'] === true) {
-
                 // actualizar la configuración
                 Configuration::updateValue(ConfigFormManager::UIID_KEY, $content['shop_uuid']);
                 Configuration::updateValue(ConfigFormManager::WEBHOOK_TOKEN_KEY, $content['webhook_token']);
+                $this->addFlash('success', $this->linkSuccessMessage($content['message'] ?? ''));
             }
 
         } else {
@@ -318,10 +319,16 @@ class ConfigController extends FrameworkBundleAdminController
     /**
      * Desvincula la tienda de shopea.me (entry del botón de desvincular).
      * Pide al servidor el softDelete de la tienda y limpia la configuración local.
+     * @param Request $request Petición que contiene el token CSRF de confirmación.
      * @return RedirectResponse
      */
-    public function unlinkShop(): RedirectResponse
+    public function unlinkShop(Request $request): RedirectResponse
     {
+        if (!$this->isCsrfTokenValid('shopeame_shop_actions', (string) $request->request->get('_token'))) {
+            $this->addFlash('error', $this->trans('La solicitud no es válida. Vuelve a intentarlo.', 'Modules.Shopeame.Admin'));
+            return $this->redirectToRoute('shopeame_config_form');
+        }
+
         $uuid = Configuration::get(ConfigFormManager::UIID_KEY) ?? "";
         $webhookToken = Configuration::get(ConfigFormManager::WEBHOOK_TOKEN_KEY) ?? "";
 
@@ -353,6 +360,33 @@ class ConfigController extends FrameworkBundleAdminController
         } else {
             $this->addFlash('warning', $this->trans('Se borraron las credenciales locales, pero Shopea.me no confirmó la desvinculación.', 'Modules.Shopeame.Admin'));
         }
+
+        return $this->redirectToRoute('shopeame_config_form');
+    }
+
+    /**
+     * Borra únicamente las credenciales de vinculación guardadas por el módulo.
+     *
+     * No realiza ninguna petición a ShopeameServer y conserva la clave del webservice.
+     *
+     * @param Request $request Petición que contiene el token CSRF de confirmación.
+     * @return RedirectResponse
+     */
+    public function clearLocalShop(Request $request): RedirectResponse
+    {
+        if (!$this->isCsrfTokenValid('shopeame_shop_actions', (string) $request->request->get('_token'))) {
+            $this->addFlash('error', $this->trans('La solicitud no es válida. Vuelve a intentarlo.', 'Modules.Shopeame.Admin'));
+            return $this->redirectToRoute('shopeame_config_form');
+        }
+
+        Configuration::updateValue(ConfigFormManager::UIID_KEY, "");
+        Configuration::updateValue(ConfigFormManager::WEBHOOK_TOKEN_KEY, "");
+        Configuration::updateValue(ConfigFormManager::SHOEAME_SHOP_REGISTERED_KEY, false);
+
+        $this->addFlash('success', $this->trans(
+            'Se borraron los datos de conexión de la app sin modificar ShopeameServer.',
+            'Modules.Shopeame.Admin'
+        ));
 
         return $this->redirectToRoute('shopeame_config_form');
     }
@@ -419,5 +453,29 @@ class ConfigController extends FrameworkBundleAdminController
             "exists" => $existsShop,
             "error" => $error
         ];
+    }
+
+    /**
+     * Traduce el código devuelto por ShopeameServer al mensaje para el comercio.
+     *
+     * @param string $message Código de resultado del servidor.
+     * @return string
+     */
+    private function linkSuccessMessage(string $message): string
+    {
+        if ($message === 'shop-already-exists') {
+            return $this->trans(
+                'La tienda ya estaba vinculada. Se recuperaron sus datos sin crear una tienda nueva.',
+                'Modules.Shopeame.Admin'
+            );
+        }
+        if ($message === 'shop-reactivated') {
+            return $this->trans(
+                'La tienda se reactivó y quedó vinculada con Shopea.me correctamente.',
+                'Modules.Shopeame.Admin'
+            );
+        }
+
+        return $this->trans('Tienda vinculada con Shopea.me correctamente.', 'Modules.Shopeame.Admin');
     }
 }
