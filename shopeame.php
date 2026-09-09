@@ -33,7 +33,6 @@ if (!defined('_PS_VERSION_')) {
 use PrestaShop\Module\Shopeame\Controller\ConfigController;
 use PrestaShop\Module\Shopeame\Form\ConfigFormManager;
 use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class Shopeame extends Module
 {
@@ -47,7 +46,7 @@ class Shopeame extends Module
         // sección de la aplicación https://devdocs.prestashop-project.org/9/modules/concepts/module-class/#tab
         $this->tab = 'administration';
         // versión de la app
-        $this->version = '1';
+        $this->version = '1.1.0';
         // autor
         $this->author = 'Shopeame';
         // para que cargue en la página modules
@@ -96,7 +95,7 @@ class Shopeame extends Module
     /**
      * Crea (o actualiza) la pestaña del módulo en el menú del back-office, bajo "Configurar".
      */
-    private function installTab(): bool
+    public function installTab(): bool
     {
         $idTab = (int) Tab::getIdFromClassName('Shopeame');
         $tab = $idTab ? new Tab($idTab) : new Tab();
@@ -131,116 +130,114 @@ class Shopeame extends Module
     /**
      * Se ejecuta cada que se crea un pedido
      * https://devdocs.prestashop-project.org/9/modules/concepts/hooks/list-of-hooks/actionvalidateorder/
+     *
+     * @param array $params
+     * @return void
      */
     public function hookActionValidateOrder($params)
     {
-        // si no se ha registrado la tienda entonces no hacer nada
-        $registeredShop = Configuration::get(ConfigFormManager::SHOEAME_SHOP_REGISTERED_KEY) ?? false;
-        if(!$registeredShop) {
-            return;
-        }
-
         // recoger todos los parámetros
-        $cart = $params['cart'];
-        $order = $params['order'];
-        $customer = $params['customer'];
-        $currency = $params['currency'];
-        $orderStatus = $params['orderStatus'];
+        $order = $params['order'] ?? null;
         $hasValidParams = (
-            Validate::isLoadedObject($cart) 
+            Validate::isLoadedObject($params['cart'] ?? null)
             && Validate::isLoadedObject($order)
-            && Validate::isLoadedObject($customer)
-            && Validate::isLoadedObject($currency)
-            && Validate::isLoadedObject($orderStatus)
+            && Validate::isLoadedObject($params['customer'] ?? null)
+            && Validate::isLoadedObject($params['currency'] ?? null)
+            && Validate::isLoadedObject($params['orderStatus'] ?? null)
         );
+
         // comprobar que esté todo ok
         if (!$hasValidParams) {
             PrestaShopLogger::addLog('Error en el evento new_order de Shopeame: parámetros del hook no válidos, se aborta.', 3);
             return;
         }
 
-        // notificar shopeame del pedido
-        // enviamos solo el id; ShopeameServer descarga el pedido por la API y lo parsea
-        $payload = [
-            "event" => "new_order",
-            "shop" => Configuration::get(ConfigFormManager::UIID_KEY),
-            "token" => Configuration::get(ConfigFormManager::WEBHOOK_TOKEN_KEY),
-            "order_id" => (int) $order->id
-        ];
-
-        // enviar la request
-        $this->sendEventRequest($payload);
-
-        return true;
+        $this->notifyOrderEvent('new_order', (int) $order->id);
     }
 
     /**
      * Se ejecuta al cambiar el ESTADO (status) de un pedido
+     *
+     * @param array $params
+     * @return void
      */
     public function hookActionOrderStatusPostUpdate($params)
     {
-        // si no se ha registrado la tienda entonces no hacer nada
-        $registeredShop = Configuration::get(ConfigFormManager::SHOEAME_SHOP_REGISTERED_KEY) ?? false;
-        if(!$registeredShop) {
-            return;
-        }
-
         // recoger todos los parámetros
-        $order = new Order($params['id_order']);
+        $order = new Order((int) ($params['id_order'] ?? 0));
 
         // comprobar que esté todo ok
         if (!Validate::isLoadedObject($order)) {
-            PrestaShopLogger::addLog('Error en el evento new_order de Shopeame: parámetros del hook no válidos, se aborta.', 3);
+            PrestaShopLogger::addLog('Error en el evento update_order de Shopeame: parámetros del hook no válidos, se aborta.', 3);
             return;
         }
 
-        // notificar shopeame de la modificación del pedido
-        // enviamos solo el id; ShopeameServer descarga el pedido por la API y lo parsea
-        $payload = [
-            "event" => "update_order",
-            "shop" => Configuration::get(ConfigFormManager::UIID_KEY),
-            "token" => Configuration::get(ConfigFormManager::WEBHOOK_TOKEN_KEY),
-            "order_id" => (int) $order->id
-        ];
-
-        // enviar la request
-        $this->sendEventRequest($payload);
-
-        return true;
+        $this->notifyOrderEvent('update_order', (int) $order->id);
     }
 
     /**
      * Se ejecuta al editar el pedido manualmente en el BackOffice
+     *
+     * @param array $params
+     * @return void
      */
     public function hookActionOrderEdited($params)
     {
-        // si no se ha registrado la tienda entonces no hacer nada
-        $registeredShop = Configuration::get(ConfigFormManager::SHOEAME_SHOP_REGISTERED_KEY) ?? false;
-        if(!$registeredShop) {
-            return;
-        }
-
         // recoger todos los parámetros
-        $order = $params['order'];
+        $order = $params['order'] ?? null;
+
         // comprobar que esté todo ok
         if (!Validate::isLoadedObject($order)) {
-            PrestaShopLogger::addLog('Error en el evento new_order de Shopeame: parámetros del hook no válidos, se aborta.', 3);
+            PrestaShopLogger::addLog('Error en el evento update_order de Shopeame: parámetros del hook no válidos, se aborta.', 3);
             return;
         }
 
-        // notificar shopeame de la modificación del pedido
-        // enviamos solo el id; ShopeameServer descarga el pedido por la API y lo parsea
-        $payload = [
-            "event" => "update_order",
-            "shop" => Configuration::get(ConfigFormManager::UIID_KEY),
-            "token" => Configuration::get(ConfigFormManager::WEBHOOK_TOKEN_KEY),
-            "order_id" => (int) $order->id
-        ];
+        $this->notifyOrderEvent('update_order', (int) $order->id);
+    }
 
-        // enviar la request
-        $this->sendEventRequest($payload);
+    /**
+     * Notifica a shopea.me que un pedido se ha creado o modificado, para que adelante la
+     * sincronización de pedidos de esta tienda. Solo enviamos el id: ShopeameServer descarga
+     * el pedido por la API y lo parsea.
+     *
+     * No miramos SHOEAME_SHOP_REGISTERED: ese flag solo se refresca cuando un administrador abre
+     * la página de configuración del módulo, así que si se quedara a false (por ejemplo, porque
+     * shopea.me estaba caído en ese momento) dejaríamos de notificar pedidos indefinidamente y en
+     * silencio. Con tener UUID y token ya podemos intentarlo; si no son válidos, el servidor
+     * responde 401 y queda registrado en los logs.
+     *
+     * @param string $event new_order o update_order
+     * @param int $idOrder
+     * @return void
+     */
+    private function notifyOrderEvent(string $event, int $idOrder): void
+    {
+        $shop = $this->getConfigString(ConfigFormManager::UIID_KEY);
+        $token = $this->getConfigString(ConfigFormManager::WEBHOOK_TOKEN_KEY);
+        if ($shop === '' || $token === '' || $idOrder <= 0) {
+            return;
+        }
 
-        return true;
+        $this->sendEventRequest([
+            'event' => $event,
+            'shop' => $shop,
+            'token' => $token,
+            'order_id' => $idOrder,
+        ]);
+    }
+
+    /**
+     * Devuelve un valor de configuración como cadena.
+     * Configuration::get() devuelve false (no null) cuando la clave no existe, así que
+     * el operador ?? no sirve para normalizarla.
+     *
+     * @param string $key
+     * @return string
+     */
+    private function getConfigString(string $key): string
+    {
+        $value = Configuration::get($key);
+        return is_string($value) ? trim($value) : '';
     }
 
     /**
@@ -262,34 +259,54 @@ class Shopeame extends Module
     }
 
     /**
-     * Envía una request a shopea.me con el payload especificado
+     * Envía una request a shopea.me con el payload especificado.
+     *
+     * Nunca lanza excepciones: se ejecuta dentro de la validación del pedido (checkout) y del
+     * guardado en el BackOffice, así que un fallo del servidor no puede romper la compra.
+     *
+     * @param array $payload
+     * @return void
      */
-    private function sendEventRequest($payload) {
+    private function sendEventRequest(array $payload): void
+    {
         // crear la request
         $client = HttpClient::create();
+
         try {
-            // enviar la request
+            // HttpClient es asíncrono: request() solo encola la petición. Los fallos de red, DNS,
+            // timeout y TLS afloran al consumir la respuesta, así que todo el consumo tiene que ir
+            // dentro de este try.
             $response = $client->request('POST', ConfigController::webHooksUrl(), array_merge([
                 'json' => $payload,
-                'timeout' => 10,
+                // timeout es de inactividad; max_duration es el tope total, para que el checkout
+                // no pueda quedarse colgado esperando a shopea.me
+                'timeout' => 5,
+                'max_duration' => 8,
             ], ConfigController::httpTlsOptions()));
-        } catch (TransportExceptionInterface $e) {
-            // si la request falla, añadirlo a los logs
+
+            $statusCode = (int) $response->getStatusCode();
+
+            // decodificamos a mano en lugar de usar toArray(), que lanza una excepción cuando la
+            // respuesta no es JSON (por ejemplo, el HTML de un error 502 del proxy)
+            $content = json_decode($response->getContent(false), true);
+            $content = is_array($content) ? $content : [];
+        } catch (\Throwable $e) {
+            // capturamos Throwable a propósito: además de los errores de transporte puede fallar
+            // la decodificación de la respuesta, y nada de eso debe afectar al pedido
             // los log level son: 1 = info, 2 = warning, 3 = error
-            PrestaShopLogger::addLog('Error al enviar el evento ' . $payload['event'] . ' de Shopeame: ' . $e->getMessage(), 3, $e->getCode());
+            PrestaShopLogger::addLog('Error al enviar el evento ' . $payload['event'] . ' de Shopeame: ' . $e->getMessage(), 3);
             return;
         }
 
-        $content = $response->toArray(false);
-        $message = key_exists("message", $content) ? $content["message"] : "";
-        $error = key_exists("error", $content) ? $content["error"] : "";
-
         // loguear la respuesta
-        if ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
+        if ($statusCode >= 200 && $statusCode < 300) {
+            $message = key_exists('message', $content) ? $content['message'] : '';
             PrestaShopLogger::addLog('Evento ' . $payload['event'] . ' de Shopeame enviado correctamente: ' . $message, 1);
-        } else {
-            PrestaShopLogger::addLog('Respuesta incorrecta al evento ' . $payload['event'] . ' de Shopeame: ' . $error, 2, $response->getStatusCode());
+            return;
         }
+
+        $error = key_exists('error', $content) ? $content['error'] : 'HTTP ' . $statusCode;
+        PrestaShopLogger::addLog('Respuesta incorrecta al evento ' . $payload['event'] . ' de Shopeame: ' . $error, 2, $statusCode);
     }
 }
 

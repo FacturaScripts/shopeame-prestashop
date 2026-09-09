@@ -27,9 +27,23 @@ Módulo que conecta una tienda **PrestaShop** (8.0 – 9.x) con **[shopea.me](ht
 > del módulo es `shopeame` y PrestaShop exige que la carpeta coincida con él. (El repositorio se
 > llama `shopeame-prestashop`, pero al desplegarlo la carpeta tiene que ser `shopeame`.)
 
-Tras instalar/activar el módulo, aparecerá en **Configurar → Shopeame**. Si actualizas desde una
-versión anterior, **reinstala** el módulo (desinstalar + instalar) para que la entrada de menú se
-coloque bajo «Configurar».
+Tras instalar/activar el módulo, aparecerá en **Configurar → Shopeame**.
+
+Si actualizas desde una versión anterior, la actualización es automática: al subir los archivos
+nuevos, PrestaShop detecta que la versión del módulo ha cambiado y ejecuta el script de
+`upgrade/`, que registra los hooks de pedidos y coloca la entrada de menú. Se dispara al entrar en
+**Mejorar → Módulos** del BackOffice, o a mano con:
+
+```bash
+php bin/console prestashop:module upgrade shopeame
+```
+
+Si no ves los cambios, vacía `var/cache/`.
+
+> Para desarrolladores: la versión del módulo (`$this->version` en `shopeame.php`) debe seguir
+> siempre el formato de tres números (`1.1.0`), y cada versión que registre hooks nuevos, cree
+> pestañas o cambie la configuración necesita su propio `upgrade/upgrade-X.Y.Z.php`. PrestaShop
+> solo ejecuta los scripts cuya versión sea mayor que la instalada y menor o igual que la actual.
 
 ## Configuración para desarrollo
 
