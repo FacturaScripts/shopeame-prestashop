@@ -46,7 +46,7 @@ class Shopeame extends Module
         // sección de la aplicación https://devdocs.prestashop-project.org/9/modules/concepts/module-class/#tab
         $this->tab = 'administration';
         // versión de la app
-        $this->version = '1.1.0';
+        $this->version = '1.1.1';
         // autor
         $this->author = 'Shopeame';
         // para que cargue en la página modules
@@ -100,6 +100,9 @@ class Shopeame extends Module
         $idTab = (int) Tab::getIdFromClassName('Shopeame');
         $tab = $idTab ? new Tab($idTab) : new Tab();
         $tab->class_name = 'Shopeame';
+        // sin route_name PrestaShop toma la primera ruta con _legacy_link «Shopeame»; la fijamos
+        // para que el menú abra siempre la configuración y nunca la generación de la clave de API
+        $tab->route_name = 'shopeame_config_form';
         $tab->module = $this->name;
         $tab->id_parent = (int) Tab::getIdFromClassName('CONFIGURE');
         $tab->active = 1;

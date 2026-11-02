@@ -1,17 +1,19 @@
-shopeame_generate_api_key:
-  path: /shopeame/generate-api-key
-  methods: [GET]
-  defaults:
-    _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::generateApiKey'
-    _legacy_controller: Shopeame
-    _legacy_link: Shopeame
-
+# La configuración va la primera: es la ruta que PrestaShop usa por defecto para el
+# _legacy_link «Shopeame» si la pestaña del menú no indica su route_name.
 shopeame_config_form:
   path: /shopeame/configuration
   methods: [GET, POST]
   defaults:
     _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::index'
     # El nombre que se muestra arriba a la izquierda en la barra de navegación
+    _legacy_controller: Shopeame
+    _legacy_link: Shopeame
+
+shopeame_generate_api_key:
+  path: /shopeame/generate-api-key
+  methods: [GET]
+  defaults:
+    _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::generateApiKey'
     _legacy_controller: Shopeame
     _legacy_link: Shopeame
 
