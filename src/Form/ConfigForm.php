@@ -42,11 +42,9 @@ class ConfigForm extends TranslatorAwareType
             // vista, no como campo del formulario; aquí solo van los datos del ERP (Opción 2)
             ->add(ConfigFormManager::UIID_KEY, TextType::class, [
                 'label' => $this->trans('UUID del ERP', 'Modules.Shopeame.Admin'),
-                'help' => $this->trans('Tiene 13 caracteres', 'Modules.Shopeame.Admin'),
             ])
             ->add(ConfigFormManager::WEBHOOK_TOKEN_KEY, TextType::class, [
-                'label' => $this->trans('Token del webhook', 'Modules.Shopeame.Admin'),
-                'help' => $this->trans('Tiene 32 caracteres', 'Modules.Shopeame.Admin'),
+                'label' => $this->trans('Token del ERP', 'Modules.Shopeame.Admin'),
             ]);
     }
 }

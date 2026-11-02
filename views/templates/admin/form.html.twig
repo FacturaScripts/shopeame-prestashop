@@ -1,115 +1,154 @@
+{#
+  Pantalla de configuración del módulo Shopeame.
+
+  Replica la estructura y los textos de la app de Shopify (base visual común a los conectores de
+  Shopify, WooCommerce y PrestaShop): sección de bienvenida o de tienda vinculada, banner con el
+  resultado de la última acción y, después, las opciones de vinculación o las acciones.
+#}
 {% extends '@PrestaShop/Admin/layout.html.twig' %}
 
+{% trans_default_domain 'Modules.Shopeame.Admin' %}
+
+{# Campo de credencial: etiqueta, valor recortable en monospace y botón "Copiar" en la misma línea #}
+{% macro credential_field(id, label, value, emptyText, hint) %}
+  <div class="shopeame-field">
+    <span class="shopeame-field-label">{{ label }}</span>
+    <div class="shopeame-field-row">
+      {% if value is not empty %}
+        <code class="shopeame-field-value" id="{{ id }}">{{ value }}</code>
+        <button type="button" class="btn btn-outline-secondary" data-shopeame-copy="{{ id }}"
+                data-shopeame-copied="{{ 'Copiado'|trans({}, 'Modules.Shopeame.Admin') }}">
+          {{ 'Copiar'|trans({}, 'Modules.Shopeame.Admin') }}
+        </button>
+      {% else %}
+        <span class="shopeame-field-value shopeame-field-empty">{{ emptyText }}</span>
+      {% endif %}
+    </div>
+    {% if hint is not empty %}
+      <small class="form-text text-muted">{{ hint }}</small>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{# Los mensajes flash no se pintan arriba: se muestran como banner bajo la primera sección #}
+{% block content_header %}{% endblock %}
+
 {% block content %}
-  {% if registeredShop %}
-    {# ===== Tienda vinculada ===== #}
-    <div class="card mb-3">
-      <h3 class="card-header">
-        <i class="material-icons">check_circle</i> {{ 'Tienda vinculada'|trans({}, 'Modules.Shopeame.Admin') }}
-      </h3>
-      <div class="card-body">
-        <p>
-          {{ 'La tienda %url% está vinculada con shopea.me. Sus pedidos se sincronizan automáticamente.'|trans({'%url%': shopUrl}, 'Modules.Shopeame.Admin') }}
-          <a href="{{ shopLinkUrl }}" target="_blank">{{ 'Ver la tienda en shopea.me'|trans({}, 'Modules.Shopeame.Admin') }}</a>.
-        </p>
-      </div>
-    </div>
+  {% import _self as shopeame %}
 
-    <div class="card">
-      <h3 class="card-header">
-        <i class="material-icons">settings</i> {{ 'Acciones'|trans({}, 'Modules.Shopeame.Admin') }}
-      </h3>
-      <div class="card-body">
-        <a href="{{ path('shopeame_check_shop') }}" class="btn btn-secondary" style="margin-right:5px;">
-          {{ 'Comprobar conexión'|trans({}, 'Modules.Shopeame.Admin') }}
-        </a>
-        <form method="post" action="{{ path('shopeame_unlink_shop') }}" class="d-inline-block" style="margin-right:5px;"
-              onsubmit="return confirm('{{ 'Esta acción desvinculará la tienda de Shopeame. ¿Quieres continuar?'|trans({}, 'Modules.Shopeame.Admin')|e('js') }}');">
-          <input type="hidden" name="_token" value="{{ csrf_token('shopeame_shop_actions') }}">
-          <button type="submit" class="btn btn-danger">
-            {{ 'Desvincular tienda'|trans({}, 'Modules.Shopeame.Admin') }}
-          </button>
-        </form>
-        <form method="post" action="{{ path('shopeame_clear_local_shop') }}" class="d-inline-block"
-              onsubmit="return confirm('{{ 'Esta acción solo borrará los datos de conexión guardados en la app y no modificará Shopeame. ¿Quieres continuar?'|trans({}, 'Modules.Shopeame.Admin')|e('js') }}');">
-          <input type="hidden" name="_token" value="{{ csrf_token('shopeame_shop_actions') }}">
-          <button type="submit" class="btn btn-outline-danger">
-            {{ 'Borrar datos de la app'|trans({}, 'Modules.Shopeame.Admin') }}
-          </button>
-        </form>
+  <div class="shopeame-page">
+    {% if registeredShop %}
+      {# ===== Tienda vinculada ===== #}
+      <div class="card shopeame-section">
+        <div class="card-body">
+          <h3 class="shopeame-section-title">{{ 'Tienda vinculada ✅'|trans }}</h3>
+          <p>
+            {{ 'La tienda %url% está vinculada con %link%. Sus pedidos se sincronizan automáticamente.'|trans({
+              '%url%': '<strong>' ~ shopUrl|e ~ '</strong>',
+              '%link%': '<a href="https://shopea.me" target="_blank">shopea.me</a>'
+            })|raw }}
+            <a href="{{ shopLinkUrl }}" target="_blank">{{ 'Ver la tienda en shopea.me'|trans }}</a>
+          </p>
+        </div>
       </div>
-    </div>
-  {% else %}
-    {# ===== No vinculada =====
-       Nota: no mostramos el resultado del check_shop automático aquí. Mientras la tienda no está
-       registrada, el UUID/token guardados son los del ERP (Opción 2), así que el check devuelve
-       "unauthorized" de forma esperada; mostrarlo como error confundía al usuario. #}
-    <p>
-      {{ 'Conecta tu tienda PrestaShop con shopea.me. Para ello necesitas tener previamente registrado tu ERP en shopea.me. Después tienes dos formas de vincularla.'|trans({}, 'Modules.Shopeame.Admin') }}
-    </p>
 
-    {# ----- Opción 1: copiar los datos en shopea.me ----- #}
-    <div class="card mb-3">
-      <h3 class="card-header">
-        {{ 'Opción 1: copiar los datos en shopea.me'|trans({}, 'Modules.Shopeame.Admin') }}
-      </h3>
-      <div class="card-body">
-        <p>{{ 'Copia estos datos y pégalos en shopea.me al conectar una tienda de tipo PrestaShop.'|trans({}, 'Modules.Shopeame.Admin') }}</p>
-        <table class="table">
-          <tbody>
-            <tr>
-              <th style="width:260px;">{{ 'URL de la tienda'|trans({}, 'Modules.Shopeame.Admin') }}</th>
-              <td>
-                <code id="shopeame-url">{{ shopUrl }}</code>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('shopeame-url').textContent)">
-                  {{ 'Copiar'|trans({}, 'Modules.Shopeame.Admin') }}
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <th>{{ 'Clave del webservice'|trans({}, 'Modules.Shopeame.Admin') }}</th>
-              <td>
-                {% if apiKey is not empty %}
-                  <code id="shopeame-key">{{ apiKey }}</code>
-                  <button type="button" class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('shopeame-key').textContent)">
-                    {{ 'Copiar'|trans({}, 'Modules.Shopeame.Admin') }}
-                  </button>
-                {% else %}
-                  <em>{{ '— genera la clave de API —'|trans({}, 'Modules.Shopeame.Admin') }}</em>
-                {% endif %}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <a href="{{ path('shopeame_generate_api_key') }}" class="btn btn-secondary">
-          {% if enableGenerateApiKeyButton %}
-            {{ 'Generar clave de API'|trans({}, 'Modules.Shopeame.Admin') }}
-          {% else %}
-            {{ 'Regenerar clave de API'|trans({}, 'Modules.Shopeame.Admin') }}
-          {% endif %}
-        </a>
-      </div>
-    </div>
+      {{ block('session_alert') }}
 
-    {# ----- Opción 2: vincular indicando tu ERP ----- #}
-    <div class="card">
-      <h3 class="card-header">
-        {{ 'Opción 2: vincular indicando tu ERP'|trans({}, 'Modules.Shopeame.Admin') }}
-      </h3>
-      <div class="card-body">
-        <p>{{ 'Introduce el UUID y el token de tu ERP (los obtienes en shopea.me una vez registrado el ERP), guarda y pulsa Registrar tienda.'|trans({}, 'Modules.Shopeame.Admin') }}</p>
-        {{ form_start(configForm) }}
-          {{ form_row(configForm.SHOPEAME_UUID) }}
-          {{ form_row(configForm.SHOPEAME_WEBHOOK_TOKEN) }}
-          <button class="btn btn-primary" id="link-button">
-            {{ 'Vincular tienda'|trans({}, 'Modules.Shopeame.Admin') }}
-          </button>
-        {{ form_end(configForm) }}
+      <div class="card shopeame-section">
+        <div class="card-body">
+          <h3 class="shopeame-section-title">{{ 'Acciones'|trans }}</h3>
+          <div class="shopeame-actions">
+            <a href="{{ path('shopeame_check_shop') }}" class="btn btn-outline-secondary">
+              {{ 'Comprobar conexión'|trans }}
+            </a>
+            <form method="post" action="{{ path('shopeame_unlink_shop') }}"
+                  data-shopeame-confirm="{{ 'Esta acción desvinculará la tienda de Shopeame. ¿Quieres continuar?'|trans }}">
+              <input type="hidden" name="_token" value="{{ csrf_token('shopeame_shop_actions') }}">
+              <button type="submit" class="btn btn-danger">{{ 'Desvincular tienda'|trans }}</button>
+            </form>
+            <form method="post" action="{{ path('shopeame_clear_local_shop') }}"
+                  data-shopeame-confirm="{{ 'Esta acción solo borrará los datos de conexión guardados en la app y no modificará Shopeame. ¿Quieres continuar?'|trans }}">
+              <input type="hidden" name="_token" value="{{ csrf_token('shopeame_shop_actions') }}">
+              <button type="submit" class="btn btn-outline-danger">{{ 'Borrar datos de la app'|trans }}</button>
+            </form>
+          </div>
+        </div>
       </div>
-    </div>
-  {% endif %}
+    {% else %}
+      {# ===== No vinculada =====
+         Nota: no mostramos el resultado del check_shop automático aquí. Mientras la tienda no está
+         registrada, el UUID/token guardados son los del ERP (Opción 2), así que el check devuelve
+         "unauthorized" de forma esperada; mostrarlo como error confundía al usuario. #}
+      <div class="card shopeame-section">
+        <div class="card-body">
+          <h3 class="shopeame-section-title">{{ 'Tu tienda ya está lista para conectar 🎉'|trans }}</h3>
+          <p>
+            {{ 'Este módulo actúa de conector entre tu tienda de PrestaShop y %link%. Para conectar la tienda online con shopea.me necesitas tener previamente registrado tu ERP en %link%. Una vez registrado, tienes dos formas de vincular esta tienda.'|trans({
+              '%link%': '<a href="https://shopea.me" target="_blank">shopea.me</a>'
+            })|raw }}
+          </p>
+        </div>
+      </div>
+
+      {{ block('session_alert') }}
+
+      {# ----- Opción 1: copiar los datos en shopea.me ----- #}
+      <div class="card shopeame-section">
+        <div class="card-body">
+          <h3 class="shopeame-section-title">{{ 'Opción 1: copiar los datos en shopea.me'|trans }}</h3>
+          <p>{{ 'Copia los datos de abajo y pégalos en shopea.me al conectar una tienda de tipo PrestaShop.'|trans }}</p>
+          <div class="shopeame-stack">
+            {{ shopeame.credential_field('shopeame-url', 'URL de la tienda'|trans, shopUrl, '', '') }}
+            {{ shopeame.credential_field(
+              'shopeame-key',
+              'Clave del webservice'|trans,
+              apiKey,
+              'Pulsa «Generar clave de API» para crearla'|trans,
+              'Trata esta clave como una contraseña: cualquiera con ella puede leer los pedidos y productos de tu tienda a través del webservice de PrestaShop.'|trans
+            ) }}
+          </div>
+          <a href="{{ path('shopeame_generate_api_key') }}" class="btn btn-outline-secondary">
+            {% if enableGenerateApiKeyButton %}
+              {{ 'Generar clave de API'|trans }}
+            {% else %}
+              {{ 'Regenerar clave de API'|trans }}
+            {% endif %}
+          </a>
+        </div>
+      </div>
+
+      {# ----- Opción 2: vincular indicando tu ERP ----- #}
+      <div class="card shopeame-section">
+        <div class="card-body">
+          <h3 class="shopeame-section-title">{{ 'Opción 2: vincular indicando tu ERP'|trans }}</h3>
+          <p>{{ 'Introduce el UUID y el token de tu ERP (los obtienes en shopea.me una vez registrado el ERP) y vincularemos esta tienda automáticamente.'|trans }}</p>
+          {{ form_start(configForm) }}
+            <div class="shopeame-stack">
+              {% for field in [configForm.SHOPEAME_UUID, configForm.SHOPEAME_WEBHOOK_TOKEN] %}
+                {# etiqueta encima y campo a todo el ancho, como en Shopify #}
+                <div class="shopeame-field">
+                  {{ form_label(field, null, {'label_attr': {'class': 'shopeame-field-label'}}) }}
+                  {{ form_widget(field) }}
+                  {{ form_errors(field) }}
+                </div>
+              {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary" id="link-button">
+              {{ 'Vincular tienda'|trans }}
+            </button>
+          {{ form_end(configForm) }}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="{{ asset('../modules/shopeame/views/css/admin.css') }}">
 {% endblock %}
 
 {% block javascripts %}
   {{ parent() }}
+  <script src="{{ asset('../modules/shopeame/views/js/admin.js') }}"></script>
 {% endblock %}

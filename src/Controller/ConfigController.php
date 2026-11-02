@@ -149,6 +149,8 @@ class ConfigController extends FrameworkBundleAdminController
 
         // mostrar la vista con el formulario y la api key
         return $this->render('@Modules/shopeame/views/templates/admin/form.html.twig', [
+            // título de la cabecera del admin, el mismo que el de la app de Shopify
+            'layoutTitle' => $this->trans('Conectar con shopea.me', 'Modules.Shopeame.Admin'),
             'configForm' => $form->createView(),
             'apiKey' => $apiKey,
             'shopUrl' => Context::getContext()->shop->getBaseURL(true),

@@ -1,0 +1,118 @@
+/**
+ * Estilos de la pantalla de configuración de Shopeame.
+ *
+ * Replican el aspecto de la app de Shopify (Polaris): secciones en tarjetas blancas redondeadas,
+ * campos de credenciales en monospace con botón "Copiar" en la misma línea, campos de formulario
+ * apilados y botones críticos en rojo para las acciones destructivas.
+ */
+
+/* Contenedor de la página: limita el ancho como lo hace s-page en Shopify */
+.shopeame-page {
+    max-width: 800px;
+}
+
+/* Sección (equivalente a s-section): tarjeta blanca con borde suave y esquinas redondeadas */
+.shopeame-page .shopeame-section {
+    border: 1px solid #e3e3e3;
+    border-radius: 12px;
+    box-shadow: 0 1px 0 rgba(26, 26, 26, 0.07);
+    margin: 0 0 16px;
+}
+
+.shopeame-page .shopeame-section .card-body {
+    padding: 16px 20px;
+}
+
+.shopeame-page .shopeame-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 12px;
+}
+
+.shopeame-page .shopeame-section p {
+    margin: 0 0 12px;
+}
+
+.shopeame-page .shopeame-section p:last-child {
+    margin-bottom: 0;
+}
+
+/* Banner de resultado (equivalente a s-banner): alertas nativas del admin con esquinas redondeadas */
+.shopeame-page .alert {
+    border-radius: 8px;
+    margin: 0 0 16px;
+}
+
+/* Pila vertical de campos */
+.shopeame-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0 0 16px;
+}
+
+.shopeame-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.shopeame-page .shopeame-field-label {
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+
+/* Campo + botón Copiar siempre en una línea */
+.shopeame-field-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/*
+ * Valor de la credencial: ocupa el espacio disponible y, en lugar de empujar el botón "Copiar"
+ * a la línea siguiente, recorta su contenido con scroll horizontal (min-width: 0 permite encoger).
+ */
+.shopeame-page .shopeame-field-value {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 8px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    background: #f6f6f7;
+    color: inherit;
+    font-family: Menlo, Consolas, Monaco, monospace;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.shopeame-page .shopeame-field-empty {
+    color: #6c868e;
+    font-family: inherit;
+    font-style: italic;
+}
+
+.shopeame-field .form-text {
+    margin: 0;
+}
+
+/* Campos de texto del formulario: etiqueta arriba e input a todo el ancho */
+.shopeame-page .shopeame-field .form-control {
+    width: 100%;
+    border-radius: 8px;
+}
+
+/* Fila de botones en línea (sección Acciones) */
+.shopeame-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.shopeame-actions form {
+    margin: 0;
+}
