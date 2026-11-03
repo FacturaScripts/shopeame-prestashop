@@ -22,7 +22,7 @@
 | `.htaccess` en la raíz para que no se pueda listar el módulo (Validator) | Deniega el acceso directo a los `*.php`, como `ps_eventbus` o `psshipping` |
 | Sin `FrameworkBundleAdminController` ni `Context` en `src/` (Validator) | `ConfigController` extiende `PrestaShopAdminController`; el traductor y el form handler se inyectan y la URL sale de `ShopContext` (ver [decisión 0005](Decisiones/0005-solo-prestashop-9.md)) |
 | Tipos correctos de las propiedades del núcleo (Validator) | `$tab->active = true` (bool, no int) |
-| Estándar de código de PrestaShop (sección «Standards» del Validator) | php-cs-fixer con la configuración de `prestashop/php-dev-tools`, sin nada que corregir (ver [0.2](00-reglas-de-trabajo.md)) |
+| Estándar de código de PrestaShop (sección «Standards» del Validator) | php-cs-fixer con la configuración de `prestashop/php-dev-tools` salvo `blank_line_after_opening_tag`, sin nada que corregir (ver [0.2](00-reglas-de-trabajo.md)) |
 | Claves de configuración con el prefijo del módulo | `SHOPEAME_*` |
 | Sin tocar tablas del núcleo ni otros módulos | Solo `Configuration`, `Tab` y `WebserviceKey` mediante sus clases |
 | Textos en inglés y traducibles | Dominio `Modules.Shopeame.Admin` y XLIFF en español (ver [0.3](00-reglas-de-trabajo.md)) |
@@ -47,11 +47,8 @@ carpeta de dentro sí debe ser `shopeame`.
 
 ## 4.4 Pendiente al enviar
 
-- Pasar el zip por el Validator y corregir lo que diga. El primer reporte (03/11/2026, versión 1.0.0) dio tres errores
-  (`FrameworkBundleAdminController` y dos usos de `Context`), el `.htaccess` que faltaba, la cabecera de licencia de
-  `views/js/admin.js` y `$tab->active = 1`; están corregidos. La segunda pasada ya no dio errores, pero sí 37 avisos
-  «Standards» (el reporte descargado no los detalla). Son las reglas del estándar de código de PrestaShop: en local
-  salieron 38 en 21 archivos y están corregidos. Falta una tercera pasada para confirmar que quedan a cero.
+- **Validator**: la versión 1.0.0 lo pasa sin errores ni avisos en ninguna sección (03/11/2026, cuarta pasada; ver
+  4.5). En cada versión nueva hay que pasar antes el estándar en local y después el zip por el Validator.
 - **Comentarios en español**: la lista de 1.7 dice que el código enviado debe estar en inglés. Los textos visibles y
   los identificadores ya lo están; los comentarios y Docblocks siguen en español por la regla del equipo. Si el revisor
   lo pide, hay que traducirlos.
@@ -68,3 +65,19 @@ carpeta de dentro sí debe ser `shopeame`.
   9.0 o superior. En la ficha de Addons hay que marcar solo las versiones 9.x.
 - `module_key`: Addons lo asigna al aceptar el módulo y hay que añadirlo en el constructor
   (`$this->module_key = '...'`) en las versiones siguientes.
+
+## 4.5 Lo que aprendimos del Validator
+
+Pasadas de la versión 1.0.0 el 03/11/2026:
+
+| Pasada | Resultado | Qué se hizo |
+|---|---|---|
+| 1 | Errores: `FrameworkBundleAdminController` y dos usos de `Context` en `src/`. Además, faltaba el `.htaccess`, `views/js/admin.js` no tenía cabecera de licencia y `$tab->active = 1` | Mínimo PrestaShop 9 con `PrestaShopAdminController`, `.htaccess`, cabeceras y `true` ([decisión 0005](Decisiones/0005-solo-prestashop-9.md)) |
+| 2 | 37 avisos «Standards» | Estándar de código de PrestaShop con php-cs-fixer: 38 correcciones en local, en 21 archivos |
+| 3 | «Standards» a cero, pero 16 errores de licencias: «There must be no blank lines before the file comment» | Quitar la línea en blanco que había puesto `blank_line_after_opening_tag` y desactivar esa regla ([decisión 0006](Decisiones/0006-estandar-de-codigo-de-prestashop.md)) |
+| 4 | Todo en verde | — |
+
+- El reporte que se descarga en `.txt` puede llegar incompleto: en las dos primeras pasadas omitió la sección
+  «Standards» («could not be rebuilt from stored data»). El detalle completo solo se ve en la web del Validator.
+- El Validator da una API key al iniciar sesión, pero su API no está documentada públicamente (solo se menciona en su
+  registro de cambios). Por eso el zip se sigue subiendo a mano.

@@ -63,13 +63,24 @@ mkdir -p ~/prestashop-cs && cd ~/prestashop-cs
 composer require prestashop/php-dev-tools friendsofphp/php-cs-fixer
 ```
 
-Se crea en esa carpeta `.php-cs-fixer.dist.php` apuntando al módulo:
+Se crea en esa carpeta `.php-cs-fixer.dist.php` apuntando al módulo. Usa las reglas de PrestaShop salvo
+`blank_line_after_opening_tag`, porque la comprobación de licencias del Validator exige la cabecera justo después de
+`<?php`. La clase `PrestaShop\CodingStandards\CsFixer\Config` sobrescribe `getRules()` y no deja cambiar reglas con
+`setRules()`, así que se copian sus reglas a una configuración normal:
 
 ```php
 <?php
 require __DIR__ . '/vendor/autoload.php';
-$config = new PrestaShop\CodingStandards\CsFixer\Config();
-$config->setUsingCache(false)->getFinder()
+
+$rules = array_merge(
+    (new PrestaShop\CodingStandards\CsFixer\Config())->getRules(),
+    ['blank_line_after_opening_tag' => false]
+);
+$config = (new PhpCsFixer\Config('PrestaShop coding standard'))
+    ->setRiskyAllowed(true)
+    ->setRules($rules)
+    ->setUsingCache(false);
+$config->getFinder()
     ->in(getenv('HOME') . '/Trabajos/FacturaScripts/shopeame-prestashop')
     ->exclude(['vendor', 'Doc']);
 

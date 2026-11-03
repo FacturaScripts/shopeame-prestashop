@@ -52,5 +52,6 @@ lo había aplazado porque solo dejaba un aviso en el log, pero el Validator lo t
 
 Probado en PrestaShop 9.1.4 con PHP 8.5: el contenedor registra `ConfigController` con
 `controller.service_arguments`, la pantalla de configuración se abre con la URL de la tienda correcta y el formulario
-muestra traducidos los errores de validación. Ya no aparece en el log el aviso de obsolescencia de `get()`. Falta volver
-a pasar el zip por el Validator.
+muestra traducidos los errores de validación. Ya no aparece en el log el aviso de obsolescencia de `get()`. El
+Validator dejó de dar estos errores en la segunda pasada (ver
+[4.5](../04-publicacion-en-prestashop-addons.md#45-lo-que-aprendimos-del-validator)).

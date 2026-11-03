@@ -25,12 +25,14 @@ o de un módulo oficial que haga lo mismo.
 - Las peticiones salen con el `HttpClient` de Symfony y nunca desactivan la verificación TLS.
 - Comentarios y Docblocks en español; los textos visibles, en inglés y traducibles (ver 0.3).
 - Los PHP siguen el estándar de código de PrestaShop (`prestashop/php-dev-tools`: php-cs-fixer con `@Symfony` y unos
-  ajustes). Es lo que el Validator cuenta en la sección «Standards». Se nota en: una línea en blanco tras `<?php`,
-  clases globales con barra inicial (`\Configuration`, `\Throwable`) dentro de un espacio de nombres en lugar de con
+  ajustes). Es lo que el Validator cuenta en la sección «Standards». Se nota en: clases globales con barra inicial (`\Configuration`, `\Throwable`) dentro de un espacio de nombres en lugar de con
   `use`, una línea en blanco antes de `return`, `if` o `try` que no abren el bloque, una línea en blanco entre la
   descripción del Docblock y sus `@param`, descripciones de `@param`/`@return` sin punto final (php-cs-fixer pone la
   primera letra en minúscula) y coma final en los argumentos de varias líneas. Cómo pasarlo: ver la
   [página de desarrollo](../Dev/como-desarrollar-y-publicar-shopeame-para-prestashop.md).
+- **Excepción**: la regla `blank_line_after_opening_tag` (línea en blanco tras `<?php`) se desactiva. La comprobación
+  de licencias del Validator exige la cabecera justo después de `<?php` («There must be no blank lines before the
+  file comment»), igual que en los módulos oficiales (`ps_mbo`, `blockwishlist`, `gsitemap`).
 
 ## 0.3 Textos y traducciones
 
