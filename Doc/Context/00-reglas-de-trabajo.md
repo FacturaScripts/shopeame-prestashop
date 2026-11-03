@@ -24,6 +24,13 @@ o de un módulo oficial que haga lo mismo.
 - Nada de `serialize()`, `eval()`, código de depuración (`var_dump`, `dump`, `console.log`) ni código comentado.
 - Las peticiones salen con el `HttpClient` de Symfony y nunca desactivan la verificación TLS.
 - Comentarios y Docblocks en español; los textos visibles, en inglés y traducibles (ver 0.3).
+- Los PHP siguen el estándar de código de PrestaShop (`prestashop/php-dev-tools`: php-cs-fixer con `@Symfony` y unos
+  ajustes). Es lo que el Validator cuenta en la sección «Standards». Se nota en: una línea en blanco tras `<?php`,
+  clases globales con barra inicial (`\Configuration`, `\Throwable`) dentro de un espacio de nombres en lugar de con
+  `use`, una línea en blanco antes de `return`, `if` o `try` que no abren el bloque, una línea en blanco entre la
+  descripción del Docblock y sus `@param`, descripciones de `@param`/`@return` sin punto final (php-cs-fixer pone la
+  primera letra en minúscula) y coma final en los argumentos de varias líneas. Cómo pasarlo: ver la
+  [página de desarrollo](../Dev/como-desarrollar-y-publicar-shopeame-para-prestashop.md).
 
 ## 0.3 Textos y traducciones
 
@@ -61,7 +68,7 @@ local: `php bin/console prestashop:module upgrade shopeame`.
 
 ## 0.6 Antes de dar un cambio por terminado
 
-1. `php -l` de los archivos tocados.
+1. `php -l` de los archivos tocados y el estándar de PrestaShop sin nada que corregir (ver 0.2).
 2. Probar con el modo debug activado (`_PS_MODE_DEV_` en `config/defines.inc.php`): los revisores de Addons lo usan
    siempre y cualquier aviso es motivo de rechazo. En `var/logs/dev-*.log` no debe aparecer nada de
    `modules/shopeame`.

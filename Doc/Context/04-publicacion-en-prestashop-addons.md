@@ -22,6 +22,7 @@
 | `.htaccess` en la raíz para que no se pueda listar el módulo (Validator) | Deniega el acceso directo a los `*.php`, como `ps_eventbus` o `psshipping` |
 | Sin `FrameworkBundleAdminController` ni `Context` en `src/` (Validator) | `ConfigController` extiende `PrestaShopAdminController`; el traductor y el form handler se inyectan y la URL sale de `ShopContext` (ver [decisión 0005](Decisiones/0005-solo-prestashop-9.md)) |
 | Tipos correctos de las propiedades del núcleo (Validator) | `$tab->active = true` (bool, no int) |
+| Estándar de código de PrestaShop (sección «Standards» del Validator) | php-cs-fixer con la configuración de `prestashop/php-dev-tools`, sin nada que corregir (ver [0.2](00-reglas-de-trabajo.md)) |
 | Claves de configuración con el prefijo del módulo | `SHOPEAME_*` |
 | Sin tocar tablas del núcleo ni otros módulos | Solo `Configuration`, `Tab` y `WebserviceKey` mediante sus clases |
 | Textos en inglés y traducibles | Dominio `Modules.Shopeame.Admin` y XLIFF en español (ver [0.3](00-reglas-de-trabajo.md)) |
@@ -48,8 +49,9 @@ carpeta de dentro sí debe ser `shopeame`.
 
 - Pasar el zip por el Validator y corregir lo que diga. El primer reporte (03/11/2026, versión 1.0.0) dio tres errores
   (`FrameworkBundleAdminController` y dos usos de `Context`), el `.htaccess` que faltaba, la cabecera de licencia de
-  `views/js/admin.js` y `$tab->active = 1`; están corregidos y falta volver a pasarlo. Ese reporte llegó incompleto
-  (sin la sección «Standards»), así que la siguiente pasada puede traer avisos de estilo nuevos.
+  `views/js/admin.js` y `$tab->active = 1`; están corregidos. La segunda pasada ya no dio errores, pero sí 37 avisos
+  «Standards» (el reporte descargado no los detalla). Son las reglas del estándar de código de PrestaShop: en local
+  salieron 38 en 21 archivos y están corregidos. Falta una tercera pasada para confirmar que quedan a cero.
 - **Comentarios en español**: la lista de 1.7 dice que el código enviado debe estar en inglés. Los textos visibles y
   los identificadores ya lo están; los comentarios y Docblocks siguen en español por la regla del equipo. Si el revisor
   lo pide, hay que traducirlos.

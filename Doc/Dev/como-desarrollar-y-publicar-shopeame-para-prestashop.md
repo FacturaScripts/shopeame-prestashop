@@ -46,10 +46,45 @@ credenciales de pruebas.
 3. Se genera el zip con `build.sh`: una sola carpeta `shopeame` con los archivos del módulo, sin lo que lista
    `.distignore` (documentación, `README.md`, `AGENTS.md`, `CLAUDE.md`, `composer.lock` y los archivos ocultos de desarrollo; el `.htaccess` sí va), con
    `vendor/` regenerado solo con el autoload (`composer dump-autoload -o --no-dev`) y un `index.php` en cada carpeta.
-4. Se pasa el zip por el Validator de PrestaShop y se corrige lo que indique.
+4. Se pasa el estándar de código de PrestaShop (ver abajo) y después el zip por el Validator de PrestaShop, y se
+   corrige lo que indique.
 5. La primera vez se envía el zip desde la cuenta de vendedor de PrestaShop Addons, con la ficha y la documentación;
    las versiones siguientes se suben como actualización indicando los cambios y las versiones de PrestaShop
    compatibles.
+
+## 4. Estándar de código de PrestaShop
+
+El Validator cuenta en su sección «Standards» lo que no cumple el estándar de código de PrestaShop, que es php-cs-fixer
+con la configuración de `prestashop/php-dev-tools`. Se puede pasar en local antes de enviar el zip, con las herramientas
+instaladas fuera del módulo para no tocar su `composer.json`:
+
+```bash
+mkdir -p ~/prestashop-cs && cd ~/prestashop-cs
+composer require prestashop/php-dev-tools friendsofphp/php-cs-fixer
+```
+
+Se crea en esa carpeta `.php-cs-fixer.dist.php` apuntando al módulo:
+
+```php
+<?php
+require __DIR__ . '/vendor/autoload.php';
+$config = new PrestaShop\CodingStandards\CsFixer\Config();
+$config->setUsingCache(false)->getFinder()
+    ->in(getenv('HOME') . '/Trabajos/FacturaScripts/shopeame-prestashop')
+    ->exclude(['vendor', 'Doc']);
+
+return $config;
+```
+
+Y se revisa y corrige con:
+
+```bash
+vendor/bin/php-cs-fixer fix --dry-run --diff   # lista lo que no cumple, sin cambiar nada
+vendor/bin/php-cs-fixer fix                    # lo corrige
+```
+
+Si php-cs-fixer avisa de que la versión de PHP no está soportada, se ejecuta con `PHP_CS_FIXER_IGNORE_ENV=1` delante.
+Los cambios son solo de formato; después hay que pasar `php -l` y probar la pantalla.
 
 ## Ver también
 
