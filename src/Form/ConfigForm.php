@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shopeame - PrestaShop connector for shopea.me
  *
@@ -36,6 +37,7 @@ class ConfigForm extends TranslatorAwareType
      *
      * @param FormBuilderInterface $builder
      * @param array $options
+     *
      * @return void
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void

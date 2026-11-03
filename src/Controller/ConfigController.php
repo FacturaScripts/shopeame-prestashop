@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shopeame - PrestaShop connector for shopea.me
  *
@@ -22,7 +23,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Configuration;
 use PrestaShop\Module\Shopeame\Form\ConfigFormManager;
 use PrestaShop\PrestaShop\Core\Form\FormHandlerInterface;
 use PrestaShopBundle\Controller\Admin\PrestaShopAdminController;
@@ -31,8 +31,6 @@ use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Throwable;
-use WebserviceKey;
 
 /**
  * Controlador de la página de configuración del módulo Shopeame: vinculación con shopea.me,
@@ -110,19 +108,19 @@ class ConfigController extends PrestaShopAdminController
     /**
      * Borra la clave del webservice creada por el módulo, si existe, y su valor en la configuración.
      *
-     * @return bool false si la clave existe y no se pudo borrar.
+     * @return bool false si la clave existe y no se pudo borrar
      */
     public static function deleteWebserviceKey(): bool
     {
         $key = ConfigFormManager::getString(ConfigFormManager::API_KEY);
-        if ($key !== '' && WebserviceKey::keyExists($key)) {
-            $webserviceKey = new WebserviceKey((int) WebserviceKey::getIdFromKey($key));
+        if ($key !== '' && \WebserviceKey::keyExists($key)) {
+            $webserviceKey = new \WebserviceKey((int) \WebserviceKey::getIdFromKey($key));
             if (false === $webserviceKey->delete()) {
                 return false;
             }
         }
 
-        Configuration::updateValue(ConfigFormManager::API_KEY, '');
+        \Configuration::updateValue(ConfigFormManager::API_KEY, '');
 
         return true;
     }
@@ -131,6 +129,7 @@ class ConfigController extends PrestaShopAdminController
      * Sustituye los permisos de la clave del webservice indicada por los de WEBSERVICE_PERMISSIONS.
      *
      * @param int $idWebserviceKey
+     *
      * @return bool
      */
     public static function setWebserviceKeyPermissions(int $idWebserviceKey): bool
@@ -141,7 +140,7 @@ class ConfigController extends PrestaShopAdminController
             $permissions[$resourceName] = array_fill_keys($methods, 1);
         }
 
-        return (bool) WebserviceKey::setPermissionForAccount($idWebserviceKey, $permissions);
+        return (bool) \WebserviceKey::setPermissionForAccount($idWebserviceKey, $permissions);
     }
 
     /**
@@ -150,17 +149,18 @@ class ConfigController extends PrestaShopAdminController
      *
      * @param Request $request
      * @param FormHandlerInterface $formDataHandler Manejador del formulario de config/services.yml.
+     *
      * @return Response
      */
     public function index(
         Request $request,
         #[Autowire(service: 'prestashop.module.shopeame.form.config_form_handler')]
-        FormHandlerInterface $formDataHandler
+        FormHandlerInterface $formDataHandler,
     ): Response {
         // si alguien borró la clave del webservice desde PrestaShop, dejamos de mostrarla
         $apiKey = ConfigFormManager::getString(ConfigFormManager::API_KEY);
-        if ($apiKey !== '' && false === WebserviceKey::keyExists($apiKey)) {
-            Configuration::updateValue(ConfigFormManager::API_KEY, '');
+        if ($apiKey !== '' && false === \WebserviceKey::keyExists($apiKey)) {
+            \Configuration::updateValue(ConfigFormManager::API_KEY, '');
         }
 
         $form = $formDataHandler->getForm();
@@ -185,14 +185,14 @@ class ConfigController extends PrestaShopAdminController
         $uuid = ConfigFormManager::getString(ConfigFormManager::UUID_KEY);
         $webhookToken = ConfigFormManager::getString(ConfigFormManager::WEBHOOK_TOKEN_KEY);
         $apiKey = ConfigFormManager::getString(ConfigFormManager::API_KEY);
-        $registeredShop = (bool) Configuration::get(ConfigFormManager::SHOP_REGISTERED_KEY);
+        $registeredShop = (bool) \Configuration::get(ConfigFormManager::SHOP_REGISTERED_KEY);
 
         // comprobamos la conexión solo cuando hay credenciales completas: así, borrar los datos
         // locales nunca provoca una petición posterior a ShopeameServer
         if ($uuid !== '' && $webhookToken !== '') {
             $result = $this->checkRegisteredShop($uuid, $webhookToken);
             if (null !== $result) {
-                Configuration::updateValue(ConfigFormManager::SHOP_REGISTERED_KEY, $result['exists']);
+                \Configuration::updateValue(ConfigFormManager::SHOP_REGISTERED_KEY, $result['exists']);
                 $registeredShop = $result['exists'];
             }
         }
@@ -239,13 +239,15 @@ class ConfigController extends PrestaShopAdminController
      * Desvincula la tienda de shopea.me (botón «Desvincular tienda»): pide al servidor que la
      * desactive y borra las credenciales locales.
      *
-     * @param Request $request Petición con el token CSRF del formulario.
+     * @param Request $request petición con el token CSRF del formulario
+     *
      * @return RedirectResponse
      */
     public function unlinkShop(Request $request): RedirectResponse
     {
         if (!$this->isCsrfTokenValid('shopeame_shop_actions', (string) $request->request->get('_token'))) {
             $this->addFlash('error', $this->trans('The request is not valid. Please try again.', [], self::DOMAIN));
+
             return $this->redirectToRoute('shopeame_config_form');
         }
 
@@ -272,13 +274,15 @@ class ConfigController extends PrestaShopAdminController
      * Borra solo las credenciales de vinculación guardadas por el módulo (botón «Borrar datos de
      * la app»). No hace ninguna petición a ShopeameServer y conserva la clave del webservice.
      *
-     * @param Request $request Petición con el token CSRF del formulario.
+     * @param Request $request petición con el token CSRF del formulario
+     *
      * @return RedirectResponse
      */
     public function clearLocalShop(Request $request): RedirectResponse
     {
         if (!$this->isCsrfTokenValid('shopeame_shop_actions', (string) $request->request->get('_token'))) {
             $this->addFlash('error', $this->trans('The request is not valid. Please try again.', [], self::DOMAIN));
+
             return $this->redirectToRoute('shopeame_config_form');
         }
 
@@ -315,35 +319,39 @@ class ConfigController extends PrestaShopAdminController
      *
      * https://devdocs.prestashop-project.org/9/webservice/tutorials/creating-access/
      *
-     * @return bool true si la clave quedó creada y guardada.
+     * @return bool true si la clave quedó creada y guardada
      */
     private function doGenerateApiKey(): bool
     {
-        Configuration::updateValue('PS_WEBSERVICE', 1);
+        \Configuration::updateValue('PS_WEBSERVICE', 1);
 
         if (false === self::deleteWebserviceKey()) {
             $this->addFlash('error', $this->trans('The previous API key could not be deleted.', [], self::DOMAIN));
+
             return false;
         }
 
-        $webserviceKey = new WebserviceKey();
+        $webserviceKey = new \WebserviceKey();
         $webserviceKey->description = self::WEBSERVICE_KEY_DESCRIPTION;
         // 32 caracteres hexadecimales de un generador criptográficamente seguro
         $webserviceKey->key = strtoupper(bin2hex(random_bytes(16)));
         $webserviceKey->active = true;
         if (false === $webserviceKey->save()) {
             $this->addFlash('error', $this->trans('The API key could not be generated.', [], self::DOMAIN));
+
             return false;
         }
 
         // shopea.me lee y actualiza el catálogo, el stock, los precios y los pedidos de la tienda
         if (false === self::setWebserviceKeyPermissions((int) $webserviceKey->id)) {
             $this->addFlash('error', $this->trans('The API key permissions could not be set.', [], self::DOMAIN));
+
             return false;
         }
 
-        if (false === Configuration::updateValue(ConfigFormManager::API_KEY, $webserviceKey->key)) {
+        if (false === \Configuration::updateValue(ConfigFormManager::API_KEY, $webserviceKey->key)) {
             $this->addFlash('error', $this->trans('The API key could not be saved.', [], self::DOMAIN));
+
             return false;
         }
 
@@ -376,6 +384,7 @@ class ConfigController extends PrestaShopAdminController
         if ($response['status'] < 200 || $response['status'] >= 300) {
             $error = isset($content['error']) && is_string($content['error']) ? $content['error'] : 'HTTP ' . $response['status'];
             $this->addFlash('error', $this->trans('The store could not be linked: %error%', ['%error%' => $error], self::DOMAIN));
+
             return;
         }
 
@@ -383,12 +392,13 @@ class ConfigController extends PrestaShopAdminController
             || !is_string($content['shop_uuid'] ?? null)
             || !is_string($content['webhook_token'] ?? null)) {
             $this->addFlash('error', $this->trans('shopea.me returned an unexpected response.', [], self::DOMAIN));
+
             return;
         }
 
-        Configuration::updateValue(ConfigFormManager::UUID_KEY, $content['shop_uuid']);
-        Configuration::updateValue(ConfigFormManager::WEBHOOK_TOKEN_KEY, $content['webhook_token']);
-        Configuration::updateValue(ConfigFormManager::SHOP_REGISTERED_KEY, true);
+        \Configuration::updateValue(ConfigFormManager::UUID_KEY, $content['shop_uuid']);
+        \Configuration::updateValue(ConfigFormManager::WEBHOOK_TOKEN_KEY, $content['webhook_token']);
+        \Configuration::updateValue(ConfigFormManager::SHOP_REGISTERED_KEY, true);
         $this->addFlash('success', $this->linkSuccessMessage((string) ($content['message'] ?? '')));
     }
 
@@ -397,7 +407,8 @@ class ConfigController extends PrestaShopAdminController
      *
      * @param string $uuid
      * @param string $webhookToken
-     * @return array|null ['exists' => bool, 'error' => string], o null si no se pudo conectar.
+     *
+     * @return array|null ['exists' => bool, 'error' => string], o null si no se pudo conectar
      */
     private function checkRegisteredShop(string $uuid, string $webhookToken): ?array
     {
@@ -424,7 +435,8 @@ class ConfigController extends PrestaShopAdminController
      * no deben romper la pantalla.
      *
      * @param array $payload
-     * @return array|null ['status' => int, 'content' => array], o null si falló la conexión.
+     *
+     * @return array|null ['status' => int, 'content' => array], o null si falló la conexión
      */
     private function postEvent(array $payload): ?array
     {
@@ -435,7 +447,7 @@ class ConfigController extends PrestaShopAdminController
             ]);
             $status = $response->getStatusCode();
             $content = json_decode($response->getContent(false), true);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->addFlash('error', $this->trans(
                 'Could not connect to shopea.me. Error: %error%',
                 ['%error%' => $e->getMessage()],
@@ -459,15 +471,16 @@ class ConfigController extends PrestaShopAdminController
      */
     private function clearLinkData(): void
     {
-        Configuration::updateValue(ConfigFormManager::UUID_KEY, '');
-        Configuration::updateValue(ConfigFormManager::WEBHOOK_TOKEN_KEY, '');
-        Configuration::updateValue(ConfigFormManager::SHOP_REGISTERED_KEY, false);
+        \Configuration::updateValue(ConfigFormManager::UUID_KEY, '');
+        \Configuration::updateValue(ConfigFormManager::WEBHOOK_TOKEN_KEY, '');
+        \Configuration::updateValue(ConfigFormManager::SHOP_REGISTERED_KEY, false);
     }
 
     /**
      * Traduce el código de resultado de la vinculación devuelto por ShopeameServer.
      *
-     * @param string $message Código de resultado del servidor.
+     * @param string $message código de resultado del servidor
+     *
      * @return string
      */
     private function linkSuccessMessage(string $message): string

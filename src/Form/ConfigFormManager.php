@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shopeame - PrestaShop connector for shopea.me
  *
@@ -79,11 +80,12 @@ final class ConfigFormManager implements DataConfigurationInterface
      * ?? no sirve para normalizarla.
      *
      * @param string $key
+     *
      * @return string
      */
     public static function getString(string $key): string
     {
-        $value = Configuration::get($key);
+        $value = \Configuration::get($key);
 
         return is_string($value) ? trim($value) : '';
     }
@@ -105,7 +107,8 @@ final class ConfigFormManager implements DataConfigurationInterface
      * Valida y guarda el UUID y el token del ERP enviados en el formulario.
      *
      * @param array $configuration
-     * @return array Errores de validación (vacío si se guardó todo).
+     *
+     * @return array errores de validación (vacío si se guardó todo)
      */
     public function updateConfiguration(array $configuration): array
     {
@@ -116,14 +119,14 @@ final class ConfigFormManager implements DataConfigurationInterface
         $errors = [];
         $uuid = trim((string) $configuration[self::UUID_KEY]);
         if (strlen($uuid) === self::UUID_LENGTH && ctype_alnum($uuid)) {
-            Configuration::updateValue(self::UUID_KEY, $uuid);
+            \Configuration::updateValue(self::UUID_KEY, $uuid);
         } else {
             $errors[] = $this->trans('The ERP UUID is not valid.');
         }
 
         $webhookToken = trim((string) $configuration[self::WEBHOOK_TOKEN_KEY]);
         if (strlen($webhookToken) === self::WEBHOOK_TOKEN_LENGTH && ctype_alnum($webhookToken)) {
-            Configuration::updateValue(self::WEBHOOK_TOKEN_KEY, $webhookToken);
+            \Configuration::updateValue(self::WEBHOOK_TOKEN_KEY, $webhookToken);
         } else {
             $errors[] = $this->trans('The ERP token is not valid.');
         }
@@ -135,6 +138,7 @@ final class ConfigFormManager implements DataConfigurationInterface
      * Comprueba que llegan los dos campos del formulario.
      *
      * @param array $configuration
+     *
      * @return bool
      */
     public function validateConfiguration(array $configuration): bool
@@ -146,6 +150,7 @@ final class ConfigFormManager implements DataConfigurationInterface
      * Traduce un mensaje del formulario con el dominio del módulo.
      *
      * @param string $message
+     *
      * @return string
      */
     private function trans(string $message): string

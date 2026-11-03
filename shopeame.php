@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shopeame - PrestaShop connector for shopea.me
  *
@@ -170,6 +171,7 @@ class Shopeame extends Module
         $idTab = (int) Tab::getIdFromClassName(self::TAB_CLASS_NAME);
         if ($idTab) {
             $tab = new Tab($idTab);
+
             return (bool) $tab->delete();
         }
 
@@ -184,6 +186,7 @@ class Shopeame extends Module
      * https://devdocs.prestashop-project.org/9/modules/concepts/hooks/list-of-hooks/actionadmincontrollersetmedia/
      *
      * @param array $params
+     *
      * @return void
      */
     public function hookActionAdminControllerSetMedia($params): void
@@ -197,6 +200,7 @@ class Shopeame extends Module
      * https://devdocs.prestashop-project.org/9/modules/concepts/hooks/list-of-hooks/actionvalidateorder/
      *
      * @param array $params
+     *
      * @return void
      */
     public function hookActionValidateOrder($params): void
@@ -212,6 +216,7 @@ class Shopeame extends Module
 
         if (!$hasValidParams) {
             PrestaShopLogger::addLog('Shopeame: invalid actionValidateOrder parameters, the new_order event was not sent.', 3);
+
             return;
         }
 
@@ -222,6 +227,7 @@ class Shopeame extends Module
      * Avisa a shopea.me cada vez que cambia el estado de un pedido.
      *
      * @param array $params
+     *
      * @return void
      */
     public function hookActionOrderStatusPostUpdate($params): void
@@ -229,6 +235,7 @@ class Shopeame extends Module
         $idOrder = (int) ($params['id_order'] ?? 0);
         if ($idOrder <= 0) {
             PrestaShopLogger::addLog('Shopeame: invalid actionOrderStatusPostUpdate parameters, the update_order event was not sent.', 3);
+
             return;
         }
 
@@ -239,6 +246,7 @@ class Shopeame extends Module
      * Avisa a shopea.me cuando se edita un pedido a mano en el back-office.
      *
      * @param array $params
+     *
      * @return void
      */
     public function hookActionOrderEdited($params): void
@@ -246,6 +254,7 @@ class Shopeame extends Module
         $order = $params['order'] ?? null;
         if (!Validate::isLoadedObject($order)) {
             PrestaShopLogger::addLog('Shopeame: invalid actionOrderEdited parameters, the update_order event was not sent.', 3);
+
             return;
         }
 
@@ -277,6 +286,7 @@ class Shopeame extends Module
      *
      * @param string $event new_order o update_order
      * @param int $idOrder
+     *
      * @return void
      */
     private function notifyOrderEvent(string $event, int $idOrder): void
@@ -302,6 +312,7 @@ class Shopeame extends Module
      * guardado en el back-office, así que un fallo del servidor no puede romper la compra.
      *
      * @param array $payload
+     *
      * @return void
      */
     private function sendEventRequest(array $payload): void
@@ -327,12 +338,14 @@ class Shopeame extends Module
             // capturamos Throwable a propósito: además de los errores de transporte puede fallar
             // la decodificación de la respuesta, y nada de eso debe afectar al pedido
             PrestaShopLogger::addLog('Shopeame: the ' . $payload['event'] . ' event could not be sent: ' . $e->getMessage(), 3);
+
             return;
         }
 
         // niveles de log: 1 = info, 2 = warning, 3 = error
         if ($statusCode >= 200 && $statusCode < 300) {
             PrestaShopLogger::addLog('Shopeame: ' . $payload['event'] . ' event sent for order ' . $payload['order_id'] . '.', 1);
+
             return;
         }
 

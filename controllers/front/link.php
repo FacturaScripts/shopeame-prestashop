@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shopeame - PrestaShop connector for shopea.me
  *
@@ -13,7 +14,6 @@
  * @copyright 2025-2026 Carlos García Gómez
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -84,7 +84,8 @@ class ShopeameLinkModuleFrontController extends ModuleFrontController
     /**
      * Comprueba la firma HMAC y que la petición no haya caducado.
      *
-     * @param string $body Cuerpo en bruto de la petición.
+     * @param string $body cuerpo en bruto de la petición
+     *
      * @return bool
      */
     private function hasValidSignature(string $body): bool
@@ -108,7 +109,8 @@ class ShopeameLinkModuleFrontController extends ModuleFrontController
      * Emite una respuesta JSON sin incluir credenciales ni detalles internos y termina.
      *
      * @param array $data
-     * @param int $status Código HTTP.
+     * @param int $status código HTTP
+     *
      * @return void
      */
     private function sendJson(array $data, int $status): void

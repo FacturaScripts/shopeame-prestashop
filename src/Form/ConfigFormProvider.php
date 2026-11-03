@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shopeame - PrestaShop connector for shopea.me
  *
@@ -31,7 +32,7 @@ use PrestaShop\PrestaShop\Core\Form\FormDataProviderInterface;
 class ConfigFormProvider implements FormDataProviderInterface
 {
     /**
-     * @var DataConfigurationInterface Gestor que lee y guarda la configuración.
+     * @var DataConfigurationInterface gestor que lee y guarda la configuración
      */
     private $configFormManager;
 
@@ -57,6 +58,7 @@ class ConfigFormProvider implements FormDataProviderInterface
      * Guarda los datos enviados y devuelve los errores de validación.
      *
      * @param array $data
+     *
      * @return array
      */
     public function setData(array $data): array
