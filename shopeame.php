@@ -32,8 +32,8 @@ use Symfony\Component\HttpClient\HttpClient;
 /**
  * Clase principal del módulo Shopeame.
  *
- * Registra la pestaña del menú del back-office y los hooks de pedidos que avisan a shopea.me de
- * cada pedido nuevo o modificado.
+ * Registra la pestaña del menú del back-office, los hooks de pedidos que avisan a shopea.me de
+ * cada pedido nuevo o modificado y el hook que pinta el logo de Shopeame en el menú lateral.
  */
 class Shopeame extends Module
 {
@@ -48,6 +48,7 @@ class Shopeame extends Module
         'actionValidateOrder',
         'actionOrderStatusPostUpdate',
         'actionOrderEdited',
+        'actionAdminControllerSetMedia',
     ];
 
     /**
@@ -146,6 +147,7 @@ class Shopeame extends Module
         $tab->module = $this->name;
         $tab->id_parent = (int) Tab::getIdFromClassName('CONFIGURE');
         $tab->active = 1;
+        // icono de reserva: views/css/menu.css lo sustituye por el logo de Shopeame
         $tab->icon = 'settings';
 
         $names = [];
@@ -171,6 +173,21 @@ class Shopeame extends Module
         }
 
         return true;
+    }
+
+    /**
+     * Carga en el back-office la hoja de estilos que pinta el logo de Shopeame como icono de la
+     * entrada del menú lateral. El menú está en todas las páginas, así que se carga en todas; es
+     * una regla CSS mínima, sin JavaScript.
+     *
+     * https://devdocs.prestashop-project.org/9/modules/concepts/hooks/list-of-hooks/actionadmincontrollersetmedia/
+     *
+     * @param array $params
+     * @return void
+     */
+    public function hookActionAdminControllerSetMedia($params): void
+    {
+        $this->context->controller->addCSS($this->_path . 'views/css/menu.css');
     }
 
     /**

@@ -1,0 +1,34 @@
+/**
+ * Shopeame - PrestaShop connector for shopea.me
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ *
+ * @author    FacturaCity SL
+ * @copyright 2025-2026 Carlos García Gómez
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ */
+
+/*
+ * Logo de Shopeame como icono de la entrada «Shopeame» del menú lateral del back-office.
+ *
+ * PrestaShop pinta el icono de la pestaña como una ligadura de Material Icons; aquí se oculta el
+ * texto de esa ligadura y se dibuja el logo (views/img/menu-icon.svg) como máscara, de modo que
+ * toma el color del enlace igual que el resto de iconos (normal, al pasar el ratón y activo).
+ * El SVG va incrustado porque PrestaShop puede combinar las hojas de estilo y cambiar las rutas.
+ * La misma regla cambia el icono de la miga de pan de la página del módulo (body.shopeame).
+ */
+#subtab-Shopeame > a > i.material-icons:first-child,
+body.shopeame .breadcrumb-item.active > i.material-icons {
+  font-size: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  vertical-align: middle;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='10 8 74 74'><path fill='black' d='M47 27C48 22 54 19.5 63 19.5L72 19.5C78 19.7 82 21 81.5 24L79.5 33L60 33L59.5 37L66 37.5C74 38 79.5 41 79 47L78 56L77 59C75 66 71 69 64 70.5C58 71.5 50 71.5 44 70.5C40 70 37.5 68.5 38 66L40 57L62.5 56.5L63 53L55 52.5C50 52 47.5 51 45 48.5C43 46.5 42.5 43 43 40ZM22 21L49 20.5L46 24ZM12 28L43 27.5L42 31.5ZM12 35L43 35L40 38.5ZM13 43L41 43L40 46.5ZM16 50.5L46 50.5L49 53.5ZM14 58L38 58L36 61.5ZM13 65.5L36 65.5L34 68.5Z'/></svg>") center / contain no-repeat;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='10 8 74 74'><path fill='black' d='M47 27C48 22 54 19.5 63 19.5L72 19.5C78 19.7 82 21 81.5 24L79.5 33L60 33L59.5 37L66 37.5C74 38 79.5 41 79 47L78 56L77 59C75 66 71 69 64 70.5C58 71.5 50 71.5 44 70.5C40 70 37.5 68.5 38 66L40 57L62.5 56.5L63 53L55 52.5C50 52 47.5 51 45 48.5C43 46.5 42.5 43 43 40ZM22 21L49 20.5L46 24ZM12 28L43 27.5L42 31.5ZM12 35L43 35L40 38.5ZM13 43L41 43L40 46.5ZM16 50.5L46 50.5L49 53.5ZM14 58L38 58L36 61.5ZM13 65.5L36 65.5L34 68.5Z'/></svg>") center / contain no-repeat;
+}

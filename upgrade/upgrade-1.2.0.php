@@ -21,9 +21,10 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Actualización del módulo a la versión 1.2.0.
  *
- * Renombra las claves de configuración SHOEAME_API_KEY y SHOEAME_SHOP_REGISTERED (con la errata en
- * el prefijo) a SHOPEAME_API_KEY y SHOPEAME_SHOP_REGISTERED: PrestaShop exige que todas las claves
- * lleven el nombre del módulo como prefijo.
+ * - Renombra las claves de configuración SHOEAME_API_KEY y SHOEAME_SHOP_REGISTERED (con la errata
+ *   en el prefijo) a SHOPEAME_API_KEY y SHOPEAME_SHOP_REGISTERED: PrestaShop exige que todas las
+ *   claves lleven el nombre del módulo como prefijo.
+ * - Registra el hook actionAdminControllerSetMedia, que pinta el logo de Shopeame en el menú.
  *
  * https://devdocs.prestashop-project.org/9/modules/creation/enabling-auto-update/
  *
@@ -44,5 +45,5 @@ function upgrade_module_1_2_0($module)
         Configuration::deleteByName($oldKey);
     }
 
-    return true;
+    return $module->registerHook(Shopeame::HOOKS);
 }
