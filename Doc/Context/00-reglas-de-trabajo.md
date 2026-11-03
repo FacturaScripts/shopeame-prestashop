@@ -60,9 +60,9 @@ local: `php bin/console prestashop:module upgrade shopeame`.
 - `~/Trabajos/deploy.sh` copia el repositorio a `/Applications/ServBay/www/prestashop/modules/shopeame`
   (https://ps.localhost) con las mismas exclusiones que el zip (`.distignore` y archivos ocultos) y vacía
   `var/cache/`. `vendor/` no está en git: si falta, `composer dump-autoload -o --no-dev` en el repositorio.
-- El dominio de la tienda local es `localps.danielfg.es`, que el navegador integrado de Claude Code no abre. Para
-  probar con él hay que cambiar temporalmente el dominio de la tienda a `ps.localhost` (tabla `shop_url` y
-  `PS_SHOP_DOMAIN`/`PS_SHOP_DOMAIN_SSL`) y devolverlo al terminar.
+- El navegador integrado de Claude Code solo abre dominios locales como `ps.localhost`. Si la tienda local usa otro
+  dominio, para probar con él hay que cambiar temporalmente el dominio de la tienda a `ps.localhost` (tabla
+  `shop_url` y `PS_SHOP_DOMAIN`/`PS_SHOP_DOMAIN_SSL`) y devolverlo al terminar.
 - Para probar contra ShopeameServer local se crea `config/defines_custom.inc.php` con
   `define('SHOPEAME_SERVER_URL', 'https://shopea.localhost');`. El certificado de ServBay se acepta sin desactivar la
   verificación TLS, en los dos sentidos. Al terminar se desvincula la tienda y se restaura el archivo: si no, la
