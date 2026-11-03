@@ -1,6 +1,7 @@
 .git
 .gitignore
 .gitattributes
+.github
 .distignore
 .claude
 .agents

@@ -40,6 +40,17 @@ scripts de `upgrade/` al entrar en **Módulos → Gestor de módulo**, o a mano 
 php bin/console prestashop:module upgrade shopeame
 ```
 
+## Release en GitHub
+
+Con los cambios de versión ya en `main`, lanza la acción **Crear Release** desde la pestaña *Actions* del
+repositorio (o `gh workflow run release.yml`). Comprueba que `$this->version` de `shopeame.php` tiene tres números y
+coincide con la de los PDF de `docs/`, crea la etiqueta `v<versión>` con los commits desde la última etiqueta como
+notas y adjunta el zip, el mismo que genera `build.sh`, dos veces: `shopeame-<versión>.zip` y `shopeame.zip`. Si esa
+versión ya tiene release, no hace nada.
+
+El enlace https://github.com/FacturaScripts/shopeame-prestashop/releases/latest/download/shopeame.zip descarga
+siempre la última release (solo funciona sin iniciar sesión si el repositorio es público).
+
 ## Desarrollo
 
 La URL del servidor se controla con la constante `SHOPEAME_SERVER_URL` (por defecto `https://shopea.me`). Para apuntar

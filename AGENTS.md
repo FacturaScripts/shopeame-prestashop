@@ -28,7 +28,9 @@ Lo que no se salta nunca:
 
 - La documentación se actualiza en el mismo trabajo que cambia el código; una decisión nueva se anota en
   `Doc/Context/Decisiones/` y en su índice.
-- `Doc/`, `AGENTS.md`, `CLAUDE.md`, `README.md` y `composer.lock` no van en el zip del módulo (`.distignore`).
+- `Doc/`, `.github/`, `AGENTS.md`, `CLAUDE.md`, `README.md` y `composer.lock` no van en el zip del módulo
+  (`.distignore`). La acción **Crear Release** (`.github/workflows/release.yml`) genera el mismo zip que `build.sh` y
+  lo publica en GitHub (ver [`Doc/Context/04-publicacion-en-prestashop-addons.md`](Doc/Context/04-publicacion-en-prestashop-addons.md)).
 - `Doc/forja.json` agrupa en `User` y `Dev` las páginas de esas carpetas por su nombre de archivo, con campos
   opcionales: `title`, `title_short`, `permalink` (enlace en la web, máx. 200 caracteres; no se puede cambiar una vez
   publicada la página), `parent` (nombre de archivo de la página padre, con `.md`), `ordernum`, `youtubeid`,

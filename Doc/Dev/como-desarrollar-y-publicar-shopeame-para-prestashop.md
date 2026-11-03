@@ -57,6 +57,13 @@ credenciales de pruebas.
    ficha. Si la
    interfaz ha cambiado, se repiten las capturas de `Doc/Addons/capturas` y se regeneran las imágenes con
    `python3 Doc/Addons/imagenes.py` (ver la sección 4.6 del contexto de publicación).
+7. Con los cambios en `main`, se lanza la acción **Crear Release** de GitHub (pestaña *Actions* o
+   `gh workflow run release.yml`). Falla si `$this->version` no tiene tres números o si no coincide con la versión
+   impresa en `docs/readme_es.pdf` y `docs/readme_en.pdf` (se arregla con el paso 6), y no hace nada si esa versión
+   ya tiene release. Si todo está bien, crea la etiqueta `v<versión>` con los commits desde la última etiqueta como
+   notas, agrupados en funcionalidades (`feat`), correcciones (`fix`) y otros cambios, y adjunta el mismo zip del
+   paso 3 con dos nombres: `shopeame-<versión>.zip` y `shopeame.zip`. Este último permite un enlace fijo a la última
+   versión: `https://github.com/FacturaScripts/shopeame-prestashop/releases/latest/download/shopeame.zip`.
 
 ## 4. Estándar de código de PrestaShop
 

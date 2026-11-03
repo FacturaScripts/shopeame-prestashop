@@ -36,7 +36,7 @@
 | Desinstalación limpia (recomendado) | Borra la configuración, la clave del webservice y la pestaña |
 | Clave del webservice con los permisos justos | 17 recursos y solo los métodos que usa ShopeameServer, sin `DELETE` ni `PATCH` (ver [decisión 0003](Decisiones/0003-permisos-minimos-de-la-clave-del-webservice.md)) |
 
-## 4.3 El zip
+## 4.3 El zip y la release de GitHub
 
 `~/Trabajos/FacturaScripts/scripts/build.sh` genera `zip-plugins/shopeame-prestashop-addons/shopeame.zip` con una
 sola carpeta `shopeame`: copia el repositorio sin lo que lista `.distignore` (`Doc/`, `AGENTS.md`, `CLAUDE.md`,
@@ -45,6 +45,24 @@ sola carpeta `shopeame`: copia el repositorio sin lo que lista `.distignore` (`D
 módulo, sin versión (`shopeame.zip`); va en su propia carpeta para no pisar `Shopeame.zip` (el plugin de
 FacturaScripts) en un disco que no distingue mayúsculas. El zip lleva `docs/` con los PDF de la documentación (ver
 4.6).
+
+La acción de GitHub `.github/workflows/release.yml` (**Crear Release**, se lanza a mano) genera el mismo zip y lo
+publica en una release `v<versión>` con dos nombres: `shopeame-<versión>.zip` y `shopeame.zip`. El segundo no cambia
+de nombre entre versiones para que `.../releases/latest/download/shopeame.zip` sea un enlace fijo a la última. Es la
+plantilla de release de fsmaker adaptada, igual que en shopeame-woocommerce:
+
+- La versión sale de `$this->version` en `shopeame.php` y tiene que coincidir con la impresa en la primera página de
+  los dos PDF de `docs/` (la lee con `pdftotext`), porque van dentro del zip. `config.xml` no se mira: es una caché
+  que genera PrestaShop y no está en git.
+- El módulo no tiene changelog, así que las notas son los commits desde la última etiqueta `v*` (todos, en la
+  primera), agrupados por su tipo de Conventional Commits: `feat`, `fix` y el resto.
+- Reproduce el bloque del módulo de `build.sh` paso a paso (rsync con `.distignore` y sin `vendor`,
+  `composer dump-autoload --optimize --no-dev` con PHP 8.1, `index.php` en las carpetas de `vendor/` y permisos
+  755/644). Se comprobó en local que el zip tiene los mismos archivos, permisos y contenido que el de `build.sh`; solo
+  cambia el sufijo aleatorio de la clase del autoload, que Composer genera de nuevo en cada `dump-autoload` porque el
+  zip no lleva `composer.lock`.
+- `.github` está en `.distignore` para que no vaya en el zip.
+- El repositorio es privado: mientras lo sea, el enlace `latest` da 404 sin iniciar sesión en GitHub.
 
 ## 4.4 Pendiente al enviar
 
@@ -92,7 +110,8 @@ El formulario de la ficha pide la documentación en un PDF por idioma, con el no
 rellena en inglés y en español, así que se suben `readme_en.pdf` y `readme_es.pdf`.
 
 - Los genera `python3 Doc/Addons/readme.py [carpeta]`, por defecto en `docs/` del módulo, que va en el zip; los
-  mismos archivos se suben a la ficha. Se versionan porque `build.sh` copia el repositorio tal cual. El
+  mismos archivos se suben a la ficha. Se versionan porque `build.sh` y la acción de release copian el repositorio
+  tal cual; la acción falla si su versión no es la de `shopeame.php` (ver 4.3). El
   script escribe un HTML por idioma y lo imprime con Chrome sin interfaz (`--print-to-pdf`). No necesita dependencias
   de Python; la ruta de Chrome se cambia con la variable `CHROME`.
 - El texto es un resumen de las páginas de `Doc/User` (cómo funciona, instalar, vincular, acciones, errores) más los
