@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Shopeame - PrestaShop connector for shopea.me
  *
