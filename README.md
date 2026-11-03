@@ -1,6 +1,6 @@
 # Shopeame para PrestaShop
 
-Módulo que conecta una tienda **PrestaShop** (8.0 – 9.x) con **[shopea.me](https://shopea.me)**
+Módulo que conecta una tienda **PrestaShop** 9 con **[shopea.me](https://shopea.me)**
 (ShopeameServer), para que shopea.me sincronice el catálogo y los pedidos de la tienda con el ERP
 (FacturaScripts / factura.city).
 

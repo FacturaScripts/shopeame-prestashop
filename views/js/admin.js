@@ -1,4 +1,19 @@
 /**
+ * Shopeame - PrestaShop connector for shopea.me
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ *
+ * @author    FacturaCity SL
+ * @copyright 2025-2026 Carlos García Gómez
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ */
+
+/*
  * Comportamiento de la pantalla de administración de Shopeame.
  *
  * - Botones "Copiar": copian al portapapeles el valor del campo indicado en data-shopeame-copy.

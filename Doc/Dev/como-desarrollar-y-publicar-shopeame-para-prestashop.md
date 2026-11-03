@@ -22,7 +22,7 @@ credenciales de pruebas.
 
 - Las cadenas se escriben en inglés con el dominio `Modules.Shopeame.Admin`:
   `$this->trans('Text', [], 'Modules.Shopeame.Admin')` en la clase del módulo,
-  `$this->trans('Text', 'Modules.Shopeame.Admin')` en `ConfigController` y `|trans` en la plantilla Twig, que declara
+  `$this->trans('Text', [], 'Modules.Shopeame.Admin')` también en `ConfigController` (firma de `PrestaShopAdminController`) y `|trans` en la plantilla Twig, que declara
   `{% trans_default_domain 'Modules.Shopeame.Admin' %}`.
 - La traducción al español está en `translations/es-ES/ModulesShopeameAdmin.es-ES.xlf`. Cada texto nuevo se añade como
   un `trans-unit` cuyo `id` es el `md5` del texto en inglés:
@@ -44,7 +44,7 @@ credenciales de pruebas.
 2. Se prueba la tienda con el modo depuración activado (`_PS_MODE_DEV_` en `config/defines.inc.php`): los revisores de
    PrestaShop Addons lo usan siempre y cualquier aviso de PHP es motivo de rechazo.
 3. Se genera el zip con `build.sh`: una sola carpeta `shopeame` con los archivos del módulo, sin lo que lista
-   `.distignore` (documentación, `README.md`, `AGENTS.md`, `CLAUDE.md`, `composer.lock` y archivos ocultos), con
+   `.distignore` (documentación, `README.md`, `AGENTS.md`, `CLAUDE.md`, `composer.lock` y los archivos ocultos de desarrollo; el `.htaccess` sí va), con
    `vendor/` regenerado solo con el autoload (`composer dump-autoload -o --no-dev`) y un `index.php` en cada carpeta.
 4. Se pasa el zip por el Validator de PrestaShop y se corrige lo que indique.
 5. La primera vez se envía el zip desde la cuenta de vendedor de PrestaShop Addons, con la ficha y la documentación;

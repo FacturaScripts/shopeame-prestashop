@@ -23,8 +23,8 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Configuration;
-use Context;
 use PrestaShop\PrestaShop\Core\Configuration\DataConfigurationInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Lee, valida y guarda la configuración del módulo (UUID y token del ERP o de la tienda).
@@ -58,6 +58,19 @@ final class ConfigFormManager implements DataConfigurationInterface
 
     /** Longitud de los tokens de shopea.me. */
     public const WEBHOOK_TOKEN_LENGTH = 32;
+
+    /**
+     * @var TranslatorInterface Traductor de PrestaShop, inyectado desde config/services.yml.
+     */
+    private $translator;
+
+    /**
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
 
     /**
      * Devuelve un valor de configuración como cadena recortada.
@@ -137,6 +150,6 @@ final class ConfigFormManager implements DataConfigurationInterface
      */
     private function trans(string $message): string
     {
-        return Context::getContext()->getTranslator()->trans($message, [], 'Modules.Shopeame.Admin');
+        return $this->translator->trans($message, [], 'Modules.Shopeame.Admin');
     }
 }

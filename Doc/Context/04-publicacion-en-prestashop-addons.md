@@ -18,6 +18,10 @@
 | `index.php` en todas las carpetas | En el repositorio en cada carpeta; `build.sh` los añade también en `vendor/` |
 | Licencia compatible con OSL/AFL (Apache, AFL, MIT, BSD, ISC, EUPL) | AFL-3.0 en `LICENSE`, `composer.json` y la cabecera de cada archivo |
 | Comprobación de `_PS_VERSION_` en cada PHP | Todos los archivos salvo los `index.php` |
+| Cabecera de licencia en los JS (Validator) | En los PHP, JS, CSS y Twig |
+| `.htaccess` en la raíz para que no se pueda listar el módulo (Validator) | Deniega el acceso directo a los `*.php`, como `ps_eventbus` o `psshipping` |
+| Sin `FrameworkBundleAdminController` ni `Context` en `src/` (Validator) | `ConfigController` extiende `PrestaShopAdminController`; el traductor y el form handler se inyectan y la URL sale de `ShopContext` (ver [decisión 0005](Decisiones/0005-solo-prestashop-9.md)) |
+| Tipos correctos de las propiedades del núcleo (Validator) | `$tab->active = true` (bool, no int) |
 | Claves de configuración con el prefijo del módulo | `SHOPEAME_*` |
 | Sin tocar tablas del núcleo ni otros módulos | Solo `Configuration`, `Tab` y `WebserviceKey` mediante sus clases |
 | Textos en inglés y traducibles | Dominio `Modules.Shopeame.Admin` y XLIFF en español (ver [0.3](00-reglas-de-trabajo.md)) |
@@ -27,7 +31,7 @@
 | Composer con `prepend-autoloader: false` y `vendor/` sin dependencias de desarrollo | `composer.json`; `build.sh` ejecuta `composer dump-autoload -o --no-dev` |
 | Nada descargado tras la instalación | Todo va en el zip; el módulo solo envía avisos a shopea.me |
 | `logo.png` de 32 × 32 | Sí |
-| Sin avisos en modo debug | Probado en PrestaShop 9.1.4 con PHP 8.5 |
+| Sin avisos en modo debug | Probado en PrestaShop 9.1.4 con PHP 8.5 (sin el aviso de obsolescencia de `get()` que dejaba `FrameworkBundleAdminController`) |
 | Desinstalación limpia (recomendado) | Borra la configuración, la clave del webservice y la pestaña |
 | Clave del webservice con los permisos justos | 17 recursos y solo los métodos que usa ShopeameServer, sin `DELETE` ni `PATCH` (ver [decisión 0003](Decisiones/0003-permisos-minimos-de-la-clave-del-webservice.md)) |
 
@@ -42,7 +46,10 @@ carpeta de dentro sí debe ser `shopeame`.
 
 ## 4.4 Pendiente al enviar
 
-- Pasar el zip por el Validator y corregir lo que diga.
+- Pasar el zip por el Validator y corregir lo que diga. El primer reporte (03/11/2026, versión 1.0.0) dio tres errores
+  (`FrameworkBundleAdminController` y dos usos de `Context`), el `.htaccess` que faltaba, la cabecera de licencia de
+  `views/js/admin.js` y `$tab->active = 1`; están corregidos y falta volver a pasarlo. Ese reporte llegó incompleto
+  (sin la sección «Standards»), así que la siguiente pasada puede traer avisos de estilo nuevos.
 - **Comentarios en español**: la lista de 1.7 dice que el código enviado debe estar en inglés. Los textos visibles y
   los identificadores ya lo están; los comentarios y Docblocks siguen en español por la regla del equipo. Si el revisor
   lo pide, hay que traducirlos.
@@ -55,9 +62,7 @@ carpeta de dentro sí debe ser `shopeame`.
   shopea.me el módulo no tiene función.
 - **Documentación en el zip**: las buenas prácticas recomiendan incluirla (en PDF, en `docs/`). Ahora no va; la ficha
   de Addons puede enlazar la documentación publicada.
-- **PrestaShop 8**: el módulo declara compatibilidad 8.0–9.x y no se ha probado en una instalación 8. En PrestaShop 9
-  `FrameworkBundleAdminController::get()` deja un aviso de obsolescencia (nivel INFO) en el log de depuración; los
-  módulos oficiales lo evitan con `PrestaShopAdminController`, que solo existe desde la 9.0 (ver
-  [decisión 0001](Decisiones/0001-adaptacion-a-prestashop-addons.md)).
+- **Solo PrestaShop 9**: desde la [decisión 0005](Decisiones/0005-solo-prestashop-9.md) el módulo pide PrestaShop
+  9.0 o superior. En la ficha de Addons hay que marcar solo las versiones 9.x.
 - `module_key`: Addons lo asigna al aceptar el módulo y hay que añadirlo en el constructor
   (`$this->module_key = '...'`) en las versiones siguientes.

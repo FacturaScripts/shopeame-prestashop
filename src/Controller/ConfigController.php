@@ -23,9 +23,10 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Configuration;
-use Context;
 use PrestaShop\Module\Shopeame\Form\ConfigFormManager;
-use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
+use PrestaShop\PrestaShop\Core\Form\FormHandlerInterface;
+use PrestaShopBundle\Controller\Admin\PrestaShopAdminController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,8 +37,11 @@ use WebserviceKey;
 /**
  * Controlador de la página de configuración del módulo Shopeame: vinculación con shopea.me,
  * clave del webservice, comprobación de la conexión y desvinculación.
+ *
+ * Extiende PrestaShopAdminController (PrestaShop 9): se registra como servicio en
+ * config/services.yml y recibe los servicios como argumentos de cada acción, sin usar Context.
  */
-class ConfigController extends FrameworkBundleAdminController
+class ConfigController extends PrestaShopAdminController
 {
     /** Dominio de las traducciones del módulo. */
     private const DOMAIN = 'Modules.Shopeame.Admin';
@@ -145,17 +149,20 @@ class ConfigController extends FrameworkBundleAdminController
      * token del ERP) y muestra el estado de la vinculación.
      *
      * @param Request $request
+     * @param FormHandlerInterface $formDataHandler Manejador del formulario de config/services.yml.
      * @return Response
      */
-    public function index(Request $request): Response
-    {
+    public function index(
+        Request $request,
+        #[Autowire(service: 'prestashop.module.shopeame.form.config_form_handler')]
+        FormHandlerInterface $formDataHandler
+    ): Response {
         // si alguien borró la clave del webservice desde PrestaShop, dejamos de mostrarla
         $apiKey = ConfigFormManager::getString(ConfigFormManager::API_KEY);
         if ($apiKey !== '' && false === WebserviceKey::keyExists($apiKey)) {
             Configuration::updateValue(ConfigFormManager::API_KEY, '');
         }
 
-        $formDataHandler = $this->get('prestashop.module.shopeame.form.config_form_handler');
         $form = $formDataHandler->getForm();
         $form->handleRequest($request);
 
@@ -172,7 +179,7 @@ class ConfigController extends FrameworkBundleAdminController
                 return $this->redirectToRoute('shopeame_config_form');
             }
 
-            $this->flashErrors($errors);
+            $this->addFlashErrors($errors);
         }
 
         $uuid = ConfigFormManager::getString(ConfigFormManager::UUID_KEY);
@@ -192,10 +199,10 @@ class ConfigController extends FrameworkBundleAdminController
 
         return $this->render('@Modules/shopeame/views/templates/admin/form.html.twig', [
             // título de la cabecera del back-office, el mismo que el de la app de Shopify
-            'layoutTitle' => $this->trans('Connect with shopea.me', self::DOMAIN),
+            'layoutTitle' => $this->trans('Connect with shopea.me', [], self::DOMAIN),
             'configForm' => $form->createView(),
             'apiKey' => $apiKey,
-            'shopUrl' => Context::getContext()->shop->getBaseURL(true),
+            'shopUrl' => $this->getShopContext()->getBaseURL(),
             'shopLinkUrl' => self::serverUrl() . '/shop-link/' . rawurlencode($uuid),
             'enableGenerateApiKeyButton' => $apiKey === '',
             'registeredShop' => $registeredShop,
@@ -210,7 +217,7 @@ class ConfigController extends FrameworkBundleAdminController
     public function generateApiKey(): RedirectResponse
     {
         if ($this->doGenerateApiKey()) {
-            $this->addFlash('success', $this->trans('API key generated successfully.', self::DOMAIN));
+            $this->addFlash('success', $this->trans('API key generated successfully.', [], self::DOMAIN));
         }
 
         return $this->redirectToRoute('shopeame_config_form');
@@ -238,7 +245,7 @@ class ConfigController extends FrameworkBundleAdminController
     public function unlinkShop(Request $request): RedirectResponse
     {
         if (!$this->isCsrfTokenValid('shopeame_shop_actions', (string) $request->request->get('_token'))) {
-            $this->addFlash('error', $this->trans('The request is not valid. Please try again.', self::DOMAIN));
+            $this->addFlash('error', $this->trans('The request is not valid. Please try again.', [], self::DOMAIN));
             return $this->redirectToRoute('shopeame_config_form');
         }
 
@@ -253,9 +260,9 @@ class ConfigController extends FrameworkBundleAdminController
         $this->clearLinkData();
 
         if (null !== $response && $response['status'] >= 200 && $response['status'] < 300) {
-            $this->addFlash('success', $this->trans('Store unlinked from shopea.me.', self::DOMAIN));
+            $this->addFlash('success', $this->trans('Store unlinked from shopea.me.', [], self::DOMAIN));
         } else {
-            $this->addFlash('warning', $this->trans('The local credentials were deleted, but shopea.me did not confirm the unlinking.', self::DOMAIN));
+            $this->addFlash('warning', $this->trans('The local credentials were deleted, but shopea.me did not confirm the unlinking.', [], self::DOMAIN));
         }
 
         return $this->redirectToRoute('shopeame_config_form');
@@ -271,12 +278,12 @@ class ConfigController extends FrameworkBundleAdminController
     public function clearLocalShop(Request $request): RedirectResponse
     {
         if (!$this->isCsrfTokenValid('shopeame_shop_actions', (string) $request->request->get('_token'))) {
-            $this->addFlash('error', $this->trans('The request is not valid. Please try again.', self::DOMAIN));
+            $this->addFlash('error', $this->trans('The request is not valid. Please try again.', [], self::DOMAIN));
             return $this->redirectToRoute('shopeame_config_form');
         }
 
         $this->clearLinkData();
-        $this->addFlash('success', $this->trans('The connection data saved in this module was deleted without changing shopea.me.', self::DOMAIN));
+        $this->addFlash('success', $this->trans('The connection data saved in this module was deleted without changing shopea.me.', [], self::DOMAIN));
 
         return $this->redirectToRoute('shopeame_config_form');
     }
@@ -294,9 +301,9 @@ class ConfigController extends FrameworkBundleAdminController
         );
 
         if (null !== $result && $result['exists']) {
-            $this->addFlash('success', $this->trans('The connection with shopea.me is working correctly.', self::DOMAIN));
+            $this->addFlash('success', $this->trans('The connection with shopea.me is working correctly.', [], self::DOMAIN));
         } else {
-            $this->addFlash('warning', $this->trans('The connection with shopea.me could not be confirmed.', self::DOMAIN));
+            $this->addFlash('warning', $this->trans('The connection with shopea.me could not be confirmed.', [], self::DOMAIN));
         }
 
         return $this->redirectToRoute('shopeame_config_form');
@@ -315,7 +322,7 @@ class ConfigController extends FrameworkBundleAdminController
         Configuration::updateValue('PS_WEBSERVICE', 1);
 
         if (false === self::deleteWebserviceKey()) {
-            $this->addFlash('error', $this->trans('The previous API key could not be deleted.', self::DOMAIN));
+            $this->addFlash('error', $this->trans('The previous API key could not be deleted.', [], self::DOMAIN));
             return false;
         }
 
@@ -325,18 +332,18 @@ class ConfigController extends FrameworkBundleAdminController
         $webserviceKey->key = strtoupper(bin2hex(random_bytes(16)));
         $webserviceKey->active = true;
         if (false === $webserviceKey->save()) {
-            $this->addFlash('error', $this->trans('The API key could not be generated.', self::DOMAIN));
+            $this->addFlash('error', $this->trans('The API key could not be generated.', [], self::DOMAIN));
             return false;
         }
 
         // shopea.me lee y actualiza el catálogo, el stock, los precios y los pedidos de la tienda
         if (false === self::setWebserviceKeyPermissions((int) $webserviceKey->id)) {
-            $this->addFlash('error', $this->trans('The API key permissions could not be set.', self::DOMAIN));
+            $this->addFlash('error', $this->trans('The API key permissions could not be set.', [], self::DOMAIN));
             return false;
         }
 
         if (false === Configuration::updateValue(ConfigFormManager::API_KEY, $webserviceKey->key)) {
-            $this->addFlash('error', $this->trans('The API key could not be saved.', self::DOMAIN));
+            $this->addFlash('error', $this->trans('The API key could not be saved.', [], self::DOMAIN));
             return false;
         }
 
@@ -357,7 +364,7 @@ class ConfigController extends FrameworkBundleAdminController
             'erp' => ConfigFormManager::getString(ConfigFormManager::UUID_KEY),
             'token' => ConfigFormManager::getString(ConfigFormManager::WEBHOOK_TOKEN_KEY),
             'new_shop' => [
-                'url' => Context::getContext()->shop->getBaseURL(true),
+                'url' => $this->getShopContext()->getBaseURL(),
                 'api_key' => ConfigFormManager::getString(ConfigFormManager::API_KEY),
             ],
         ]);
@@ -368,14 +375,14 @@ class ConfigController extends FrameworkBundleAdminController
         $content = $response['content'];
         if ($response['status'] < 200 || $response['status'] >= 300) {
             $error = isset($content['error']) && is_string($content['error']) ? $content['error'] : 'HTTP ' . $response['status'];
-            $this->addFlash('error', $this->trans('The store could not be linked: %error%', self::DOMAIN, ['%error%' => $error]));
+            $this->addFlash('error', $this->trans('The store could not be linked: %error%', ['%error%' => $error], self::DOMAIN));
             return;
         }
 
         if (($content['success'] ?? false) !== true
             || !is_string($content['shop_uuid'] ?? null)
             || !is_string($content['webhook_token'] ?? null)) {
-            $this->addFlash('error', $this->trans('shopea.me returned an unexpected response.', self::DOMAIN));
+            $this->addFlash('error', $this->trans('shopea.me returned an unexpected response.', [], self::DOMAIN));
             return;
         }
 
@@ -431,8 +438,8 @@ class ConfigController extends FrameworkBundleAdminController
         } catch (Throwable $e) {
             $this->addFlash('error', $this->trans(
                 'Could not connect to shopea.me. Error: %error%',
-                self::DOMAIN,
-                ['%error%' => $e->getMessage()]
+                ['%error%' => $e->getMessage()],
+                self::DOMAIN
             ));
 
             return null;
@@ -466,12 +473,12 @@ class ConfigController extends FrameworkBundleAdminController
     private function linkSuccessMessage(string $message): string
     {
         if ($message === 'shop-already-exists') {
-            return $this->trans('The store was already linked. Its data was recovered without creating a new store.', self::DOMAIN);
+            return $this->trans('The store was already linked. Its data was recovered without creating a new store.', [], self::DOMAIN);
         }
         if ($message === 'shop-reactivated') {
-            return $this->trans('The store was reactivated and linked with shopea.me successfully.', self::DOMAIN);
+            return $this->trans('The store was reactivated and linked with shopea.me successfully.', [], self::DOMAIN);
         }
 
-        return $this->trans('Store linked with shopea.me successfully.', self::DOMAIN);
+        return $this->trans('Store linked with shopea.me successfully.', [], self::DOMAIN);
     }
 }

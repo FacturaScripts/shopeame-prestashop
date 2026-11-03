@@ -1,4 +1,4 @@
-Módulo **Shopeame** para PrestaShop 8 y 9: conecta una tienda PrestaShop con el servicio shopea.me, que hace de
+Módulo **Shopeame** para PrestaShop 9: conecta una tienda PrestaShop con el servicio shopea.me, que hace de
 intermediario entre las tiendas online y el ERP FacturaScripts del cliente. Se publica en PrestaShop Addons con el
 nombre técnico `shopeame`.
 

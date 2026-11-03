@@ -14,7 +14,13 @@ o de un módulo oficial que haga lo mismo.
   nombres `Shopeame*`, clases CSS `shopeame-*`, rutas `shopeame_*`. Las clases de `src/` van en el espacio de nombres
   `PrestaShop\Module\Shopeame` y se cargan con el autoload de Composer (`vendor/`, generado por `build.sh`).
 - Cada archivo PHP empieza con la cabecera de la licencia AFL-3.0 y con `if (!defined('_PS_VERSION_')) { exit; }`
-  (salvo los `index.php`, que redirigen a la carpeta superior). Cada carpeta tiene su `index.php`.
+  (salvo los `index.php`, que redirigen a la carpeta superior). Los JS, CSS y Twig llevan la misma cabecera (el
+  Validator la exige al menos en los JS). Cada carpeta tiene su `index.php` y la raíz, un `.htaccess` que impide
+  listarla y abrir sus PHP directamente.
+- El código de `src/` no usa `Context`: el Validator lo marca como error. Los servicios se inyectan desde
+  `config/services.yml` (como el traductor en `ConfigFormManager`) o como argumentos de la acción con
+  `#[Autowire(service: ...)]`, y el contexto de la tienda sale de `PrestaShopAdminController::getShopContext()`.
+  `shopeame.php` y `controllers/front/` siguen usando el contexto heredado (`$this->context`), que es lo normal ahí.
 - Nada de `serialize()`, `eval()`, código de depuración (`var_dump`, `dump`, `console.log`) ni código comentado.
 - Las peticiones salen con el `HttpClient` de Symfony y nunca desactivan la verificación TLS.
 - Comentarios y Docblocks en español; los textos visibles, en inglés y traducibles (ver 0.3).
@@ -22,8 +28,8 @@ o de un módulo oficial que haga lo mismo.
 ## 0.3 Textos y traducciones
 
 - Toda cadena visible usa el sistema de traducciones nuevo con el dominio `Modules.Shopeame.Admin`:
-  `$this->trans('Text', [], 'Modules.Shopeame.Admin')` en el módulo, `$this->trans('Text', 'Modules.Shopeame.Admin')`
-  en `ConfigController` (firma de `FrameworkBundleAdminController`), `|trans` en Twig con
+  `$this->trans('Text', [], 'Modules.Shopeame.Admin')` en el módulo y en `ConfigController` (firma de
+  `PrestaShopAdminController`), `|trans` en Twig con
   `{% trans_default_domain 'Modules.Shopeame.Admin' %}`.
 - La traducción al español va en `translations/es-ES/ModulesShopeameAdmin.es-ES.xlf`; el `id` de cada `trans-unit` es
   el `md5` del texto en inglés. Al añadir o cambiar un texto, se añade o cambia su entrada en el XLIFF y se vacía
@@ -33,6 +39,8 @@ o de un módulo oficial que haga lo mismo.
 ## 0.4 Versiones
 
 La primera versión publicada es la 1.0.0 (ver [decisión 0004](Decisiones/0004-primera-version-publica-1-0-0.md)).
+El módulo es compatible con PrestaShop 9.0 o superior y PHP 8.1 o superior (`ps_versions_compliancy` y
+`composer.json`; ver [decisión 0005](Decisiones/0005-solo-prestashop-9.md)).
 Una versión nueva cambia `$this->version` en `shopeame.php` (siempre tres números). Si registra hooks nuevos, cambia
 pestañas, migra configuración o cambia los permisos de la clave del webservice, lleva su
 `upgrade/upgrade-X.Y.Z.php`, que PrestaShop ejecuta una vez cuando la versión instalada es menor. Para aplicarlo en
@@ -56,8 +64,7 @@ local: `php bin/console prestashop:module upgrade shopeame`.
 1. `php -l` de los archivos tocados.
 2. Probar con el modo debug activado (`_PS_MODE_DEV_` en `config/defines.inc.php`): los revisores de Addons lo usan
    siempre y cualquier aviso es motivo de rechazo. En `var/logs/dev-*.log` no debe aparecer nada de
-   `modules/shopeame` salvo el aviso conocido de `FrameworkBundleAdminController::get()` (ver
-   [decisión 0001](Decisiones/0001-adaptacion-a-prestashop-addons.md)).
+   `modules/shopeame`.
 3. Si el cambio toca la vinculación o los pedidos, la prueba de extremo a extremo contra shopea.localhost en los dos
    sentidos (desde PrestaShop con el UUID y el token del ERP, y desde la pantalla «conectar tienda» de shopea con la
    URL y la clave del webservice), más desvincular, borrar datos y desinstalar.

@@ -38,7 +38,9 @@ eran compatibles con PHP 7 (tipo de retorno `false|array`).
 - **Pasar `ConfigController` a `PrestaShopAdminController`** con inyección de servicios para quitar el aviso de
   obsolescencia de `get()` en PrestaShop 9: esa clase no existe en PrestaShop 8 y obligaría a subir el mínimo a 9.0,
   como hacen los módulos oficiales. El aviso solo va al log de depuración (nivel INFO), no se muestra, y `get()`
-  funciona hasta PrestaShop 10. Se revisará cuando se deje de dar soporte a PrestaShop 8.
+  funciona hasta PrestaShop 10. Se revisará cuando se deje de dar soporte a PrestaShop 8. (La
+  [decisión 0005](0005-solo-prestashop-9.md) lo cambió: el Validator lo marca como error y el módulo pasó a pedir
+  PrestaShop 9.)
 - **Traducir también los comentarios al inglés**: la regla del equipo es comentar en español. Queda como riesgo
   anotado en [4.4](../04-publicacion-en-prestashop-addons.md).
 - **Limitar los permisos de la clave del webservice**: ShopeameServer escribe en varios recursos y no hay una lista

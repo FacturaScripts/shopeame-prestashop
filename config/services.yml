@@ -15,7 +15,7 @@ services:
   # el fichero src/form/ConfigFormManager.php
   prestashop.module.shopeame.form.config_form_manager:
     class: PrestaShop\Module\Shopeame\Form\ConfigFormManager
-    arguments: ['@prestashop.adapter.legacy.configuration']
+    arguments: ['@translator']
 
   # el fichero src/form/ConfigFormProvider.php
   prestashop.module.shopeame.form.config_form_provider:
@@ -32,3 +32,11 @@ services:
       - '@prestashop.module.shopeame.form.config_form_provider'
       - 'PrestaShop\Module\Shopeame\Form\ConfigForm'
       - 'ShopeameConfig'
+
+  # controlador de la configuración (src/Controller/ConfigController.php): PrestaShop 9 registra
+  # solo los que extienden FrameworkBundleAdminController, así que los que extienden
+  # PrestaShopAdminController se declaran aquí; autoconfigure le añade la etiqueta
+  # controller.service_arguments para inyectar servicios en los argumentos de cada acción
+  PrestaShop\Module\Shopeame\Controller\ConfigController:
+    autowire: true
+    autoconfigure: true

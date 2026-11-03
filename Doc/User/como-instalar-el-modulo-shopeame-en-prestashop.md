@@ -1,5 +1,5 @@
 El módulo **Shopeame** se instala como cualquier otro módulo de PrestaShop, desde el catálogo de módulos o subiendo
-el archivo zip descargado de PrestaShop Addons. Funciona en PrestaShop 8 y 9.
+el archivo zip descargado de PrestaShop Addons. Funciona en PrestaShop 9.
 
 ## ⚙️ Antes de empezar
 

@@ -5,16 +5,17 @@
 | Archivo | Qué hace |
 |---|---|
 | `shopeame.php` | Clase `Shopeame`: datos del módulo, carga de `vendor/autoload.php`, instalación (hooks y pestaña), desinstalación, hooks de pedidos y del menú, y envío de los avisos de pedido |
-| `src/Controller/ConfigController.php` | Pantalla de configuración (Symfony) y sus acciones: generar la clave del webservice, vincular, comprobar, desvincular y borrar datos. También `serverUrl()`, `webHooksUrl()` y `deleteWebserviceKey()`, que usa la desinstalación |
+| `src/Controller/ConfigController.php` | Pantalla de configuración (Symfony, extiende `PrestaShopAdminController`) y sus acciones: generar la clave del webservice, vincular, comprobar, desvincular y borrar datos. También `serverUrl()`, `webHooksUrl()` y `deleteWebserviceKey()`, que usa la desinstalación |
 | `src/Form/ConfigForm.php`, `ConfigFormProvider.php`, `ConfigFormManager.php` | Formulario de la opción 2 (UUID y token del ERP). `ConfigFormManager` define además las claves de configuración y `getString()` |
 | `controllers/front/link.php` | Controlador frontal `ShopeameLinkModuleFrontController`, que recibe la vinculación firmada de ShopeameServer |
-| `config/routes.yml`, `config/services.yml` | Rutas de la pantalla (`/shopeame/...`) y servicios del formulario |
+| `config/routes.yml`, `config/services.yml` | Rutas de la pantalla (`/shopeame/...`), servicios del formulario (con el traductor inyectado en `ConfigFormManager`) y registro de `ConfigController` como servicio (`autowire` y `autoconfigure`), que PrestaShop 9 no hace solo con los controladores que extienden `PrestaShopAdminController` |
 | `views/templates/admin/form.html.twig` | Plantilla de la pantalla |
 | `views/css/admin.css`, `views/js/admin.js` | Estilos de la pantalla, botones «Copiar» y confirmaciones |
 | `views/css/menu.css`, `views/img/menu-icon.svg` | Logo de Shopeame en el menú lateral y en la miga de pan (ver [decisión 0002](Decisiones/0002-logo-en-el-menu-lateral.md)) |
 | `translations/es-ES/ModulesShopeameAdmin.es-ES.xlf` | Traducción al español |
 | `upgrade/upgrade-*.php` | Actualizaciones entre versiones; la 1.0.0 no tiene ninguna (ver [decisión 0004](Decisiones/0004-primera-version-publica-1-0-0.md)) |
 | `logo.png` | Icono de 32 × 32 del gestor de módulos |
+| `.htaccess` | Impide listar la carpeta del módulo y abrir sus PHP directamente (lo exige el Validator); `deploy.sh` no lo copia a la tienda local porque excluye los archivos ocultos, pero `build.sh` sí lo mete en el zip |
 
 La pantalla imita la estructura y los textos de la app de Shopify de Shopeame, que es la base visual común de los
 conectores de Shopify, WooCommerce y PrestaShop.

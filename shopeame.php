@@ -65,7 +65,7 @@ class Shopeame extends Module
         $this->author = 'Shopeame';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = [
-            'min' => '8.0.0',
+            'min' => '9.0.0',
             'max' => '9.99.99',
         ];
         $this->bootstrap = true;
@@ -147,7 +147,7 @@ class Shopeame extends Module
         $tab->route_name = 'shopeame_config_form';
         $tab->module = $this->name;
         $tab->id_parent = (int) Tab::getIdFromClassName('CONFIGURE');
-        $tab->active = 1;
+        $tab->active = true;
         // icono de reserva: views/css/menu.css lo sustituye por el logo de Shopeame
         $tab->icon = 'settings';
 

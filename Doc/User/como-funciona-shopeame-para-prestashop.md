@@ -9,7 +9,7 @@ stock, precios, categorías y atributos, pero no puede borrar nada ni acceder a 
 
 ## ⚙️ Antes de empezar
 
-- Una tienda PrestaShop 8 o 9 servida por HTTPS.
+- Una tienda PrestaShop 9 servida por HTTPS.
 - Una cuenta en shopea.me con tu ERP ya registrado.
 
 ## 🔄 Cómo funciona
