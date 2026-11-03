@@ -32,9 +32,11 @@ o de un módulo oficial que haga lo mismo.
 
 ## 0.4 Versiones
 
+La primera versión publicada es la 1.0.0 (ver [decisión 0004](Decisiones/0004-primera-version-publica-1-0-0.md)).
 Una versión nueva cambia `$this->version` en `shopeame.php` (siempre tres números). Si registra hooks nuevos, cambia
-pestañas o migra configuración, lleva su `upgrade/upgrade-X.Y.Z.php`, que PrestaShop ejecuta una vez cuando la
-versión instalada es menor. Para aplicarlo en local: `php bin/console prestashop:module upgrade shopeame`.
+pestañas, migra configuración o cambia los permisos de la clave del webservice, lleva su
+`upgrade/upgrade-X.Y.Z.php`, que PrestaShop ejecuta una vez cuando la versión instalada es menor. Para aplicarlo en
+local: `php bin/console prestashop:module upgrade shopeame`.
 
 ## 0.5 Entorno local
 

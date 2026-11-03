@@ -33,8 +33,8 @@ trabajar con el repositorio directamente, genera antes el autoload:
 composer dump-autoload -o --no-dev
 ```
 
-Las actualizaciones son automáticas: PrestaShop detecta la versión nueva y ejecuta los scripts de `upgrade/` al entrar
-en **Módulos → Gestor de módulo**, o a mano con:
+Las actualizaciones son automáticas: PrestaShop detecta la versión nueva y, si la versión los trae, ejecuta los
+scripts de `upgrade/` al entrar en **Módulos → Gestor de módulo**, o a mano con:
 
 ```bash
 php bin/console prestashop:module upgrade shopeame

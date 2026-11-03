@@ -13,7 +13,7 @@
 | `views/css/admin.css`, `views/js/admin.js` | Estilos de la pantalla, botones «Copiar» y confirmaciones |
 | `views/css/menu.css`, `views/img/menu-icon.svg` | Logo de Shopeame en el menú lateral y en la miga de pan (ver [decisión 0002](Decisiones/0002-logo-en-el-menu-lateral.md)) |
 | `translations/es-ES/ModulesShopeameAdmin.es-ES.xlf` | Traducción al español |
-| `upgrade/upgrade-*.php` | Actualizaciones entre versiones |
+| `upgrade/upgrade-*.php` | Actualizaciones entre versiones; la 1.0.0 no tiene ninguna (ver [decisión 0004](Decisiones/0004-primera-version-publica-1-0-0.md)) |
 | `logo.png` | Icono de 32 × 32 del gestor de módulos |
 
 La pantalla imita la estructura y los textos de la app de Shopify de Shopeame, que es la base visual común de los
@@ -27,9 +27,6 @@ conectores de Shopify, WooCommerce y PrestaShop.
 | `SHOPEAME_WEBHOOK_TOKEN` | Token del ERP mientras se vincula; después, el de la tienda (32 caracteres alfanuméricos) |
 | `SHOPEAME_API_KEY` | Clave del webservice de PrestaShop creada por el módulo |
 | `SHOPEAME_SHOP_REGISTERED` | Último estado de vinculación conocido; se refresca con `check_shop` cada vez que se abre la pantalla |
-
-Hasta la versión 1.1.1 dos claves se llamaban `SHOEAME_API_KEY` y `SHOEAME_SHOP_REGISTERED` (con una errata en el
-prefijo); `upgrade-1.2.0.php` las renombra.
 
 ## 1.3 Hooks, rutas y menú
 

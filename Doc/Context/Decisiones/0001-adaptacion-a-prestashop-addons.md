@@ -21,7 +21,8 @@ eran compatibles con PHP 7 (tipo de retorno `false|array`).
   `translations/es-ES/ModulesShopeameAdmin.es-ES.xlf` (`isUsingNewTranslationSystem()`). Los textos ingleses son los
   mismos que los del plugin de WooCommerce, cambiando «plugin» por «module».
 - Claves renombradas a `SHOPEAME_API_KEY` y `SHOPEAME_SHOP_REGISTERED`; `upgrade-1.2.0.php` copia el valor de las
-  antiguas y las borra. Versión **1.2.0**.
+  antiguas y las borra. Versión **1.2.0**. (La [decisión 0004](0004-primera-version-publica-1-0-0.md) quitó después
+  los upgrades y dejó el módulo en la 1.0.0, porque nadie lo tenía instalado.)
 - Se quita `SHOPEAME_DEV`; se mantiene `SHOPEAME_SERVER_URL` para desarrollo.
 - `index.php` en todas las carpetas.
 - `require_once __DIR__ . '/vendor/autoload.php'` en `shopeame.php`.

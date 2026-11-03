@@ -59,8 +59,9 @@ class Shopeame extends Module
         $this->name = 'shopeame';
         // sección del gestor de módulos: https://devdocs.prestashop-project.org/9/modules/concepts/module-class/#tab
         $this->tab = 'administration';
-        // formato de tres números: cada versión que cambie hooks, pestañas o configuración lleva su upgrade/
-        $this->version = '1.2.0';
+        // formato de tres números: cada versión que cambie hooks, pestañas, configuración o permisos de la
+        // clave del webservice lleva su upgrade/upgrade-X.Y.Z.php
+        $this->version = '1.0.0';
         $this->author = 'Shopeame';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = [

@@ -18,7 +18,7 @@
 | `index.php` en todas las carpetas | En el repositorio en cada carpeta; `build.sh` los añade también en `vendor/` |
 | Licencia compatible con OSL/AFL (Apache, AFL, MIT, BSD, ISC, EUPL) | AFL-3.0 en `LICENSE`, `composer.json` y la cabecera de cada archivo |
 | Comprobación de `_PS_VERSION_` en cada PHP | Todos los archivos salvo los `index.php` |
-| Claves de configuración con el prefijo del módulo | `SHOPEAME_*` (antes había dos `SHOEAME_*`; `upgrade-1.2.0.php` las migra) |
+| Claves de configuración con el prefijo del módulo | `SHOPEAME_*` |
 | Sin tocar tablas del núcleo ni otros módulos | Solo `Configuration`, `Tab` y `WebserviceKey` mediante sus clases |
 | Textos en inglés y traducibles | Dominio `Modules.Shopeame.Admin` y XLIFF en español (ver [0.3](00-reglas-de-trabajo.md)) |
 | Sin funciones prohibidas (`serialize`, `eval`), depuración ni código comentado | Revisado |
