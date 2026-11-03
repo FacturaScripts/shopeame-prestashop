@@ -1,0 +1,106 @@
+{
+    "User": {
+        "como-funciona-shopeame-para-prestashop.md": {
+            "title": "Cómo funciona el módulo Shopeame para PrestaShop",
+            "title_short": "Cómo funciona Shopeame para PrestaShop",
+            "permalink": "como-funciona-shopeame-para-prestashop",
+            "ordernum": 10,
+            "imageurl": "Doc/Assets/como-vincular-prestashop-copiando-los-datos-en-shopeame/04-tienda-vinculada.png",
+            "icon": "fa-solid fa-circle-info",
+            "color": "primary",
+            "keywords": "shopeame, prestashop, shopea.me, sincronizar pedidos, tienda online, erp, cómo funciona, módulo",
+            "visibility": true
+        },
+        "como-instalar-el-modulo-shopeame-en-prestashop.md": {
+            "title": "Cómo instalar el módulo Shopeame en PrestaShop",
+            "title_short": "Instalar Shopeame en PrestaShop",
+            "permalink": "como-instalar-el-modulo-shopeame-en-prestashop",
+            "parent": "como-funciona-shopeame-para-prestashop.md",
+            "ordernum": 20,
+            "imageurl": "Doc/Assets/como-instalar-el-modulo-shopeame-en-prestashop/02-menu-shopeame.png",
+            "icon": "fa-solid fa-download",
+            "color": "info",
+            "keywords": "instalar, módulo, shopeame, prestashop, gestor de módulos, subir un módulo, menú configurar",
+            "visibility": true
+        },
+        "como-vincular-prestashop-copiando-los-datos-en-shopeame.md": {
+            "title": "Cómo vincular PrestaShop copiando los datos en shopea.me",
+            "title_short": "Vincular PrestaShop copiando los datos",
+            "permalink": "como-vincular-prestashop-copiando-los-datos-en-shopeame",
+            "parent": "como-funciona-shopeame-para-prestashop.md",
+            "ordernum": 30,
+            "imageurl": "Doc/Assets/como-vincular-prestashop-copiando-los-datos-en-shopeame/02-copiar-url-y-clave.png",
+            "icon": "fa-solid fa-key",
+            "color": "success",
+            "keywords": "vincular, conectar tienda, clave del webservice, generar clave de api, url de la tienda, prestashop, shopea.me",
+            "visibility": true
+        },
+        "como-vincular-prestashop-con-el-uuid-y-el-token-del-erp.md": {
+            "title": "Cómo vincular PrestaShop con el UUID y el token del ERP",
+            "title_short": "Vincular PrestaShop con el UUID y el token",
+            "permalink": "como-vincular-prestashop-con-el-uuid-y-el-token-del-erp",
+            "parent": "como-funciona-shopeame-para-prestashop.md",
+            "ordernum": 40,
+            "imageurl": "Doc/Assets/como-vincular-prestashop-con-el-uuid-y-el-token-del-erp/02-vincular-tienda.png",
+            "icon": "fa-solid fa-link",
+            "color": "success",
+            "keywords": "vincular, conectar tienda, uuid del erp, token del erp, vincular tienda, prestashop, shopea.me",
+            "visibility": true
+        },
+        "como-comprobar-desvincular-o-borrar-los-datos-de-shopeame-en-prestashop.md": {
+            "title": "Cómo comprobar, desvincular o borrar los datos de Shopeame en PrestaShop",
+            "title_short": "Comprobar o desvincular PrestaShop",
+            "permalink": "como-comprobar-desvincular-o-borrar-los-datos-de-shopeame-en-prestashop",
+            "parent": "como-funciona-shopeame-para-prestashop.md",
+            "ordernum": 50,
+            "imageurl": "Doc/Assets/como-comprobar-desvincular-o-borrar-los-datos-de-shopeame-en-prestashop/01-acciones-de-la-tienda.png",
+            "icon": "fa-solid fa-plug",
+            "color": "warning",
+            "keywords": "comprobar conexión, desvincular tienda, borrar datos del módulo, regenerar clave de api, webservice, shopeame, prestashop",
+            "visibility": true
+        },
+        "como-resolver-los-errores-de-shopeame-en-prestashop.md": {
+            "title": "Cómo resolver los errores de Shopeame en PrestaShop",
+            "title_short": "Errores de Shopeame en PrestaShop",
+            "permalink": "como-resolver-los-errores-de-shopeame-en-prestashop",
+            "parent": "como-funciona-shopeame-para-prestashop.md",
+            "ordernum": 60,
+            "icon": "fa-solid fa-triangle-exclamation",
+            "color": "danger",
+            "keywords": "errores, no se vincula, pedidos no llegan, registros, logs, 401, clave del webservice, comprobar conexión, shopeame, prestashop",
+            "visibility": true
+        }
+    },
+    "Dev": {
+        "endpoint-de-vinculacion-de-shopeame-para-prestashop.md": {
+            "title": "Endpoint de vinculación de Shopeame para PrestaShop",
+            "title_short": "Endpoint de vinculación de PrestaShop",
+            "permalink": "endpoint-de-vinculacion-de-shopeame-para-prestashop",
+            "ordernum": 10,
+            "icon": "fa-solid fa-code",
+            "color": "dark",
+            "keywords": "controlador frontal, endpoint, controller=link, hmac, firma, vinculación, shopeameserver, prestashop",
+            "visibility": true
+        },
+        "eventos-que-envia-shopeame-para-prestashop.md": {
+            "title": "Eventos que envía Shopeame para PrestaShop",
+            "title_short": "Eventos que envía el módulo",
+            "permalink": "eventos-que-envia-shopeame-para-prestashop",
+            "ordernum": 20,
+            "icon": "fa-solid fa-paper-plane",
+            "color": "dark",
+            "keywords": "webhooks, eventos, register_prestashop, new_order, update_order, check_shop, unlink_shop, configuración, shopeame_server_url",
+            "visibility": true
+        },
+        "como-desarrollar-y-publicar-shopeame-para-prestashop.md": {
+            "title": "Cómo desarrollar y publicar Shopeame para PrestaShop",
+            "title_short": "Desarrollar y publicar el módulo",
+            "permalink": "como-desarrollar-y-publicar-shopeame-para-prestashop",
+            "ordernum": 30,
+            "icon": "fa-solid fa-screwdriver-wrench",
+            "color": "dark",
+            "keywords": "desarrollo, pruebas, shopeame_server_url, traducciones, xliff, prestashop addons, validator, publicar versión, zip",
+            "visibility": true
+        }
+    }
+}

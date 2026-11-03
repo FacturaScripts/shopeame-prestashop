@@ -4,74 +4,54 @@ Módulo que conecta una tienda **PrestaShop** (8.0 – 9.x) con **[shopea.me](ht
 (ShopeameServer), para que shopea.me sincronice el catálogo y los pedidos de la tienda con el ERP
 (FacturaScripts / factura.city).
 
+La documentación de uso y de programación está en [`Doc/`](Doc/) y el contexto del equipo (por qué el código es como
+es) en [`Doc/Context/README.md`](Doc/Context/README.md).
+
 ## Qué hace
 
-- Añade una entrada **Shopeame** en el menú del back-office, bajo la sección **Configurar**.
+- Añade la entrada **Shopeame**, con el logo de Shopeame, en el menú del back-office, bajo **Configurar**.
 - **Vinculación con shopea.me**, de dos formas:
-  1. **Copiar credenciales**: la pantalla muestra la *URL de la tienda* y la *clave del webservice*
-     de PrestaShop (que el módulo **genera automáticamente**, activando el webservice) con botones
-     para copiarlas y pegarlas en shopea.me al conectar una tienda de tipo PrestaShop. Después del
-     alta, ShopeameServer intenta devolver sus credenciales al controlador
-     `index.php?fc=module&module=shopeame&controller=link`.
-  2. **Vincular indicando el ERP**: el usuario introduce el *UUID* y el *token* de su ERP (los
-     obtiene en shopea.me) y, con un solo botón **Vincular tienda**, el módulo guarda esos datos,
-     genera la clave del webservice si hace falta y se registra en shopea.me (evento
-     `register_prestashop`), guardando el `shop_uuid` y `webhook_token` devueltos. Si ya estaba
-     vinculada, recupera esos datos sin crear un nuevo enlace en ShopeameServer.
-- **Estado vinculada**: indica que la tienda está conectada, con enlace directo a su configuración
-  en shopea.me, y botones para **comprobar conexión**, **desvincular** o **borrar los datos de la
-  app**. Esta última acción elimina solo el UUID, el token y el estado de vinculación locales,
-  conserva la clave del webservice y no envía ninguna petición a ShopeameServer.
-- **Pedidos en tiempo real**: mediante los hooks `actionValidateOrder`, `actionOrderStatusPostUpdate`
-  y `actionOrderEdited` envía el `order_id` a ShopeameServer; el servidor descarga el pedido y lo
-  sincroniza con el ERP.
-
-La recepción automática requiere HTTPS y una firma HMAC-SHA256 vigente creada con la clave del
-webservice. Si el módulo no está instalado o no responde, se mantiene el copiado manual.
+  1. **Copiar los datos**: la pantalla muestra la *URL de la tienda* y la *clave del webservice* (que el módulo
+     genera, activando el webservice) para pegarlas en shopea.me. Después del alta, ShopeameServer devuelve las
+     credenciales firmadas al controlador `index.php?fc=module&module=shopeame&controller=link`.
+  2. **Indicar el ERP**: el usuario introduce el *UUID* y el *token* de su ERP y pulsa **Vincular tienda**; el módulo
+     genera la clave si hace falta y registra la tienda en shopea.me (evento `register_prestashop`).
+- **Tienda vinculada**: botones para **comprobar la conexión**, **desvincular** o **borrar los datos del módulo**.
+- **Pedidos en tiempo real**: los hooks `actionValidateOrder`, `actionOrderStatusPostUpdate` y `actionOrderEdited`
+  envían el `order_id` a ShopeameServer, que descarga el pedido y lo sincroniza con el ERP.
 
 ## Instalación
 
-> ⚠️ **La carpeta del módulo debe llamarse `shopeame`**, es decir, `modules/shopeame/`. El nombre
-> del módulo es `shopeame` y PrestaShop exige que la carpeta coincida con él. (El repositorio se
-> llama `shopeame-prestashop`, pero al desplegarlo la carpeta tiene que ser `shopeame`.)
+> ⚠️ **La carpeta del módulo debe llamarse `shopeame`** (`modules/shopeame/`). El repositorio se llama
+> `shopeame-prestashop`, pero PrestaShop exige que la carpeta coincida con el nombre del módulo.
 
-Tras instalar/activar el módulo, aparecerá en **Configurar → Shopeame**.
+El zip para instalar o publicar lo genera `~/Trabajos/FacturaScripts/scripts/build.sh`
+(`zip-plugins/shopeame-prestashop.zip`): incluye `vendor/` con el autoload de Composer, que no está en git. Para
+trabajar con el repositorio directamente, genera antes el autoload:
 
-Si actualizas desde una versión anterior, la actualización es automática: al subir los archivos
-nuevos, PrestaShop detecta que la versión del módulo ha cambiado y ejecuta el script de
-`upgrade/`, que registra los hooks de pedidos y coloca la entrada de menú. Se dispara al entrar en
-**Mejorar → Módulos** del BackOffice, o a mano con:
+```bash
+composer dump-autoload -o --no-dev
+```
+
+Las actualizaciones son automáticas: PrestaShop detecta la versión nueva y ejecuta los scripts de `upgrade/` al entrar
+en **Módulos → Gestor de módulo**, o a mano con:
 
 ```bash
 php bin/console prestashop:module upgrade shopeame
 ```
 
-Si no ves los cambios, vacía `var/cache/`.
+## Desarrollo
 
-> Para desarrolladores: la versión del módulo (`$this->version` en `shopeame.php`) debe seguir
-> siempre el formato de tres números (`1.1.0`), y cada versión que registre hooks nuevos, cree
-> pestañas o cambie la configuración necesita su propio `upgrade/upgrade-X.Y.Z.php`. PrestaShop
-> solo ejecuta los scripts cuya versión sea mayor que la instalada y menor o igual que la actual.
-
-## Configuración para desarrollo
-
-La URL del servidor de shopea.me se controla con la constante `SHOPEAME_SERVER_URL`. Por defecto se
-usa `https://shopea.me` (producción). Para apuntar a una instalación local, créala en
-`config/defines_custom.inc.php` (PrestaShop carga ese archivo si existe):
+La URL del servidor se controla con la constante `SHOPEAME_SERVER_URL` (por defecto `https://shopea.me`). Para apuntar
+a una instalación local, créala en `config/defines_custom.inc.php` de la tienda:
 
 ```php
 <?php
-define('SHOPEAME_SERVER_URL', 'https://localshopea.danielfg.es');
-
-// Modo desarrollo: acepta el certificado TLS local autofirmado (no verifica el SSL).
-// Por defecto (sin definir) se asume PRODUCCIÓN. NO usar en producción.
-define('SHOPEAME_DEV', true);
+define('SHOPEAME_SERVER_URL', 'https://shopea.localhost');
 ```
 
-- **URL**: si `SHOPEAME_SERVER_URL` no se define, se usa `https://shopea.me`. La usan tanto el
-  registro y la comprobación/desvinculación como los hooks de pedidos
-  (`ConfigController::webHooksUrl()` y el enlace «ver tienda» `serverUrl()`).
-- **TLS**: las peticiones usan el `HttpClient` de Symfony, que por defecto verifica el certificado.
-  Con `SHOPEAME_DEV = true` se desactiva esa verificación (`verify_peer`/`verify_host => false`)
-  para poder conectar con un servidor local con certificado autofirmado. Si tu CA local (p. ej. la
-  de ServBay) ya está en el almacén del sistema, no necesitas `SHOPEAME_DEV`.
+La verificación TLS está siempre activa (PrestaShop Addons rechaza los módulos que la desactivan). Con el certificado de
+ServBay funciona sin hacer nada más.
+
+Las reglas de trabajo (textos en inglés y traducción XLIFF, versiones, modo debug, pruebas de extremo a extremo y
+publicación en Addons) están en [`Doc/Context/00-reglas-de-trabajo.md`](Doc/Context/00-reglas-de-trabajo.md).
