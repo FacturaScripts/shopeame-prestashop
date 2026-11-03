@@ -1,22 +1,17 @@
 <?php
 /**
- * This file is part of FacturaScripts
- * Copyright (C) 2025-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Shopeame - PrestaShop connector for shopea.me
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * NOTICE OF LICENSE
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
- * @author FacturaCity SL <abdedarghal111@gmail.com>
+ * @author    FacturaCity SL
+ * @copyright 2025-2026 Carlos García Gómez
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
 declare(strict_types=1);
@@ -28,76 +23,120 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Configuration;
+use Context;
 use PrestaShop\PrestaShop\Core\Configuration\DataConfigurationInterface;
 
 /**
- * Clase encargada de rescatar, validar y actualizar la configuración
+ * Lee, valida y guarda la configuración del módulo (UUID y token del ERP o de la tienda).
+ *
+ * También define las claves de configuración del módulo, todas con el prefijo SHOPEAME_.
  */
 final class ConfigFormManager implements DataConfigurationInterface
 {
-    // Claves de la configuración
-    public const UIID_KEY = 'SHOPEAME_UUID';
+    /** UUID del ERP (antes de vincular) o de la tienda en shopea.me (después de vincular). */
+    public const UUID_KEY = 'SHOPEAME_UUID';
+
+    /** Token del ERP (antes de vincular) o token de webhooks de la tienda (después de vincular). */
     public const WEBHOOK_TOKEN_KEY = 'SHOPEAME_WEBHOOK_TOKEN';
-    public const API_KEY = 'SHOEAME_API_KEY';
-    public const SHOEAME_SHOP_REGISTERED_KEY = 'SHOEAME_SHOP_REGISTERED';
-    public const UUID_LENGHT = 13;
-    public const WEBHOOK_TOKEN_LENGHT = 32;
+
+    /** Clave del webservice de PrestaShop creada por el módulo para shopea.me. */
+    public const API_KEY = 'SHOPEAME_API_KEY';
+
+    /** Último estado de vinculación conocido (se refresca al abrir la configuración). */
+    public const SHOP_REGISTERED_KEY = 'SHOPEAME_SHOP_REGISTERED';
+
+    /** Todas las claves de configuración del módulo (se borran al desinstalar). */
+    public const CONFIG_KEYS = [
+        self::UUID_KEY,
+        self::WEBHOOK_TOKEN_KEY,
+        self::API_KEY,
+        self::SHOP_REGISTERED_KEY,
+    ];
+
+    /** Longitud de los UUID de shopea.me. */
+    public const UUID_LENGTH = 13;
+
+    /** Longitud de los tokens de shopea.me. */
+    public const WEBHOOK_TOKEN_LENGTH = 32;
 
     /**
-     * Aquí se rescatan los datos de la configuración
+     * Devuelve un valor de configuración como cadena recortada.
+     *
+     * Configuration::get() devuelve false (no null) cuando la clave no existe, así que el operador
+     * ?? no sirve para normalizarla.
+     *
+     * @param string $key
+     * @return string
      */
-    public function getConfiguration(): array
+    public static function getString(string $key): string
     {
-        $return = [];
+        $value = Configuration::get($key);
 
-        $return[self::UIID_KEY] = Configuration::get(self::UIID_KEY) ?? "";
-        $return[self::WEBHOOK_TOKEN_KEY] = Configuration::get(self::WEBHOOK_TOKEN_KEY) ?? "";
-        // injectar el valor de la api key para que aparezca en el formulario como no editable
-        $return[self::API_KEY] = Configuration::get(self::API_KEY) ?? "";
-
-        return $return;
+        return is_string($value) ? trim($value) : '';
     }
 
     /**
-     * Aquí se comprueba que los datos cumplen con las reestricciones
-     * y se introducen o muestran errores si no lo son
+     * Devuelve los datos con los que se rellena el formulario.
+     *
+     * @return array
+     */
+    public function getConfiguration(): array
+    {
+        return [
+            self::UUID_KEY => self::getString(self::UUID_KEY),
+            self::WEBHOOK_TOKEN_KEY => self::getString(self::WEBHOOK_TOKEN_KEY),
+        ];
+    }
+
+    /**
+     * Valida y guarda el UUID y el token del ERP enviados en el formulario.
+     *
+     * @param array $configuration
+     * @return array Errores de validación (vacío si se guardó todo).
      */
     public function updateConfiguration(array $configuration): array
     {
-        $errors = [];
+        if (false === $this->validateConfiguration($configuration)) {
+            return [$this->trans('Enter the ERP UUID and token.')];
+        }
 
-        // filtrar y actualizar datos
-        if ($this->validateConfiguration($configuration)) {
-            $uuid = trim($configuration[self::UIID_KEY]);
-            if (strlen($uuid) === self::UUID_LENGHT) {
-                Configuration::updateValue(static::UIID_KEY, $uuid);
-            } else {
-                $errors[] = "The UUID is not valid";
-            }
-            $webhookToken = trim($configuration[self::WEBHOOK_TOKEN_KEY]);
-            if(strlen($webhookToken) === self::WEBHOOK_TOKEN_LENGHT) {
-                Configuration::updateValue(static::WEBHOOK_TOKEN_KEY, $webhookToken);
-            } else {
-                $errors[] = "The Webhook is not valid";
-            }
+        $errors = [];
+        $uuid = trim((string) $configuration[self::UUID_KEY]);
+        if (strlen($uuid) === self::UUID_LENGTH && ctype_alnum($uuid)) {
+            Configuration::updateValue(self::UUID_KEY, $uuid);
+        } else {
+            $errors[] = $this->trans('The ERP UUID is not valid.');
+        }
+
+        $webhookToken = trim((string) $configuration[self::WEBHOOK_TOKEN_KEY]);
+        if (strlen($webhookToken) === self::WEBHOOK_TOKEN_LENGTH && ctype_alnum($webhookToken)) {
+            Configuration::updateValue(self::WEBHOOK_TOKEN_KEY, $webhookToken);
+        } else {
+            $errors[] = $this->trans('The ERP token is not valid.');
         }
 
         return $errors;
     }
 
     /**
-     * Para verificar que son tipos de datos válidos
+     * Comprueba que llegan los dos campos del formulario.
      *
-     * @return bool Returns true if no exception are thrown
+     * @param array $configuration
+     * @return bool
      */
     public function validateConfiguration(array $configuration): bool
     {
-        $issetUUID = isset($configuration[self::UIID_KEY]);
-        $issetWebhookToken = isset($configuration[self::WEBHOOK_TOKEN_KEY]);
-        if(!$issetUUID || !$issetWebhookToken) {
-            return false;
-        }
+        return isset($configuration[self::UUID_KEY], $configuration[self::WEBHOOK_TOKEN_KEY]);
+    }
 
-        return true;
+    /**
+     * Traduce un mensaje del formulario con el dominio del módulo.
+     *
+     * @param string $message
+     * @return string
+     */
+    private function trans(string $message): string
+    {
+        return Context::getContext()->getTranslator()->trans($message, [], 'Modules.Shopeame.Admin');
     }
 }

@@ -1,5 +1,20 @@
 <?php
 /**
+ * Shopeame - PrestaShop connector for shopea.me
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ *
+ * @author    FacturaCity SL
+ * @copyright 2025-2026 Carlos García Gómez
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ */
+
+/**
  * Actualización del módulo a la versión 1.1.0.
  *
  * Las instalaciones anteriores quedaron registradas en ps_module con la versión '1' o '0.0.1',

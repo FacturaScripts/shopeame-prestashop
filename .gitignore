@@ -1,1 +1,27 @@
-vendor
+# sistema operativo
+.DS_Store
+Thumbs.db
+
+# editores
+/.idea/
+.vscode
+*.code-workspace
+
+# dependencias de composer: build.sh genera vendor/ (solo el autoload) al crear el zip
+/vendor/
+
+# zip del módulo: lo genera build.sh fuera del repositorio
+*.zip
+
+# caché que genera PrestaShop al instalar el módulo
+/config.xml
+/config_*.xml
+
+# IA: lo local de Claude Code y de Codex no se versiona; sí sus skills (.agents/skills, con enlace desde .claude/skills)
+/.claude/*
+!/.claude/skills
+/.agents/*
+!/.agents/skills
+/CLAUDE.local.md
+/AGENTS.override.md
+__pycache__/

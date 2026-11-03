@@ -1,22 +1,17 @@
 <?php
 /**
- * This file is part of FacturaScripts
- * Copyright (C) 2025-2026 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Shopeame - PrestaShop connector for shopea.me
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * NOTICE OF LICENSE
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
- * @author FacturaCity SL <abdedarghal111@gmail.com>
+ * @author    FacturaCity SL
+ * @copyright 2025-2026 Carlos García Gómez
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
 declare(strict_types=1);
@@ -30,21 +25,29 @@ if (!defined('_PS_VERSION_')) {
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+
 /**
- * Clase encargada de construir el formulario de la configuración
+ * Formulario de la opción 2 de la configuración: UUID y token del ERP en shopea.me.
  */
 class ConfigForm extends TranslatorAwareType
 {
+    /**
+     * Añade los campos del UUID y del token del ERP.
+     *
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             // la clave de API (clave del webservice) se muestra en la tarjeta "Opción 1" de la
             // vista, no como campo del formulario; aquí solo van los datos del ERP (Opción 2)
-            ->add(ConfigFormManager::UIID_KEY, TextType::class, [
-                'label' => $this->trans('UUID del ERP', 'Modules.Shopeame.Admin'),
+            ->add(ConfigFormManager::UUID_KEY, TextType::class, [
+                'label' => $this->trans('ERP UUID', 'Modules.Shopeame.Admin'),
             ])
             ->add(ConfigFormManager::WEBHOOK_TOKEN_KEY, TextType::class, [
-                'label' => $this->trans('Token del ERP', 'Modules.Shopeame.Admin'),
+                'label' => $this->trans('ERP token', 'Modules.Shopeame.Admin'),
             ]);
     }
 }

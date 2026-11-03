@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="modules/shopeame" source-language="en" target-language="es" datatype="plaintext">
+    <body>
+      <trans-unit id="40735fe3e31fc3daf8d6261d4fa0aed2" approved="yes">
+        <source>Shopeame</source>
+        <target state="final">Shopeame</target>
+      </trans-unit>
+      <trans-unit id="8f97998a892ea93ad565d83bd03bef8f" approved="yes">
+        <source>Connect your PrestaShop store with shopea.me to sync its orders with your ERP.</source>
+        <target state="final">Conecta tu tienda PrestaShop con shopea.me para sincronizar sus pedidos con tu ERP.</target>
+      </trans-unit>
+      <trans-unit id="79c175e00401c7850c48ca7a0d9d722d" approved="yes">
+        <source>Are you sure you want to uninstall Shopeame? The link with shopea.me and the webservice key created by the module will be deleted.</source>
+        <target state="final">¿Seguro que quieres desinstalar Shopeame? Se borrarán la vinculación con shopea.me y la clave del webservice creada por el módulo.</target>
+      </trans-unit>
+      <trans-unit id="8ed135c248a8fd7f5bbe59fe3486ba1a" approved="yes">
+        <source>Enter the ERP UUID and token.</source>
+        <target state="final">Introduce el UUID y el token del ERP.</target>
+      </trans-unit>
+      <trans-unit id="727cc356363fb3a4b3482404c325eea2" approved="yes">
+        <source>The ERP UUID is not valid.</source>
+        <target state="final">El UUID del ERP no es válido.</target>
+      </trans-unit>
+      <trans-unit id="eff835c32028c6111480d459a00de265" approved="yes">
+        <source>The ERP token is not valid.</source>
+        <target state="final">El token del ERP no es válido.</target>
+      </trans-unit>
+      <trans-unit id="982c6316d8ef0af16fd060d55de91956" approved="yes">
+        <source>ERP UUID</source>
+        <target state="final">UUID del ERP</target>
+      </trans-unit>
+      <trans-unit id="9e4c6615e213977cb2521c9f60011122" approved="yes">
+        <source>ERP token</source>
+        <target state="final">Token del ERP</target>
+      </trans-unit>
+      <trans-unit id="ef3c4ad9603b8cf3507b3e17d4414968" approved="yes">
+        <source>Connect with shopea.me</source>
+        <target state="final">Conectar con shopea.me</target>
+      </trans-unit>
+      <trans-unit id="16691c4a25d470223eff4f0e90de4262" approved="yes">
+        <source>API key generated successfully.</source>
+        <target state="final">Clave de API generada correctamente.</target>
+      </trans-unit>
+      <trans-unit id="8a5a737ee16df0f0291e95a8655a1725" approved="yes">
+        <source>The request is not valid. Please try again.</source>
+        <target state="final">La solicitud no es válida. Vuelve a intentarlo.</target>
+      </trans-unit>
+      <trans-unit id="8322a4198a841292096be9ac07eb5108" approved="yes">
+        <source>Store unlinked from shopea.me.</source>
+        <target state="final">Tienda desvinculada de shopea.me.</target>
+      </trans-unit>
+      <trans-unit id="7f7f9a8d257544efecfa7e112b3c8faa" approved="yes">
+        <source>The local credentials were deleted, but shopea.me did not confirm the unlinking.</source>
+        <target state="final">Se borraron las credenciales locales, pero shopea.me no confirmó la desvinculación.</target>
+      </trans-unit>
+      <trans-unit id="663cee4d1d0bd51180b9624d97d6bc46" approved="yes">
+        <source>The connection data saved in this module was deleted without changing shopea.me.</source>
+        <target state="final">Se borraron los datos de conexión guardados en el módulo sin modificar shopea.me.</target>
+      </trans-unit>
+      <trans-unit id="29b26bc4a73cac46d46f5e076212c98b" approved="yes">
+        <source>The connection with shopea.me is working correctly.</source>
+        <target state="final">La conexión con shopea.me funciona correctamente.</target>
+      </trans-unit>
+      <trans-unit id="b302804b1877c3b60734e3228cdc39c7" approved="yes">
+        <source>The connection with shopea.me could not be confirmed.</source>
+        <target state="final">No se pudo confirmar la conexión con shopea.me.</target>
+      </trans-unit>
+      <trans-unit id="d445250e02d26e61a87bd1f635f0734e" approved="yes">
+        <source>The previous API key could not be deleted.</source>
+        <target state="final">No se pudo eliminar la clave de API anterior.</target>
+      </trans-unit>
+      <trans-unit id="ed1e2830546c61eccfc4417cee245ace" approved="yes">
+        <source>The API key could not be generated.</source>
+        <target state="final">No se pudo generar la clave de API.</target>
+      </trans-unit>
+      <trans-unit id="0775440e660ff8b86c8739df4679390f" approved="yes">
+        <source>The API key permissions could not be set.</source>
+        <target state="final">No se pudieron establecer los permisos de la clave de API.</target>
+      </trans-unit>
+      <trans-unit id="f8eb1f8b7ea2e0481da26493ec6b3d37" approved="yes">
+        <source>The API key could not be saved.</source>
+        <target state="final">No se pudo guardar la clave de API.</target>
+      </trans-unit>
+      <trans-unit id="db4385fdaeeba57b7b1cec59350e457d" approved="yes">
+        <source>The store could not be linked: %error%</source>
+        <target state="final">No se pudo vincular la tienda: %error%</target>
+      </trans-unit>
+      <trans-unit id="4f77a85c09f7a64d8cfa1061969a760f" approved="yes">
+        <source>shopea.me returned an unexpected response.</source>
+        <target state="final">shopea.me devolvió una respuesta inesperada.</target>
+      </trans-unit>
+      <trans-unit id="8c2c18ec53aec039af34ed36198352da" approved="yes">
+        <source>Could not connect to shopea.me. Error: %error%</source>
+        <target state="final">No se pudo conectar con shopea.me. Error: %error%</target>
+      </trans-unit>
+      <trans-unit id="9a201041e354becec2c5947f6d1ae8e2" approved="yes">
+        <source>The store was already linked. Its data was recovered without creating a new store.</source>
+        <target state="final">La tienda ya estaba vinculada. Se recuperaron sus datos sin crear una tienda nueva.</target>
+      </trans-unit>
+      <trans-unit id="f1879fb7277e1a1af96c47b5c9e89e87" approved="yes">
+        <source>The store was reactivated and linked with shopea.me successfully.</source>
+        <target state="final">La tienda se reactivó y quedó vinculada con shopea.me correctamente.</target>
+      </trans-unit>
+      <trans-unit id="3c90853aa4359db2ef3c3c0e22cc2493" approved="yes">
+        <source>Store linked with shopea.me successfully.</source>
+        <target state="final">Tienda vinculada con shopea.me correctamente.</target>
+      </trans-unit>
+      <trans-unit id="a588b1abc58b8b758c4b34b69b9e10bb" approved="yes">
+        <source>Copied</source>
+        <target state="final">Copiado</target>
+      </trans-unit>
+      <trans-unit id="5fb63579fc981698f97d55bfecb213ea" approved="yes">
+        <source>Copy</source>
+        <target state="final">Copiar</target>
+      </trans-unit>
+      <trans-unit id="62f843d47da4c903e0d917ad2424ad6e" approved="yes">
+        <source>Linked store ✅</source>
+        <target state="final">Tienda vinculada ✅</target>
+      </trans-unit>
+      <trans-unit id="237a0c663c2c81a3c2d0f739c373d5b8" approved="yes">
+        <source>The store %url% is linked with %link%. Its orders are synced automatically.</source>
+        <target state="final">La tienda %url% está vinculada con %link%. Sus pedidos se sincronizan automáticamente.</target>
+      </trans-unit>
+      <trans-unit id="78a46b361826a1ab41aad081297b706b" approved="yes">
+        <source>View the store on shopea.me</source>
+        <target state="final">Ver la tienda en shopea.me</target>
+      </trans-unit>
+      <trans-unit id="06df33001c1d7187fdd81ea1f5b277aa" approved="yes">
+        <source>Actions</source>
+        <target state="final">Acciones</target>
+      </trans-unit>
+      <trans-unit id="adfd8457217a99457830c7e81add24f8" approved="yes">
+        <source>Check connection</source>
+        <target state="final">Comprobar conexión</target>
+      </trans-unit>
+      <trans-unit id="613bfdb1c8a1a0b423628739e6a514c3" approved="yes">
+        <source>This will unlink the store from Shopeame. Do you want to continue?</source>
+        <target state="final">Esta acción desvinculará la tienda de Shopeame. ¿Quieres continuar?</target>
+      </trans-unit>
+      <trans-unit id="3a81358114f7db820304e9da4579e701" approved="yes">
+        <source>Unlink store</source>
+        <target state="final">Desvincular tienda</target>
+      </trans-unit>
+      <trans-unit id="af27711361521121a943bbb6281f904b" approved="yes">
+        <source>This will only delete the connection data saved in this module and will not change Shopeame. Do you want to continue?</source>
+        <target state="final">Esta acción solo borrará los datos de conexión guardados en el módulo y no modificará Shopeame. ¿Quieres continuar?</target>
+      </trans-unit>
+      <trans-unit id="95defdb54f121d540bd5152bd99fb0fe" approved="yes">
+        <source>Delete module data</source>
+        <target state="final">Borrar datos del módulo</target>
+      </trans-unit>
+      <trans-unit id="834c9fbe3d85638b4cfb6b3e6cf13021" approved="yes">
+        <source>Your store is ready to connect 🎉</source>
+        <target state="final">Tu tienda ya está lista para conectar 🎉</target>
+      </trans-unit>
+      <trans-unit id="e846f2e3b95eada25cb1775b9b3b4292" approved="yes">
+        <source>This module connects your PrestaShop store with %link%. To connect the store you first need to register your ERP on shopea.me. Once registered, there are two ways to link this store.</source>
+        <target state="final">Este módulo conecta tu tienda de PrestaShop con %link%. Para conectar la tienda necesitas tener previamente registrado tu ERP en shopea.me. Una vez registrado, tienes dos formas de vincular esta tienda.</target>
+      </trans-unit>
+      <trans-unit id="f7ad04a36f5be03ecb52bb0f15079a5b" approved="yes">
+        <source>Option 1: copy the data into shopea.me</source>
+        <target state="final">Opción 1: copiar los datos en shopea.me</target>
+      </trans-unit>
+      <trans-unit id="379e9885dda830515e025f1a21d071be" approved="yes">
+        <source>Copy the data below and paste it into shopea.me when connecting a PrestaShop store.</source>
+        <target state="final">Copia los datos de abajo y pégalos en shopea.me al conectar una tienda de tipo PrestaShop.</target>
+      </trans-unit>
+      <trans-unit id="2244fb2cc638a8f0d0b9630d51c14779" approved="yes">
+        <source>Store URL</source>
+        <target state="final">URL de la tienda</target>
+      </trans-unit>
+      <trans-unit id="ad87ea508b9dc8dddc98bf041b907c55" approved="yes">
+        <source>Webservice key</source>
+        <target state="final">Clave del webservice</target>
+      </trans-unit>
+      <trans-unit id="008f51de69ecb93ce25a505fc20f1566" approved="yes">
+        <source>Click “Generate API key” to create it</source>
+        <target state="final">Pulsa «Generar clave de API» para crearla</target>
+      </trans-unit>
+      <trans-unit id="8ff7c5596ebb69d272d8667392c05daa" approved="yes">
+        <source>Treat this key like a password: anyone who has it can read the orders and products of your store through the PrestaShop webservice.</source>
+        <target state="final">Trata esta clave como una contraseña: cualquiera que la tenga puede leer los pedidos y productos de tu tienda a través del webservice de PrestaShop.</target>
+      </trans-unit>
+      <trans-unit id="6d415529feb50e398b056c547dd52e48" approved="yes">
+        <source>Generate API key</source>
+        <target state="final">Generar clave de API</target>
+      </trans-unit>
+      <trans-unit id="bebcda36c4dde137e903184c2b2a5495" approved="yes">
+        <source>Regenerate API key</source>
+        <target state="final">Regenerar clave de API</target>
+      </trans-unit>
+      <trans-unit id="d258c6165fca088470845de572cae24b" approved="yes">
+        <source>Option 2: link using your ERP details</source>
+        <target state="final">Opción 2: vincular indicando tu ERP</target>
+      </trans-unit>
+      <trans-unit id="641597075bdb61391f896099f4d98b44" approved="yes">
+        <source>Enter the UUID and token of your ERP (you get them on shopea.me once the ERP is registered) and this store will be linked automatically.</source>
+        <target state="final">Introduce el UUID y el token de tu ERP (los obtienes en shopea.me una vez registrado el ERP) y vincularemos esta tienda automáticamente.</target>
+      </trans-unit>
+      <trans-unit id="173a6ef417e78ebd765a406e8880d716" approved="yes">
+        <source>Link store</source>
+        <target state="final">Vincular tienda</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

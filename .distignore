@@ -1,0 +1,14 @@
+.git
+.gitignore
+.gitattributes
+.distignore
+.claude
+.agents
+.DS_Store
+AGENTS.md
+CLAUDE.md
+Doc
+README.md
+composer.lock
+config.xml
+config_*.xml

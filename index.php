@@ -1,28 +1,24 @@
 <?php
 /**
- * This file is part of FacturaScripts
- * Copyright (C) 2025-2025 Carlos Garcia Gomez <carlos@facturascripts.com>
+ * Shopeame - PrestaShop connector for shopea.me
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * NOTICE OF LICENSE
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
- * @author FacturaCity SL <abdedarghal111@gmail.com>
+ * @author    FacturaCity SL
+ * @copyright 2025-2026 Carlos García Gómez
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-# Esto es para evitar el acceso a este path directamente o para leer el config.xml que se genera por cualquiera
+// impide listar el contenido de la carpeta: redirige a la carpeta superior
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 header('Cache-Control: no-store, no-cache, must-revalidate');
 header('Cache-Control: post-check=0, pre-check=0', false);
 header('Pragma: no-cache');
 header('Location: ../');
+exit;
