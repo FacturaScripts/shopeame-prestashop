@@ -39,8 +39,8 @@ credenciales de pruebas.
 ## 3. Publicar una versión
 
 1. Se sube el número de versión en `$this->version` de `shopeame.php` (tres números). Si la versión registra hooks,
-   cambia la pestaña del menú o migra la configuración, se añade su `upgrade/upgrade-X.Y.Z.php` con la función
-   `upgrade_module_X_Y_Z($module)`.
+   cambia la pestaña del menú, migra la configuración o cambia los permisos de la clave del webservice, se añade su
+   `upgrade/upgrade-X.Y.Z.php` con la función `upgrade_module_X_Y_Z($module)`.
 2. Se prueba la tienda con el modo depuración activado (`_PS_MODE_DEV_` en `config/defines.inc.php`): los revisores de
    PrestaShop Addons lo usan siempre y cualquier aviso de PHP es motivo de rechazo.
 3. Se genera el zip con `build.sh`: una sola carpeta `shopeame` con los archivos del módulo, sin lo que lista

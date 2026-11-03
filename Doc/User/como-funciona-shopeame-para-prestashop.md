@@ -3,7 +3,9 @@ online a tu ERP. Una vez vinculada la tienda, cada pedido nuevo o modificado se 
 shopea.me lo descarga y lo crea en el ERP sin que tengas que copiar nada a mano.
 
 Para que shopea.me pueda leer los pedidos y mantener al día el catálogo, el stock y los precios, el módulo activa el
-webservice de PrestaShop y crea una clave solo para shopea.me.
+webservice de PrestaShop y crea una clave solo para shopea.me, con los permisos justos: puede leer los pedidos y los
+datos que necesita para copiarlos (clientes, direcciones, países, monedas…) y crear o actualizar productos, variantes,
+stock, precios, categorías y atributos, pero no puede borrar nada ni acceder a empleados, carritos u otros datos.
 
 ## ⚙️ Antes de empezar
 

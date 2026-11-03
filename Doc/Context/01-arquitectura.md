@@ -65,6 +65,9 @@ El servidor es el plugin ShopeameServer de FacturaScripts (`../facturascripts/Pl
 - `Lib/Shopeame/ShopLinkNotifier.php` entrega las credenciales de la tienda recién creada al controlador
   `index.php?fc=module&module=shopeame&controller=link`.
 - ShopeameServer lee y actualiza el catálogo, el stock, los precios y los pedidos por el webservice de PrestaShop con
-  la clave que genera el módulo (por eso tiene todos los permisos).
+  la clave que genera el módulo, que solo tiene los permisos que necesita (ver
+  [decisión 0003](Decisiones/0003-permisos-minimos-de-la-clave-del-webservice.md)).
 
-Cualquier cambio de eventos, campos o firma se hace en los dos proyectos en el mismo trabajo.
+Cualquier cambio de eventos, campos o firma se hace en los dos proyectos en el mismo trabajo. Si ShopeameServer
+empieza a usar un recurso o un método nuevo del webservice de PrestaShop, también hay que añadirlo a
+`ConfigController::WEBSERVICE_PERMISSIONS` con una versión y su upgrade.

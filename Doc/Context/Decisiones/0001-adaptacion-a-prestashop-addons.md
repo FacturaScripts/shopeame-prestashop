@@ -41,7 +41,8 @@ eran compatibles con PHP 7 (tipo de retorno `false|array`).
 - **Traducir también los comentarios al inglés**: la regla del equipo es comentar en español. Queda como riesgo
   anotado en [4.4](../04-publicacion-en-prestashop-addons.md).
 - **Limitar los permisos de la clave del webservice**: ShopeameServer escribe en varios recursos y no hay una lista
-  cerrada; limitarlos sin probar toda la sincronización podía romperla. Queda anotado en 4.4.
+  cerrada; limitarlos sin probar toda la sincronización podía romperla. Queda anotado en 4.4. Se resolvió en la
+  [decisión 0003](0003-permisos-minimos-de-la-clave-del-webservice.md).
 
 ## Resultado
 

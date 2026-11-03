@@ -29,6 +29,7 @@
 | `logo.png` de 32 × 32 | Sí |
 | Sin avisos en modo debug | Probado en PrestaShop 9.1.4 con PHP 8.5 |
 | Desinstalación limpia (recomendado) | Borra la configuración, la clave del webservice y la pestaña |
+| Clave del webservice con los permisos justos | 17 recursos y solo los métodos que usa ShopeameServer, sin `DELETE` ni `PATCH` (ver [decisión 0003](Decisiones/0003-permisos-minimos-de-la-clave-del-webservice.md)) |
 
 ## 4.3 El zip
 
@@ -45,9 +46,10 @@ carpeta de dentro sí debe ser `shopeame`.
 - **Comentarios en español**: la lista de 1.7 dice que el código enviado debe estar en inglés. Los textos visibles y
   los identificadores ya lo están; los comentarios y Docblocks siguen en español por la regla del equipo. Si el revisor
   lo pide, hay que traducirlos.
-- **Permisos del webservice**: la clave tiene todos los permisos sobre todos los recursos. Si el revisor lo cuestiona,
-  hay que limitarlos a los recursos que usa ShopeameServer (productos, combinaciones, stock, precios, categorías,
-  pedidos, clientes, direcciones...) y probar toda la sincronización.
+- **Lectura de `configurations`**: la clave solo necesita `PS_LANG_DEFAULT` y `PS_TIMEZONE`, pero el permiso GET deja
+  leer toda la configuración, incluida `PS_MAIL_PASSWD`. Si el revisor lo cuestiona, hay que cambiar los dos lados
+  para que el módulo envíe esos dos valores y quitar el permiso (ver
+  [decisión 0003](Decisiones/0003-permisos-minimos-de-la-clave-del-webservice.md)).
 - **Soporte y enlaces externos**: las directrices piden el soporte solo por Addons y no enlazar webs propias desde el
   módulo. El módulo enlaza a shopea.me porque es el servicio que conecta; si el revisor lo marca, se explica que sin
   shopea.me el módulo no tiene función.

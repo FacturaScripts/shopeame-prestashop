@@ -32,7 +32,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 use WebserviceKey;
-use WebserviceRequest;
 
 /**
  * Controlador de la página de configuración del módulo Shopeame: vinculación con shopea.me,
@@ -45,6 +44,41 @@ class ConfigController extends FrameworkBundleAdminController
 
     /** Descripción con la que se crea la clave del webservice. */
     private const WEBSERVICE_KEY_DESCRIPTION = 'Shopeame (shopea.me) - do not delete or share this key';
+
+    /**
+     * Permisos mínimos de la clave del webservice: solo los recursos y métodos que usa
+     * ShopeameServer (Lib/PrestaShop/Client.php). Nunca necesita DELETE ni PATCH, y la raíz
+     * /api (GET y HEAD, para la lista de recursos y la versión) no requiere permiso.
+     *
+     * Si ShopeameServer empieza a usar un recurso o un método nuevo, hay que añadirlo aquí y
+     * sacar una versión con su upgrade que corrija las claves ya creadas.
+     *
+     * https://devdocs.prestashop-project.org/9/webservice/getting-started/
+     *
+     * @var array<string, string[]>
+     */
+    public const WEBSERVICE_PERMISSIONS = [
+        // catálogo: el servidor crea y actualiza productos, variantes y stock y crea categorías y atributos
+        'products' => ['GET', 'POST', 'PUT'],
+        'combinations' => ['GET', 'POST', 'PUT'],
+        'stock_availables' => ['GET', 'PUT'],
+        'categories' => ['GET', 'POST'],
+        'product_options' => ['GET', 'POST'],
+        'product_option_values' => ['GET', 'POST'],
+        'taxes' => ['GET'],
+        'tax_rule_groups' => ['GET'],
+        // pedidos y los datos necesarios para copiarlos al ERP
+        'orders' => ['GET'],
+        'order_states' => ['GET'],
+        'customers' => ['GET'],
+        'addresses' => ['GET'],
+        'countries' => ['GET'],
+        'states' => ['GET'],
+        'currencies' => ['GET'],
+        'languages' => ['GET'],
+        // idioma por defecto (PS_LANG_DEFAULT) y zona horaria (PS_TIMEZONE) de la tienda
+        'configurations' => ['GET'],
+    ];
 
     /**
      * URL base del servidor de shopea.me (sin ruta).
@@ -87,6 +121,23 @@ class ConfigController extends FrameworkBundleAdminController
         Configuration::updateValue(ConfigFormManager::API_KEY, '');
 
         return true;
+    }
+
+    /**
+     * Sustituye los permisos de la clave del webservice indicada por los de WEBSERVICE_PERMISSIONS.
+     *
+     * @param int $idWebserviceKey
+     * @return bool
+     */
+    public static function setWebserviceKeyPermissions(int $idWebserviceKey): bool
+    {
+        // setPermissionForAccount() espera [recurso => [método => 1]] y borra antes los permisos anteriores
+        $permissions = [];
+        foreach (self::WEBSERVICE_PERMISSIONS as $resourceName => $methods) {
+            $permissions[$resourceName] = array_fill_keys($methods, 1);
+        }
+
+        return (bool) WebserviceKey::setPermissionForAccount($idWebserviceKey, $permissions);
     }
 
     /**
@@ -252,8 +303,8 @@ class ConfigController extends FrameworkBundleAdminController
     }
 
     /**
-     * Genera (o regenera) la clave del webservice, activa el webservice y guarda la clave.
-     * No redirige; muestra los errores que se produzcan.
+     * Genera (o regenera) la clave del webservice con los permisos de WEBSERVICE_PERMISSIONS,
+     * activa el webservice y guarda la clave. No redirige; muestra los errores que se produzcan.
      *
      * https://devdocs.prestashop-project.org/9/webservice/tutorials/creating-access/
      *
@@ -279,12 +330,7 @@ class ConfigController extends FrameworkBundleAdminController
         }
 
         // shopea.me lee y actualiza el catálogo, el stock, los precios y los pedidos de la tienda
-        $permissions = [];
-        foreach (array_keys(WebserviceRequest::getResources()) as $resourceName) {
-            $permissions[$resourceName] = ['GET' => 1, 'POST' => 1, 'PUT' => 1, 'PATCH' => 1, 'DELETE' => 1, 'HEAD' => 1];
-        }
-
-        if (false === WebserviceKey::setPermissionForAccount($webserviceKey->id, $permissions)) {
+        if (false === self::setWebserviceKeyPermissions((int) $webserviceKey->id)) {
             $this->addFlash('error', $this->trans('The API key permissions could not be set.', self::DOMAIN));
             return false;
         }

@@ -65,12 +65,28 @@ Shopeame: the new_order event could not be sent: <motivo>      (gravedad 3)
 |---|---|---|
 | `SHOPEAME_UUID` | Configuración | UUID del ERP durante la opción 2; después, UUID de la tienda en shopea.me |
 | `SHOPEAME_WEBHOOK_TOKEN` | Configuración | Token del ERP durante la opción 2; después, token de la tienda |
-| `SHOPEAME_API_KEY` | Configuración | Clave del webservice generada por el módulo |
+| `SHOPEAME_API_KEY` | Configuración | Clave del webservice generada por el módulo, con los permisos de `ConfigController::WEBSERVICE_PERMISSIONS` |
 | `SHOPEAME_SHOP_REGISTERED` | Configuración | Último estado de vinculación conocido |
 | `SHOPEAME_SERVER_URL` | Constante de `config/defines_custom.inc.php` | URL del servidor; por defecto `https://shopea.me` |
 
 Las claves están en **`PrestaShop\Module\Shopeame\Form\ConfigFormManager`** (`CONFIG_KEYS`). Al desinstalar el módulo
 se borran todas, junto con la clave del webservice y la entrada del menú.
+
+## 4. Permisos de la clave del webservice
+
+La clave solo tiene los recursos y métodos que usa ShopeameServer (`Lib/PrestaShop/Client.php`):
+
+| Recursos | Métodos |
+|---|---|
+| `products`, `combinations` | GET, POST, PUT |
+| `stock_availables` | GET, PUT |
+| `categories`, `product_options`, `product_option_values` | GET, POST |
+| `taxes`, `tax_rule_groups`, `orders`, `order_states`, `customers`, `addresses`, `countries`, `states`, `currencies`, `languages`, `configurations` | GET |
+
+La raíz `/api` no necesita permiso. Con cualquier otro recurso PrestaShop responde 401, y con un método no permitido,
+405. Si ShopeameServer empieza a usar un recurso o un método nuevo, hay que añadirlo a
+`ConfigController::WEBSERVICE_PERMISSIONS` y sacar una versión con su `upgrade/upgrade-X.Y.Z.php`, que llame a
+`ConfigController::setWebserviceKeyPermissions()` para corregir las claves de las tiendas ya vinculadas.
 
 ## Ver también
 

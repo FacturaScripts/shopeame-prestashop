@@ -3,9 +3,14 @@
 ## 2.1 Clave del webservice
 
 `ConfigController::doGenerateApiKey()` activa el webservice (`PS_WEBSERVICE`), borra la clave anterior del módulo y
-crea una `WebserviceKey` nueva de 32 caracteres hexadecimales en mayúscula (`random_bytes()`), activa y con permiso
-`GET`, `POST`, `PUT`, `PATCH`, `DELETE` y `HEAD` sobre todos los recursos: ShopeameServer no solo lee pedidos, también
-actualiza stock, precios y catálogo. La descripción de la clave es
+crea una `WebserviceKey` nueva de 32 caracteres hexadecimales en mayúscula (`random_bytes()`), activa y solo con los
+permisos de `ConfigController::WEBSERVICE_PERMISSIONS`: lectura de pedidos, clientes, direcciones, países, provincias,
+monedas, estados de pedido, idiomas, impuestos y configuración; lectura, creación y actualización de productos y
+variantes; lectura y actualización del stock; y lectura y creación de categorías y atributos. Nunca `DELETE` ni
+`PATCH`. La lista sale de lo que usa ShopeameServer (ver [decisión 0003](Decisiones/0003-permisos-minimos-de-la-clave-del-webservice.md));
+si el servidor empieza a usar un recurso o un método nuevo de PrestaShop, se añade a la lista con una versión nueva y
+su `upgrade/upgrade-X.Y.Z.php`, que llama a `ConfigController::setWebserviceKeyPermissions()` para corregir las claves
+ya creadas. La descripción de la clave es
 `Shopeame (shopea.me) - do not delete or share this key`. Si alguien la borra desde **Parámetros Avanzados** →
 **Webservice**, la pantalla lo detecta al abrirse y deja de mostrarla.
 
