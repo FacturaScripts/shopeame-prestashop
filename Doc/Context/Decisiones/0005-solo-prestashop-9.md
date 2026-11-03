@@ -55,3 +55,20 @@ Probado en PrestaShop 9.1.4 con PHP 8.5: el contenedor registra `ConfigControlle
 muestra traducidos los errores de validación. Ya no aparece en el log el aviso de obsolescencia de `get()`. El
 Validator dejó de dar estos errores en la segunda pasada (ver
 [4.5](../04-publicacion-en-prestashop-addons.md#45-lo-que-aprendimos-del-validator)).
+
+Prueba de extremo a extremo contra shopea.localhost con el código final, ya en verde en el Validator (03/11/2026, modo
+debug activado):
+
+- Opción 2 (UUID y token del ERP de pruebas): vincula con `shop-reactivated` y, al repetirla, con
+  `shop-already-exists` sin crear otra tienda. La clave nace con los 25 permisos (solo GET, POST y PUT).
+- **Comprobar conexión**, aviso de pedido (`actionOrderEdited` → `update-order received` y sincronización
+  adelantada), y `MonitorShops` y `SyncShopOrders` solo para esa tienda, sin errores.
+- **Desvincular tienda** (`unlink-shop`; la clave se conserva) y **Borrar datos del módulo** (solo lo local, sin
+  ningún evento en shopea).
+- Opción 1 desde «conectar tienda» (asistente nuevo de la rama `feature/connect-shop-plugins-como-shopify` de
+  ShopeameServer, opción «El módulo me muestra la URL de la tienda y la clave del webservice»): crea la tienda, y el
+  controlador `link` recibe y guarda las credenciales firmadas.
+- Desinstalar borra la configuración, la clave, sus permisos, la pestaña y los hooks (el webservice sigue activo), y
+  reinstalar los vuelve a crear.
+- En `var/logs/dev-*.log` no hay ningún aviso del módulo: los avisos de obsolescencia que aparecen son del núcleo de
+  PrestaShop y de Symfony/Doctrine con PHP 8.5.

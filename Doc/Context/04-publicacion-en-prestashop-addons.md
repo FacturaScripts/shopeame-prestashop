@@ -75,7 +75,7 @@ Pasadas de la versión 1.0.0 el 03/11/2026:
 | 1 | Errores: `FrameworkBundleAdminController` y dos usos de `Context` en `src/`. Además, faltaba el `.htaccess`, `views/js/admin.js` no tenía cabecera de licencia y `$tab->active = 1` | Mínimo PrestaShop 9 con `PrestaShopAdminController`, `.htaccess`, cabeceras y `true` ([decisión 0005](Decisiones/0005-solo-prestashop-9.md)) |
 | 2 | 37 avisos «Standards» | Estándar de código de PrestaShop con php-cs-fixer: 38 correcciones en local, en 21 archivos |
 | 3 | «Standards» a cero, pero 16 errores de licencias: «There must be no blank lines before the file comment» | Quitar la línea en blanco que había puesto `blank_line_after_opening_tag` y desactivar esa regla ([decisión 0006](Decisiones/0006-estandar-de-codigo-de-prestashop.md)) |
-| 4 | Todo en verde | — |
+| 4 | Todo en verde | Prueba de extremo a extremo contra shopea.localhost con el código final, sin fallos (ver el resultado de la [decisión 0005](Decisiones/0005-solo-prestashop-9.md#resultado)) |
 
 - El reporte que se descarga en `.txt` puede llegar incompleto: en las dos primeras pasadas omitió la sección
   «Standards» («could not be rebuilt from stored data»). El detalle completo solo se ve en la web del Validator.
