@@ -15,7 +15,7 @@ en el mismo trabajo que cambia el código.
 | [1. Arquitectura](01-arquitectura.md) | Archivos del módulo, configuración guardada, hooks, rutas, menú y relación con ShopeameServer |
 | [2. Vinculación con shopea.me](02-vinculacion.md) | La clave del webservice, las dos formas de vincular, el controlador firmado con HMAC, desvincular y borrar datos |
 | [3. Pedidos](03-pedidos.md) | Qué se envía al crear o modificar un pedido, qué hace el servidor y dónde quedan los errores |
-| [4. Publicación en PrestaShop Addons](04-publicacion-en-prestashop-addons.md) | Requisitos de la validación técnica que se cumplen, zip, licencia, lo que queda por revisar al enviar y lo que aprendimos de cada pasada del Validator |
+| [4. Publicación en PrestaShop Addons](04-publicacion-en-prestashop-addons.md) | Requisitos de la validación técnica que se cumplen, zip, licencia, lo que queda por revisar al enviar, lo que aprendimos de cada pasada del Validator y los PDF y las imágenes de la ficha |
 
 ## Decisiones
 

@@ -23,6 +23,7 @@ Lo que no se salta nunca:
 | [`Doc/Dev/`](Doc/Dev/) | Quien programa | Páginas `.md` sobre el endpoint de vinculación, los eventos que envía y cómo desarrollarlo y publicarlo |
 | [`Doc/Context/`](Doc/Context/) | El equipo y los agentes | Por qué el código es como es: las decisiones tomadas, con su índice en `README.md` |
 | [`Doc/Assets/`](Doc/Assets/) | Toda la documentación | Imágenes enlazadas desde las páginas |
+| [`Doc/Addons/`](Doc/Addons/) | La ficha de PrestaShop Addons | `readme.py` (PDF `readme_es` y `readme_en`), `imagenes.py` (imágenes de 1200 × 1200) y las capturas con las que se montan |
 | [`Doc/forja.json`](Doc/forja.json) | La forja de facturascripts.com | Datos de cada página de `User` y `Dev` para publicarlas |
 
 - La documentación se actualiza en el mismo trabajo que cambia el código; una decisión nueva se anota en

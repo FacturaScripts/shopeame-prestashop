@@ -51,6 +51,10 @@ credenciales de pruebas.
 5. La primera vez se envía el zip desde la cuenta de vendedor de PrestaShop Addons, con la ficha y la documentación;
    las versiones siguientes se suben como actualización indicando los cambios y las versiones de PrestaShop
    compatibles.
+6. Se regeneran los PDF de documentación de la ficha con `python3 Doc/Addons/readme.py`, que deja `readme_es.pdf` y
+   `readme_en.pdf` en `zip-plugins/shopeame-prestashop-addons/` con la versión nueva, y se suben a la ficha. Si la
+   interfaz ha cambiado, se repiten las capturas de `Doc/Addons/capturas` y se regeneran las imágenes con
+   `python3 Doc/Addons/imagenes.py` (ver la sección 4.6 del contexto de publicación).
 
 ## 4. Estándar de código de PrestaShop
 

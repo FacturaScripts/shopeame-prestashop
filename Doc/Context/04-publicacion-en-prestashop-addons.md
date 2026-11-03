@@ -60,7 +60,7 @@ carpeta de dentro sí debe ser `shopeame`.
   módulo. El módulo enlaza a shopea.me porque es el servicio que conecta; si el revisor lo marca, se explica que sin
   shopea.me el módulo no tiene función.
 - **Documentación en el zip**: las buenas prácticas recomiendan incluirla (en PDF, en `docs/`). Ahora no va; la ficha
-  de Addons puede enlazar la documentación publicada.
+  de Addons lleva los PDF `readme_es.pdf` y `readme_en.pdf` (ver 4.6).
 - **Solo PrestaShop 9**: desde la [decisión 0005](Decisiones/0005-solo-prestashop-9.md) el módulo pide PrestaShop
   9.0 o superior. En la ficha de Addons hay que marcar solo las versiones 9.x.
 - `module_key`: Addons lo asigna al aceptar el módulo y hay que añadirlo en el constructor
@@ -81,3 +81,54 @@ Pasadas de la versión 1.0.0 el 03/11/2026:
   «Standards» («could not be rebuilt from stored data»). El detalle completo solo se ve en la web del Validator.
 - El Validator da una API key al iniciar sesión, pero su API no está documentada públicamente (solo se menciona en su
   registro de cambios). Por eso el zip se sigue subiendo a mano.
+
+## 4.6 La documentación y las imágenes de la ficha
+
+El formulario de la ficha pide la documentación en un PDF por idioma, con el nombre `readme_<iso>.pdf`. La ficha se
+rellena en inglés y en español, así que se suben `readme_en.pdf` y `readme_es.pdf`.
+
+- Los genera `python3 Doc/Addons/readme.py [carpeta]`, por defecto en `zip-plugins/shopeame-prestashop-addons/`. El
+  script escribe un HTML por idioma y lo imprime con Chrome sin interfaz (`--print-to-pdf`). No necesita dependencias
+  de Python; la ruta de Chrome se cambia con la variable `CHROME`.
+- El texto es un resumen de las páginas de `Doc/User` (cómo funciona, instalar, vincular, acciones, errores) más los
+  permisos de la clave de la [decisión 0003](Decisiones/0003-permisos-minimos-de-la-clave-del-webservice.md). No se
+  genera a partir de los `.md`: si cambian esas páginas o los permisos, hay que cambiar también el script. La versión
+  se lee de `$this->version` en `shopeame.php`.
+- Los pasos numerados siguen la misma numeración que las marcas de las capturas de `Doc/Assets`.
+- En el PDF en inglés, los botones y avisos del módulo son los textos originales del XLIFF. Las capturas están en
+  español y lo explica una nota. Las etiquetas de shopea.me van en inglés con el texto en español entre paréntesis,
+  porque ShopeameServer solo tiene traducción al español.
+- `Doc/` no va en el zip, así que los scripts y las capturas tampoco.
+
+### Imágenes
+
+La ficha pide imágenes de al menos 1000 × 1000 px. `python3 Doc/Addons/imagenes.py [carpeta]` genera seis de
+1200 × 1200 por idioma, por defecto en `zip-plugins/shopeame-prestashop-addons/imagenes/es` y `/en`. Cada una lleva
+un titular sobre el color de Shopeame y una captura de `Doc/Addons/capturas` en una ventana; la última resume las
+ventajas del módulo sin captura. El script calcula la altura de cada captura para recortarla y centrarla sin huecos.
+Los titulares están en el script; las capturas son las mismas en los dos idiomas, con el back-office en español.
+
+Las capturas de `Doc/Addons/capturas` se hacen a mano, a escala 2 (2560 px de ancho), sin marcas numeradas:
+
+1. Se abre Chrome con un perfil temporal y el puerto de depuración:
+   `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --user-data-dir=<carpeta temporal>
+   --remote-debugging-port=9333 <URL del back-office>`. La persona inicia sesión en esa ventana; el agente no escribe
+   la contraseña, porque la tienda local redirige a su dominio configurado, que no es `.localhost`.
+2. `node Doc/Addons/cdp.mjs go '<url o js>'` navega, `node Doc/Addons/cdp.mjs eval "$(cat Doc/Addons/anonimizar.js)"`
+   anonimiza la página (dominio de la tienda, nombre de la tienda, servidor shopea.me local y clave del webservice) y
+   `node Doc/Addons/cdp.mjs shot <png> [selector] [margen]` la captura. Hay que anonimizar justo antes de capturar,
+   porque también cambia los enlaces.
+3. Para capturar la clave y la tienda vinculada hay que generar la clave y vincular la tienda contra shopea.localhost,
+   **con permiso de la persona**. Los valores de ejemplo del UUID y el token de la opción 2 se escriben en los campos
+   sin enviarlos. En los registros se ocultan las columnas que no aportan y las entradas que no son avisos de pedidos.
+4. Al terminar se deja la tienda como estaba: **Desvincular tienda**, borrar la clave en **Parámetros Avanzados →
+   Webservice** y, si antes no existían, borrar las filas `SHOPEAME_*` de la configuración. Se cierra Chrome y se
+   borra el perfil temporal, que guarda la sesión.
+
+| Captura | Pantalla |
+|---|---|
+| `01-sin-vincular.png` | Página Shopeame sin vincular, ventana completa |
+| `02-opcion-1.png` | Tarjeta de la opción 1 con la URL y la clave |
+| `03-opcion-2.png` | Tarjeta de la opción 2 con un UUID y un token de ejemplo |
+| `04-tienda-vinculada.png` | Página con la tienda vinculada tras **Comprobar conexión**, ventana completa |
+| `05-registros.png` | Panel de **Registros/Logs** filtrado por `Shopeame:` |
