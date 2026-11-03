@@ -38,12 +38,13 @@
 
 ## 4.3 El zip
 
-`~/Trabajos/FacturaScripts/scripts/build.sh` genera `zip-plugins/shopeame-prestashop.zip` con una sola carpeta
-`shopeame`: copia el repositorio sin lo que lista `.distignore` (`Doc/`, `AGENTS.md`, `CLAUDE.md`, `README.md`,
-`composer.lock`, `config*.xml` y archivos ocultos), regenera `vendor/` solo con el autoload, añade los `index.php` que
-falten y normaliza permisos. Se llama `shopeame-prestashop.zip` para no pisar `Shopeame.zip` (el plugin de
-FacturaScripts) en un disco que no distingue mayúsculas; al subirlo a Addons el nombre del zip no importa, pero la
-carpeta de dentro sí debe ser `shopeame`.
+`~/Trabajos/FacturaScripts/scripts/build.sh` genera `zip-plugins/shopeame-prestashop-addons/shopeame.zip` con una
+sola carpeta `shopeame`: copia el repositorio sin lo que lista `.distignore` (`Doc/`, `AGENTS.md`, `CLAUDE.md`,
+`README.md`, `composer.lock`, `config*.xml` y archivos ocultos), regenera `vendor/` solo con el autoload, añade los
+`index.php` que falten y normaliza permisos. La [guía de validación técnica](https://helpcenter-partners.prestashop.com/hc/en-us/articles/28089957680018-Guide-technical-validation) pide que el zip se llame como el
+módulo, sin versión (`shopeame.zip`); va en su propia carpeta para no pisar `Shopeame.zip` (el plugin de
+FacturaScripts) en un disco que no distingue mayúsculas. El zip lleva `docs/` con los PDF de la documentación (ver
+4.6).
 
 ## 4.4 Pendiente al enviar
 
@@ -59,12 +60,15 @@ carpeta de dentro sí debe ser `shopeame`.
 - **Soporte y enlaces externos**: las directrices piden el soporte solo por Addons y no enlazar webs propias desde el
   módulo. El módulo enlaza a shopea.me porque es el servicio que conecta; si el revisor lo marca, se explica que sin
   shopea.me el módulo no tiene función.
-- **Documentación en el zip**: las buenas prácticas recomiendan incluirla (en PDF, en `docs/`). Ahora no va; la ficha
-  de Addons lleva los PDF `readme_es.pdf` y `readme_en.pdf` (ver 4.6).
+- **Documentación y enlace de soporte en el zip**: la [guía de validación técnica](https://helpcenter-partners.prestashop.com/hc/en-us/articles/28089957680018-Guide-technical-validation) pide incluir la
+  documentación y el enlace de soporte de Addons. `docs/` lleva `readme_es.pdf` y `readme_en.pdf` (ver 4.6), pero el
+  enlace de soporte depende del id del producto en Addons: cuando se conozca, se pone en `SUPPORT_URL` de
+  `Doc/Addons/readme.py` y se regeneran los PDF.
 - **Solo PrestaShop 9**: desde la [decisión 0005](Decisiones/0005-solo-prestashop-9.md) el módulo pide PrestaShop
   9.0 o superior. En la ficha de Addons hay que marcar solo las versiones 9.x.
-- `module_key`: Addons lo asigna al aceptar el módulo y hay que añadirlo en el constructor
-  (`$this->module_key = '...'`) en las versiones siguientes.
+- `module_key`: la [guía de validación técnica](https://helpcenter-partners.prestashop.com/hc/en-us/articles/28089957680018-Guide-technical-validation) pide añadirlo en el constructor
+  (`$this->module_key = '...'`) al enviar el módulo, pero no dice dónde se obtiene. En el primer envío (03/11/2026)
+  Addons no dio ninguno nuevo; queda pendiente de confirmar con el soporte de partners cuál es.
 
 ## 4.5 Lo que aprendimos del Validator
 
@@ -87,7 +91,8 @@ Pasadas de la versión 1.0.0 el 03/11/2026:
 El formulario de la ficha pide la documentación en un PDF por idioma, con el nombre `readme_<iso>.pdf`. La ficha se
 rellena en inglés y en español, así que se suben `readme_en.pdf` y `readme_es.pdf`.
 
-- Los genera `python3 Doc/Addons/readme.py [carpeta]`, por defecto en `zip-plugins/shopeame-prestashop-addons/`. El
+- Los genera `python3 Doc/Addons/readme.py [carpeta]`, por defecto en `docs/` del módulo, que va en el zip; los
+  mismos archivos se suben a la ficha. Se versionan porque `build.sh` copia el repositorio tal cual. El
   script escribe un HTML por idioma y lo imprime con Chrome sin interfaz (`--print-to-pdf`). No necesita dependencias
   de Python; la ruta de Chrome se cambia con la variable `CHROME`.
 - El texto es un resumen de las páginas de `Doc/User` (cómo funciona, instalar, vincular, acciones, errores) más los

@@ -26,7 +26,7 @@ es) en [`Doc/Context/README.md`](Doc/Context/README.md).
 > `shopeame-prestashop`, pero PrestaShop exige que la carpeta coincida con el nombre del módulo.
 
 El zip para instalar o publicar lo genera `~/Trabajos/FacturaScripts/scripts/build.sh`
-(`zip-plugins/shopeame-prestashop.zip`): incluye `vendor/` con el autoload de Composer, que no está en git. Para
+(`zip-plugins/shopeame-prestashop-addons/shopeame.zip`): incluye `vendor/` con el autoload de Composer, que no está en git. Para
 trabajar con el repositorio directamente, genera antes el autoload:
 
 ```bash

@@ -1,10 +1,10 @@
-"""Genera readme_es.pdf y readme_en.pdf del módulo Shopeame para la ficha de PrestaShop Addons.
+"""Genera readme_es.pdf y readme_en.pdf del módulo Shopeame, para el zip y para la ficha de PrestaShop Addons.
 
 Construye un HTML por idioma con las capturas de Doc/Assets y lo imprime a PDF con Chrome sin interfaz. El texto
 resume las páginas de Doc/User: si cambian, hay que cambiar también este archivo. La versión se lee de shopeame.php.
 
 Uso: python3 Doc/Addons/readme.py [carpeta de salida]
-(por defecto, zip-plugins/shopeame-prestashop-addons junto al repositorio)
+(por defecto, docs/ del módulo, que va en el zip; los mismos archivos se suben a la ficha)
 """
 
 import os
@@ -17,10 +17,14 @@ import tempfile
 # raíz del repositorio: este archivo está en Doc/Addons
 REPO = pathlib.Path(__file__).resolve().parents[2]
 ASSETS = REPO / 'Doc' / 'Assets'
-OUT = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else REPO.parent / 'zip-plugins' / 'shopeame-prestashop-addons'
+OUT = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else REPO / 'docs'
 CHROME = os.environ.get('CHROME', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')
 # misma versión que $this->version del módulo
 VERSION = re.search(r"\$this->version = '([^']+)'", (REPO / 'shopeame.php').read_text()).group(1)
+# enlace de soporte de la ficha de Addons; la guía de validación pide incluirlo en el zip. Vacío mientras no se
+# conozca: el pie remite entonces a la página del módulo sin enlace
+SUPPORT_URL = ''
+SUPPORT_LINK = f' <a href="{SUPPORT_URL}">{SUPPORT_URL}</a>' if SUPPORT_URL else ''
 
 LOGO = (
     '<svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="10 8 74 74"><path fill="currentColor" '
@@ -255,7 +259,7 @@ Después hay que volver a vincular la tienda para que shopea.me reciba la nueva.
 <p>Al desinstalarlo se borran su configuración, la clave del webservice que creó y la entrada del menú, y shopea.me
 deja de tener acceso a la tienda.</p>
 
-<div class="foot">Para cualquier duda, escríbenos desde la página del módulo en PrestaShop Addons.</div>
+<div class="foot">Para cualquier duda, escríbenos desde la página del módulo en PrestaShop Addons.{SUPPORT_LINK}</div>
 """,
 }
 
@@ -442,7 +446,7 @@ new one. You then need to link the store again so that shopea.me receives the ne
 <p>Uninstalling removes its configuration, the webservice key it created and the menu entry, and shopea.me no longer
 has access to the store.</p>
 
-<div class="foot">For any question, contact us from the module page on PrestaShop Addons.</div>
+<div class="foot">For any question, contact us from the module page on PrestaShop Addons.{SUPPORT_LINK}</div>
 """,
 }
 
