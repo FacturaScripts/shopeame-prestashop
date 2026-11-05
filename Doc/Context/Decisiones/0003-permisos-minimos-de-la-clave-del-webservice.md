@@ -23,7 +23,7 @@ importadores y exportadores de `Lib/PrestaShop`, los crons `MonitorShops` y `Syn
 | `stock_availables` | GET, PUT | Leer y actualizar el stock |
 | `categories`, `product_options`, `product_option_values` | GET, POST | Leer y crear categorías y atributos |
 | `taxes`, `tax_rule_groups` | GET | Impuestos del producto y de los pedidos |
-| `orders`, `order_states`, `customers`, `addresses`, `countries`, `states`, `currencies`, `languages` | GET | Copiar los pedidos al ERP |
+| `orders`, `order_states`, `order_payments`, `customers`, `addresses`, `countries`, `states`, `currencies`, `languages` | GET | Copiar los pedidos al ERP |
 | `configurations` | GET | Idioma por defecto (`PS_LANG_DEFAULT`) y zona horaria (`PS_TIMEZONE`) |
 
 - Nada usa `DELETE`, `PATCH` ni `HEAD` sobre un recurso. La raíz `/api` (lista de recursos con GET y versión con HEAD)
@@ -38,6 +38,9 @@ importadores y exportadores de `Lib/PrestaShop`, los crons `MonitorShops` y `Syn
   mismo método.
 - Si ShopeameServer empieza a usar un recurso o un método nuevo de PrestaShop, hay que añadirlo a la lista y sacar una
   versión con su upgrade, en el mismo trabajo (ver [2.1](../02-vinculacion.md)).
+- **Ampliación (05/11/2026)**: se añade `GET` de `order_payments` (pagos de cada pedido) para la sincronización de
+  pedidos. Queda en 18 recursos y 26 permisos. Se hace dentro de la 1.0.0 y sin upgrade porque todavía nadie tiene el
+  módulo instalado; quien generó la clave antes tiene que pulsar **Regenerar clave de API**.
 
 ## Alternativas descartadas
 

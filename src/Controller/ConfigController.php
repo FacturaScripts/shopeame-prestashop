@@ -71,6 +71,7 @@ class ConfigController extends PrestaShopAdminController
         // pedidos y los datos necesarios para copiarlos al ERP
         'orders' => ['GET'],
         'order_states' => ['GET'],
+        'order_payments' => ['GET'],
         'customers' => ['GET'],
         'addresses' => ['GET'],
         'countries' => ['GET'],

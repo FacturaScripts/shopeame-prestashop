@@ -34,7 +34,7 @@
 | `logo.png` de 32 × 32 | Sí |
 | Sin avisos en modo debug | Probado en PrestaShop 9.1.4 con PHP 8.5 (sin el aviso de obsolescencia de `get()` que dejaba `FrameworkBundleAdminController`) |
 | Desinstalación limpia (recomendado) | Borra la configuración, la clave del webservice y la pestaña |
-| Clave del webservice con los permisos justos | 17 recursos y solo los métodos que usa ShopeameServer, sin `DELETE` ni `PATCH` (ver [decisión 0003](Decisiones/0003-permisos-minimos-de-la-clave-del-webservice.md)) |
+| Clave del webservice con los permisos justos | 18 recursos y solo los métodos que usa ShopeameServer, sin `DELETE` ni `PATCH` (ver [decisión 0003](Decisiones/0003-permisos-minimos-de-la-clave-del-webservice.md)) |
 
 ## 4.3 El zip y la release de GitHub
 

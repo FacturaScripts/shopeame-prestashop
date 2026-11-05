@@ -221,7 +221,8 @@ Después hay que volver a vincular la tienda para que shopea.me reciba la nueva.
   <tr><td><code>stock_availables</code></td><td>GET, PUT</td><td>Stock</td></tr>
   <tr><td><code>categories</code>, <code>product_options</code>, <code>product_option_values</code></td>
       <td>GET, POST</td><td>Categorías y atributos</td></tr>
-  <tr><td><code>orders</code>, <code>order_states</code>, <code>customers</code>, <code>addresses</code>,
+  <tr><td><code>orders</code>, <code>order_states</code>, <code>order_payments</code>,
+      <code>customers</code>, <code>addresses</code>,
       <code>countries</code>, <code>states</code>, <code>currencies</code>, <code>languages</code>,
       <code>taxes</code>, <code>tax_rule_groups</code></td><td>GET</td><td>Copiar los pedidos al ERP</td></tr>
   <tr><td><code>configurations</code></td><td>GET</td><td>Idioma por defecto y zona horaria</td></tr>
@@ -409,7 +410,8 @@ new one. You then need to link the store again so that shopea.me receives the ne
   <tr><td><code>stock_availables</code></td><td>GET, PUT</td><td>Stock</td></tr>
   <tr><td><code>categories</code>, <code>product_options</code>, <code>product_option_values</code></td>
       <td>GET, POST</td><td>Categories and attributes</td></tr>
-  <tr><td><code>orders</code>, <code>order_states</code>, <code>customers</code>, <code>addresses</code>,
+  <tr><td><code>orders</code>, <code>order_states</code>, <code>order_payments</code>,
+      <code>customers</code>, <code>addresses</code>,
       <code>countries</code>, <code>states</code>, <code>currencies</code>, <code>languages</code>,
       <code>taxes</code>, <code>tax_rule_groups</code></td><td>GET</td><td>Copying orders to the ERP</td></tr>
   <tr><td><code>configurations</code></td><td>GET</td><td>Default language and time zone</td></tr>

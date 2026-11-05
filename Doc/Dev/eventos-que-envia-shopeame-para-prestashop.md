@@ -81,7 +81,7 @@ La clave solo tiene los recursos y métodos que usa ShopeameServer (`Lib/PrestaS
 | `products`, `combinations` | GET, POST, PUT |
 | `stock_availables` | GET, PUT |
 | `categories`, `product_options`, `product_option_values` | GET, POST |
-| `taxes`, `tax_rule_groups`, `orders`, `order_states`, `customers`, `addresses`, `countries`, `states`, `currencies`, `languages`, `configurations` | GET |
+| `taxes`, `tax_rule_groups`, `orders`, `order_states`, `order_payments`, `customers`, `addresses`, `countries`, `states`, `currencies`, `languages`, `configurations` | GET |
 
 La raíz `/api` no necesita permiso. Con cualquier otro recurso PrestaShop responde 401, y con un método no permitido,
 405. Si ShopeameServer empieza a usar un recurso o un método nuevo, hay que añadirlo a
