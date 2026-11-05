@@ -59,6 +59,18 @@
             "keywords": "comprobar conexión, desvincular tienda, borrar datos del módulo, regenerar clave de api, webservice, shopeame, prestashop",
             "visibility": true
         },
+        "como-descargar-las-facturas-de-un-pedido-en-prestashop.md": {
+            "title": "Cómo descargar las facturas del ERP de un pedido en PrestaShop",
+            "title_short": "Descargar las facturas del ERP",
+            "permalink": "como-descargar-las-facturas-de-un-pedido-en-prestashop",
+            "parent": "como-funciona-shopeame-para-prestashop.md",
+            "ordernum": 55,
+            "imageurl": "Doc/Assets/como-descargar-las-facturas-de-un-pedido-en-prestashop/01-listado-de-pedidos.png",
+            "icon": "fa-solid fa-file-invoice",
+            "color": "success",
+            "keywords": "facturas, facturas del erp, descargar factura, pdf, rectificativa, factura parcial, agrupar pedidos, mi cuenta, prestashop, shopeame",
+            "visibility": true
+        },
         "como-resolver-los-errores-de-shopeame-en-prestashop.md": {
             "title": "Cómo resolver los errores de Shopeame en PrestaShop",
             "title_short": "Errores de Shopeame en PrestaShop",
@@ -89,7 +101,7 @@
             "ordernum": 20,
             "icon": "fa-solid fa-paper-plane",
             "color": "dark",
-            "keywords": "webhooks, eventos, register_prestashop, new_order, update_order, check_shop, unlink_shop, configuración, shopeame_server_url",
+            "keywords": "webhooks, eventos, register_prestashop, new_order, update_order, order_invoices, invoice_pdf, check_shop, unlink_shop, configuración",
             "visibility": true
         },
         "como-desarrollar-y-publicar-shopeame-para-prestashop.md": {

@@ -22,6 +22,9 @@ stock, precios, categorías y atributos, pero no puede borrar nada ni acceder a 
      PrestaShop.
 3. A partir de ahí, cada vez que se crea un pedido, cambia su estado o se edita desde el panel, el módulo avisa a
    shopea.me con el número del pedido. shopea.me lo descarga y lo lleva al ERP.
+4. Cuando facturas el pedido en el ERP, puedes descargar sus facturas desde el listado y la ficha de los pedidos de
+   PrestaShop, y tus clientes, desde **Mi cuenta** (ver
+   [Cómo descargar las facturas del ERP de un pedido](como-descargar-las-facturas-de-un-pedido-en-prestashop.md)).
 
 ![Página Shopeame de PrestaShop con la tienda vinculada](../Assets/como-vincular-prestashop-copiando-los-datos-en-shopeame/04-tienda-vinculada.png)
 
@@ -30,6 +33,8 @@ stock, precios, categorías y atributos, pero no puede borrar nada ni acceder a 
 - Al vincular: la URL de la tienda y la clave del webservice y, en la opción 2, el UUID y el token del ERP.
 - Con cada pedido nuevo o modificado: solo el número del pedido. El resto de datos (cliente, direcciones, productos y
   totales) los lee shopea.me por el webservice con su clave.
+- Al ver o descargar las facturas de un pedido: el número del pedido y el de la factura. shopea.me las pide al ERP en
+  ese momento y no guarda nada; el PDF tampoco se guarda en PrestaShop.
 - Antes de vincular la tienda, el módulo no envía nada.
 
 Si desinstalas el módulo desde **Módulos** → **Gestor de módulo**, se borran sus datos y la clave del webservice que
@@ -40,3 +45,4 @@ creó, y shopea.me deja de tener acceso a la tienda.
 - [Cómo instalar el módulo Shopeame en PrestaShop](como-instalar-el-modulo-shopeame-en-prestashop.md)
 - [Cómo vincular PrestaShop copiando los datos en shopea.me](como-vincular-prestashop-copiando-los-datos-en-shopeame.md)
 - [Cómo vincular PrestaShop con el UUID y el token del ERP](como-vincular-prestashop-con-el-uuid-y-el-token-del-erp.md)
+- [Cómo descargar las facturas del ERP de un pedido en PrestaShop](como-descargar-las-facturas-de-un-pedido-en-prestashop.md)

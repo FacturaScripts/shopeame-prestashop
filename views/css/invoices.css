@@ -1,0 +1,117 @@
+/**
+ * Shopeame - PrestaShop connector for shopea.me
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ *
+ * @author    FacturaCity SL
+ * @copyright 2025-2026 Carlos García Gómez
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ */
+
+/*
+ * Facturas del ERP de los pedidos, en el back-office y en Mi cuenta.
+ *
+ * En los listados (pedidos del back-office e historial de Mi cuenta) el panel es un desplegable de
+ * posición fija que coloca views/js/invoices.js; en la ficha del pedido y en el detalle del pedido
+ * de Mi cuenta, una lista dentro de su cuadro o sección. En Mi cuenta se respetan la tipografía y
+ * los colores del tema.
+ */
+
+.shopeame-invoices--account {
+    display: inline-block;
+}
+
+/* Botón del listado de pedidos del back-office en una sola línea */
+.column-shopeame_invoices .shopeame-invoices__toggle {
+    white-space: nowrap;
+}
+
+/* Desplegable de los listados */
+.shopeame-invoices:not([data-autoload]) .shopeame-invoices__panel {
+    position: fixed;
+    z-index: 1050;
+    min-width: 280px;
+    max-width: calc(100vw - 16px);
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 8px 12px;
+    background: #fff;
+    border: 1px solid #dfdfdf;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-align: left;
+    white-space: normal;
+}
+
+.shopeame-invoices__panel[hidden] {
+    display: none;
+}
+
+.shopeame-invoices__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.shopeame-invoices__item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    margin: 0;
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.shopeame-invoices__item:last-child {
+    border-bottom: 0;
+}
+
+.shopeame-invoices__link {
+    font-weight: 600;
+}
+
+/* Las rectificativas se distinguen con una etiqueta y el total en rojo */
+.shopeame-invoices__badge {
+    padding: 0 6px;
+    border-radius: 3px;
+    background: #fcf0f1;
+    color: #8a2424;
+    font-size: 11px;
+    line-height: 18px;
+}
+
+.shopeame-invoices__meta {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+    color: #6c757d;
+    white-space: nowrap;
+}
+
+.shopeame-invoices__item--refund .shopeame-invoices__total {
+    color: #c0392b;
+}
+
+.shopeame-invoices__message {
+    margin: 4px 0;
+    color: #6c757d;
+}
+
+.shopeame-invoices__message--error {
+    color: #c0392b;
+}
+
+.shopeame-invoices__reload {
+    padding-left: 0;
+}
+
+/* Sección «Facturas» del detalle del pedido en Mi cuenta */
+.shopeame-order-invoices {
+    margin-bottom: 1.5rem;
+}

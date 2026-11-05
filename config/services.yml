@@ -40,3 +40,15 @@ services:
   PrestaShop\Module\Shopeame\Controller\ConfigController:
     autowire: true
     autoconfigure: true
+
+  # facturas del ERP de los pedidos (src/Invoice/InvoiceService.php); el controlador frontal de
+  # Mi cuenta y los hooks la crean con el traductor del contexto
+  prestashop.module.shopeame.invoice.invoice_service:
+    class: PrestaShop\Module\Shopeame\Invoice\InvoiceService
+    arguments: ['@translator']
+
+  # controlador de las facturas del back-office (src/Controller/InvoiceController.php), registrado
+  # como servicio por el mismo motivo que ConfigController
+  PrestaShop\Module\Shopeame\Controller\InvoiceController:
+    autowire: true
+    autoconfigure: true

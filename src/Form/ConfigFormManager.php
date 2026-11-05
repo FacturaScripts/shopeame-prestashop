@@ -45,12 +45,16 @@ final class ConfigFormManager implements DataConfigurationInterface
     /** Último estado de vinculación conocido (se refresca al abrir la configuración). */
     public const SHOP_REGISTERED_KEY = 'SHOPEAME_SHOP_REGISTERED';
 
+    /** Si los clientes pueden descargar desde Mi cuenta las facturas del ERP de sus pedidos ('1' o '0'). */
+    public const CUSTOMER_INVOICES_KEY = 'SHOPEAME_CUSTOMER_INVOICES';
+
     /** Todas las claves de configuración del módulo (se borran al desinstalar). */
     public const CONFIG_KEYS = [
         self::UUID_KEY,
         self::WEBHOOK_TOKEN_KEY,
         self::API_KEY,
         self::SHOP_REGISTERED_KEY,
+        self::CUSTOMER_INVOICES_KEY,
     ];
 
     /** Longitud de los UUID de shopea.me. */
