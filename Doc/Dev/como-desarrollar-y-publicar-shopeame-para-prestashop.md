@@ -20,11 +20,14 @@ credenciales de pruebas.
 
 ## 2. Textos y traducciones
 
-- Las cadenas se escriben en inglés con el dominio `Modules.Shopeame.Admin`:
+- Las cadenas se escriben en inglés con el dominio `Modules.Shopeame.Admin` (back-office) o `Modules.Shopeame.Shop`
+  (Mi cuenta: plantillas de `views/templates/hook/order_detail_invoices.tpl`, textos del script en el front y aviso
+  genérico de `InvoiceService` para los clientes):
   `$this->trans('Text', [], 'Modules.Shopeame.Admin')` en la clase del módulo,
   `$this->trans('Text', [], 'Modules.Shopeame.Admin')` también en `ConfigController` (firma de `PrestaShopAdminController`) y `|trans` en la plantilla Twig, que declara
   `{% trans_default_domain 'Modules.Shopeame.Admin' %}`.
-- La traducción al español está en `translations/es-ES/ModulesShopeameAdmin.es-ES.xlf`. Cada texto nuevo se añade como
+- La traducción al español está en `translations/es-ES/ModulesShopeameAdmin.es-ES.xlf` y
+  `translations/es-ES/ModulesShopeameShop.es-ES.xlf`. Cada texto nuevo se añade como
   un `trans-unit` cuyo `id` es el `md5` del texto en inglés:
 
 ```xml

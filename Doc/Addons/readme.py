@@ -100,6 +100,7 @@ el webservice de PrestaShop y crea una clave solo para shopea.me, con los permis
   <li>Dos formas de vincular la tienda: copiando sus datos en shopea.me o indicando el UUID y el token del ERP.</li>
   <li>Aviso de los pedidos en tiempo real: al crearlos, al cambiar su estado y al editarlos desde el panel.</li>
   <li>Botones para comprobar la conexión, desvincular la tienda y borrar los datos del módulo.</li>
+  <li>Descarga de las facturas del ERP de cada pedido en el panel y, para tus clientes, en Mi cuenta.</li>
   <li>Registro de cada aviso en <b>Parámetros Avanzados → Registros/Logs</b>.</li>
   <li>Un fallo al avisar a shopea.me nunca bloquea el pedido: el cliente termina su compra igual.</li>
 </ul>
@@ -205,12 +206,31 @@ si aún no existe y registra la tienda en shopea.me.</p>
 <p>Con la tienda sin vincular, la opción 1 muestra <b>Regenerar clave de API</b>: borra la clave anterior y crea otra.
 Después hay que volver a vincular la tienda para que shopea.me reciba la nueva.</p>
 
-<h2>6. Datos que se envían y permisos</h2>
+<h2>6. Facturas del ERP de los pedidos</h2>
+<p>Cuando facturas en el ERP un pedido de la tienda, puedes descargar sus facturas en PDF desde PrestaShop: las
+parciales, la que agrupa ese pedido con otros del mismo cliente y las rectificativas. En la ficha del pedido se llaman <b>Facturas del
+ERP</b> para no confundirlas con las facturas propias de PrestaShop, que el módulo no toca.</p>
+<ul>
+  <li><b>Listado de pedidos</b>: el botón <b>Facturas</b> (1) abre la lista del pedido; cada código (2)
+      descarga su PDF. Las rectificativas llevan la etiqueta <b>Rectificativa</b> y el total en rojo.</li>
+  <li><b>Ficha del pedido</b>: el cuadro <b>Facturas del ERP</b> las muestra al abrirla.</li>
+  <li><b>Mi cuenta</b>: tus clientes ven el botón <b>Facturas</b> en su historial de pedidos y la sección
+      <b>Facturas</b> en el detalle de cada pedido, solo con sus propios pedidos. Se desactiva desmarcando
+      <b>Permitir que los clientes descarguen las facturas de sus pedidos desde Mi cuenta</b> en la página
+      <b>Shopeame</b>.</li>
+</ul>
+{fig('como-descargar-las-facturas-de-un-pedido-en-prestashop/01-listado-de-pedidos.png', 'Facturas del ERP de un pedido desplegadas en el listado de pedidos.')}
+<p>Las facturas no se guardan en PrestaShop: shopea.me las pide al ERP cada vez, así que hace falta que el ERP esté
+encendido. Si facturas en el ERP, desactiva las facturas de PrestaShop en <b>Pedidos → Facturas</b> para que tus
+clientes no vean dos facturas del mismo pedido.</p>
+
+<h2>7. Datos que se envían y permisos</h2>
 <ul>
   <li>Antes de vincular la tienda, el módulo no envía nada.</li>
   <li>Al vincular: la URL de la tienda y la clave del webservice y, en la opción 2, el UUID y el token del ERP.</li>
   <li>Con cada pedido nuevo o modificado: solo el número del pedido. El resto de datos los lee shopea.me por el
       webservice.</li>
+  <li>Al ver o descargar las facturas de un pedido: el número del pedido y el de la factura.</li>
 </ul>
 <p>La clave del webservice que crea el módulo solo tiene estos permisos, sin <code>DELETE</code> ni
 <code>PATCH</code>:</p>
@@ -229,7 +249,7 @@ Después hay que volver a vincular la tienda para que shopea.me reciba la nueva.
 </table>
 <p>El módulo no modifica tablas del núcleo ni de otros módulos y no descarga nada después de instalarse.</p>
 
-<h2>7. Resolución de problemas</h2>
+<h2>8. Resolución de problemas</h2>
 <table>
   <tr><th style="width:38%">Aviso o síntoma</th><th>Qué hacer</th></tr>
   <tr><td><b>No se pudo generar la clave de API.</b> o <b>No se pudieron establecer los permisos de la clave de
@@ -255,7 +275,7 @@ Después hay que volver a vincular la tienda para que shopea.me reciba la nueva.
       la siguiente sincronización.</li>
 </ul>
 
-<h2>8. Actualizar y desinstalar</h2>
+<h2>9. Actualizar y desinstalar</h2>
 <p>Las actualizaciones se instalan desde <b>Módulos → Gestor de módulo</b>, como en cualquier otro módulo.</p>
 <p>Al desinstalarlo se borran su configuración, la clave del webservice que creó y la entrada del menú, y shopea.me
 deja de tener acceso a la tienda.</p>
@@ -283,6 +303,7 @@ PrestaShop webservice and creates a key just for shopea.me, with only the permis
   <li>Two ways to link the store: copying its details into shopea.me, or entering the ERP UUID and token.</li>
   <li>Real-time order notifications when an order is created, changes status or is edited in the back office.</li>
   <li>Buttons to check the connection, unlink the store and delete the module data.</li>
+  <li>Download of the ERP invoices of each order in the back office and, for your customers, in My account.</li>
   <li>Every notification is logged in <b>Advanced Parameters → Logs</b>.</li>
   <li>A failed notification never blocks the order: the customer still completes the purchase.</li>
 </ul>
@@ -394,7 +415,24 @@ key if it does not exist yet and registers the store on shopea.me.</p>
 <p>While the store is not linked, option 1 shows <b>Regenerate API key</b>: it deletes the previous key and creates a
 new one. You then need to link the store again so that shopea.me receives the new key.</p>
 
-<h2>6. Data sent and permissions</h2>
+<h2>6. ERP invoices of the orders</h2>
+<p>When you invoice a store order in the ERP, you can download its invoices as PDF from PrestaShop: partial invoices,
+the invoice that groups the order with other orders of the same customer, and corrective invoices. On the order page they are called
+<b>ERP invoices</b> so they are not confused with PrestaShop's own invoices, which the module does not touch.</p>
+<ul>
+  <li><b>Orders list</b>: the <b>Invoices</b> button (1) opens the list of the order; each code (2) downloads its
+      PDF. Corrective invoices have the <b>Corrective</b> label and the total in red.</li>
+  <li><b>Order page</b>: the <b>ERP invoices</b> box shows them when the page opens.</li>
+  <li><b>My account</b>: your customers see the <b>Invoices</b> button in their order history and the <b>Invoices</b>
+      section on each order page, only for their own orders. Untick <b>Allow customers to download the invoices of
+      their orders from My account</b> on the <b>Shopeame</b> page to turn it off.</li>
+</ul>
+{fig('como-descargar-las-facturas-de-un-pedido-en-prestashop/01-listado-de-pedidos.png', 'ERP invoices of an order opened in the orders list (back office in Spanish).')}
+<p>The invoices are not stored in PrestaShop: shopea.me requests them from the ERP each time, so the ERP must be
+online. If you invoice in the ERP, turn off the PrestaShop invoices in <b>Orders → Invoices</b> so your customers do not
+see two invoices for the same order.</p>
+
+<h2>7. Data sent and permissions</h2>
 <ul>
   <li>Before the store is linked, the module sends nothing.</li>
   <li>When linking: the store URL and the webservice key and, with option 2, the ERP UUID and token.</li>
@@ -418,7 +456,7 @@ new one. You then need to link the store again so that shopea.me receives the ne
 </table>
 <p>The module does not modify core tables or other modules, and it downloads nothing after installation.</p>
 
-<h2>7. Troubleshooting</h2>
+<h2>8. Troubleshooting</h2>
 <table>
   <tr><th style="width:38%">Message or symptom</th><th>What to do</th></tr>
   <tr><td><b>The API key could not be generated.</b> or <b>The API key permissions could not be set.</b></td>
@@ -443,7 +481,7 @@ new one. You then need to link the store again so that shopea.me receives the ne
       the next sync.</li>
 </ul>
 
-<h2>8. Updating and uninstalling</h2>
+<h2>9. Updating and uninstalling</h2>
 <p>Updates are installed from <b>Modules → Module Manager</b>, like any other module.</p>
 <p>Uninstalling removes its configuration, the webservice key it created and the menu entry, and shopea.me no longer
 has access to the store.</p>

@@ -48,3 +48,32 @@ shopeame_check_shop:
     _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::checkShop'
     _legacy_controller: Shopeame
     _legacy_link: Shopeame
+
+shopeame_save_invoice_settings:
+  path: /shopeame/invoice-settings
+  methods: [POST]
+  defaults:
+    _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::saveInvoiceSettings'
+    _legacy_controller: Shopeame
+    _legacy_link: Shopeame
+
+# Facturas del ERP de los pedidos: _legacy_controller AdminOrders hace que solo entren los
+# empleados con permiso de lectura sobre los pedidos (atributo AdminSecurity del controlador)
+shopeame_order_invoices:
+  path: /shopeame/orders/{orderId}/invoices
+  methods: [GET]
+  requirements:
+    orderId: '\d+'
+  defaults:
+    _controller: 'PrestaShop\Module\Shopeame\Controller\InvoiceController::list'
+    _legacy_controller: AdminOrders
+
+shopeame_order_invoice_pdf:
+  path: /shopeame/orders/{orderId}/invoices/{invoiceId}/pdf
+  methods: [GET]
+  requirements:
+    orderId: '\d+'
+    invoiceId: '\d+'
+  defaults:
+    _controller: 'PrestaShop\Module\Shopeame\Controller\InvoiceController::download'
+    _legacy_controller: AdminOrders

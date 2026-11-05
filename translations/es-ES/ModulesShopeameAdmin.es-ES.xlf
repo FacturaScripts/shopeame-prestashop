@@ -202,6 +202,90 @@
         <source>Link store</source>
         <target state="final">Vincular tienda</target>
       </trans-unit>
+      <trans-unit id="a22161a0578bcc5cd0d16c675bd465bb" approved="yes">
+        <source>ERP invoices</source>
+        <target state="final">Facturas del ERP</target>
+      </trans-unit>
+      <trans-unit id="f5c9cc508208e5bc106078b9dad01646" approved="yes">
+        <source>The orders list and each order show the invoices that your ERP has generated for the order, downloaded through shopea.me. They are not the PrestaShop invoices.</source>
+        <target state="final">El listado de pedidos y cada pedido muestran las facturas que tu ERP ha generado para el pedido, descargadas a través de shopea.me. No son las facturas de PrestaShop.</target>
+      </trans-unit>
+      <trans-unit id="36a87c027c9d1ff561d65379d3189675" approved="yes">
+        <source>Allow customers to download the invoices of their orders from My account</source>
+        <target state="final">Permitir que los clientes descarguen las facturas de sus pedidos desde Mi cuenta</target>
+      </trans-unit>
+      <trans-unit id="c9cc8cce247e49bae79f15173ce97354" approved="yes">
+        <source>Save</source>
+        <target state="final">Guardar</target>
+      </trans-unit>
+      <trans-unit id="9a7e58ee13cb727cb7c4acc68f4cafe5" approved="yes">
+        <source>Settings saved.</source>
+        <target state="final">Ajustes guardados.</target>
+      </trans-unit>
+      <trans-unit id="59bfee7e4791bf32bfcfc0ad8e7dd9a0" approved="yes">
+        <source>This order has no invoices in the ERP yet.</source>
+        <target state="final">Este pedido aún no tiene facturas en el ERP.</target>
+      </trans-unit>
+      <trans-unit id="852b8c02ef870e022b1e5311787b886b" approved="yes">
+        <source>The ERP invoices could not be loaded.</source>
+        <target state="final">No se han podido cargar las facturas del ERP.</target>
+      </trans-unit>
+      <trans-unit id="4262e0f0bd0d54032c5be8d549947742" approved="yes">
+        <source>Loading invoices…</source>
+        <target state="final">Cargando facturas…</target>
+      </trans-unit>
+      <trans-unit id="82a183f5bbcaf7607f1e0fb56399a565" approved="yes">
+        <source>Corrective</source>
+        <target state="final">Rectificativa</target>
+      </trans-unit>
+      <trans-unit id="d4db6f2d96b1e95e66415b2818196b26" approved="yes">
+        <source>Corrective invoice of %s</source>
+        <target state="final">Rectificativa de %s</target>
+      </trans-unit>
+      <trans-unit id="2607298669ace2fc910321afeb9f8a84" approved="yes">
+        <source>Download PDF</source>
+        <target state="final">Descargar PDF</target>
+      </trans-unit>
+      <trans-unit id="4d1c8263ba1036754f8db14a98f9f006" approved="yes">
+        <source>Reload</source>
+        <target state="final">Volver a cargar</target>
+      </trans-unit>
+      <trans-unit id="50ae9796ec20fa2463fda853bbab4b13" approved="yes">
+        <source>The order does not exist.</source>
+        <target state="final">El pedido no existe.</target>
+      </trans-unit>
+      <trans-unit id="45627943c3e0b8ada28baaba0dd144c3" approved="yes">
+        <source>The store is not linked with shopea.me.</source>
+        <target state="final">La tienda no está vinculada con shopea.me.</target>
+      </trans-unit>
+      <trans-unit id="8ed86c48e1d122b92edf2904f599ca9d" approved="yes">
+        <source>Could not connect with shopea.me. Try again in a few minutes.</source>
+        <target state="final">No se ha podido conectar con shopea.me. Inténtalo de nuevo en unos minutos.</target>
+      </trans-unit>
+      <trans-unit id="a216666a8643d6a8f3f134dc8a95f9d6" approved="yes">
+        <source>shopea.me does not support invoice downloads yet.</source>
+        <target state="final">shopea.me todavía no permite descargar facturas.</target>
+      </trans-unit>
+      <trans-unit id="b8be3338614fad86c608a11d185bd5c9" approved="yes">
+        <source>Your ERP is not available right now. Try again later.</source>
+        <target state="final">Tu ERP no está disponible ahora mismo. Inténtalo más tarde.</target>
+      </trans-unit>
+      <trans-unit id="e205e0a3ff12ce206515dedbaf56a151" approved="yes">
+        <source>Your ERP does not allow downloading invoices. Update FacturaScripts and the Shopeame plugin.</source>
+        <target state="final">Tu ERP no permite descargar facturas. Actualiza FacturaScripts y el plugin Shopeame.</target>
+      </trans-unit>
+      <trans-unit id="be5cb27b0f40a61e1f86e67524dcc33d" approved="yes">
+        <source>The invoice no longer belongs to this order. Reload the invoices.</source>
+        <target state="final">La factura ya no pertenece a este pedido. Vuelve a cargar las facturas.</target>
+      </trans-unit>
+      <trans-unit id="eec40ed799352bc5981303086ac90b42" approved="yes">
+        <source>The ERP invoices could not be loaded. Try again in a few minutes.</source>
+        <target state="final">No se han podido cargar las facturas del ERP. Inténtalo de nuevo en unos minutos.</target>
+      </trans-unit>
+      <trans-unit id="fce9a6a1bd2a2050eb86d33103f46fd3" approved="yes">
+        <source>Invoices</source>
+        <target state="final">Facturas</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

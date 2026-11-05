@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="modules/shopeame" source-language="en" target-language="es" datatype="plaintext">
+    <body>
+      <trans-unit id="fce9a6a1bd2a2050eb86d33103f46fd3" approved="yes">
+        <source>Invoices</source>
+        <target state="final">Facturas</target>
+      </trans-unit>
+      <trans-unit id="4884cf671921db8e6fed0247dbd5a37f" approved="yes">
+        <source>Invoices of order %s</source>
+        <target state="final">Facturas del pedido %s</target>
+      </trans-unit>
+      <trans-unit id="c217a36a3e23997f5891a1ca1398f185" approved="yes">
+        <source>This order has no invoices yet.</source>
+        <target state="final">Este pedido aún no tiene facturas.</target>
+      </trans-unit>
+      <trans-unit id="62cf2c9516da508641346b9e7a68a46d" approved="yes">
+        <source>The invoices could not be loaded.</source>
+        <target state="final">No se han podido cargar las facturas.</target>
+      </trans-unit>
+      <trans-unit id="b025e823fff49a606132ed5e2fffe5c9" approved="yes">
+        <source>The invoices are not available right now. Try again later.</source>
+        <target state="final">Las facturas no están disponibles ahora mismo. Inténtalo más tarde.</target>
+      </trans-unit>
+      <trans-unit id="4262e0f0bd0d54032c5be8d549947742" approved="yes">
+        <source>Loading invoices…</source>
+        <target state="final">Cargando facturas…</target>
+      </trans-unit>
+      <trans-unit id="82a183f5bbcaf7607f1e0fb56399a565" approved="yes">
+        <source>Corrective</source>
+        <target state="final">Rectificativa</target>
+      </trans-unit>
+      <trans-unit id="d4db6f2d96b1e95e66415b2818196b26" approved="yes">
+        <source>Corrective invoice of %s</source>
+        <target state="final">Rectificativa de %s</target>
+      </trans-unit>
+      <trans-unit id="2607298669ace2fc910321afeb9f8a84" approved="yes">
+        <source>Download PDF</source>
+        <target state="final">Descargar PDF</target>
+      </trans-unit>
+      <trans-unit id="4d1c8263ba1036754f8db14a98f9f006" approved="yes">
+        <source>Reload</source>
+        <target state="final">Volver a cargar</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
