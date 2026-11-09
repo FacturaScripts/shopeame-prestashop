@@ -202,6 +202,42 @@
         <source>Link store</source>
         <target state="final">Vincular tienda</target>
       </trans-unit>
+      <trans-unit id="fe50db41e8ba99f7a5f1048cf5e85d51" approved="yes">
+        <source>A new version of Shopeame is available: %new%. You have version %current%.</source>
+        <target state="final">Hay una versión nueva de Shopeame: %new%. Tienes la versión %current%.</target>
+      </trans-unit>
+      <trans-unit id="dd9d28bfefd68e9dd263dcac9a515831" approved="yes">
+        <source>Update now</source>
+        <target state="final">Actualizar ahora</target>
+      </trans-unit>
+      <trans-unit id="490414e0366b091220802d406e52c076" approved="yes">
+        <source>What’s new</source>
+        <target state="final">Novedades</target>
+      </trans-unit>
+      <trans-unit id="b644b5ff134a8cbfaddf693550660bd9" approved="yes">
+        <source>Shopeame version %version%</source>
+        <target state="final">Shopeame versión %version%</target>
+      </trans-unit>
+      <trans-unit id="eb1b4bb3667dd670210c7822badc2f1d" approved="yes">
+        <source>Check for updates</source>
+        <target state="final">Buscar actualizaciones</target>
+      </trans-unit>
+      <trans-unit id="73f8a5beb09d11138257d7deb621fd93" approved="yes">
+        <source>Shopeame is up to date.</source>
+        <target state="final">Shopeame está actualizado.</target>
+      </trans-unit>
+      <trans-unit id="31592fd73da86d2aee59f154510804c5" approved="yes">
+        <source>Shopeame was updated to version %version%.</source>
+        <target state="final">Shopeame se ha actualizado a la versión %version%.</target>
+      </trans-unit>
+      <trans-unit id="121e0ea1bd1e88537d3fdf0ece395246" approved="yes">
+        <source>Shopeame could not be updated: %error%</source>
+        <target state="final">No se pudo actualizar Shopeame: %error%</target>
+      </trans-unit>
+      <trans-unit id="124ccf35fd0916d0597f0b70509d6b3e" approved="yes">
+        <source>Could not connect to GitHub to check for updates.</source>
+        <target state="final">No se pudo conectar con GitHub para buscar actualizaciones.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

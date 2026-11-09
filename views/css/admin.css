@@ -131,3 +131,21 @@
 .shopeame-actions form {
     margin: 0;
 }
+
+/* Aviso de versión nueva: changelog en lista y botones en la misma línea */
+.shopeame-page .shopeame-update-notice {
+    border-radius: 8px;
+    margin: 0 0 16px;
+}
+
+.shopeame-update-changelog {
+    margin: 8px 0 12px;
+    padding-left: 20px;
+}
+
+/* Pie con la versión instalada y el enlace para buscar actualizaciones */
+.shopeame-version {
+    color: #6c868e;
+    font-size: 12px;
+    margin: 0;
+}

@@ -48,3 +48,19 @@ shopeame_check_shop:
     _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::checkShop'
     _legacy_controller: Shopeame
     _legacy_link: Shopeame
+
+shopeame_update_module:
+  path: /shopeame/update
+  methods: [POST]
+  defaults:
+    _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::updateModule'
+    _legacy_controller: Shopeame
+    _legacy_link: Shopeame
+
+shopeame_check_updates:
+  path: /shopeame/check-updates
+  methods: [GET]
+  defaults:
+    _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::checkUpdates'
+    _legacy_controller: Shopeame
+    _legacy_link: Shopeame

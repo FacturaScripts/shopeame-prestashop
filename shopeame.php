@@ -27,13 +27,15 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use PrestaShop\Module\Shopeame\Controller\ConfigController;
 use PrestaShop\Module\Shopeame\Form\ConfigFormManager;
+use PrestaShop\Module\Shopeame\Update\UpdateChecker;
 use Symfony\Component\HttpClient\HttpClient;
 
 /**
  * Clase principal del módulo Shopeame.
  *
  * Registra la pestaña del menú del back-office, los hooks de pedidos que avisan a shopea.me de
- * cada pedido nuevo o modificado y el hook que pinta el logo de Shopeame en el menú lateral.
+ * cada pedido nuevo o modificado, el hook que pinta el logo de Shopeame en el menú lateral y el
+ * que anuncia al gestor de módulos las versiones nuevas publicadas en GitHub.
  */
 class Shopeame extends Module
 {
@@ -49,6 +51,7 @@ class Shopeame extends Module
         'actionOrderStatusPostUpdate',
         'actionOrderEdited',
         'actionAdminControllerSetMedia',
+        'actionListModules',
     ];
 
     /**
@@ -191,6 +194,39 @@ class Shopeame extends Module
     public function hookActionAdminControllerSetMedia($params): void
     {
         $this->context->controller->addCSS($this->_path . 'views/css/menu.css');
+    }
+
+    /**
+     * Anuncia al gestor de módulos la última versión del módulo publicada en GitHub.
+     *
+     * El módulo no está en PrestaShop Addons. El gestor de módulos reúne con este hook los módulos
+     * de otras fuentes (es el mismo que usa ps_distributionapiclient con los módulos oficiales): si
+     * version_available es mayor que la instalada, muestra «Actualizar», descarga el zip de
+     * download_url, lo descomprime y ejecuta los upgrade/upgrade-X.Y.Z.php. changeLog es lo que
+     * pinta la tarjeta de la pestaña «Actualizaciones» ([versión => [líneas]]). La consulta a GitHub
+     * se guarda 12 horas (ver UpdateChecker).
+     *
+     * @param array $params
+     *
+     * @return array<array<string, mixed>>
+     */
+    public function hookActionListModules($params): array
+    {
+        $update = UpdateChecker::getAvailableUpdate($this->version);
+        if (null === $update) {
+            return [];
+        }
+
+        $module = [
+            'name' => $this->name,
+            'version_available' => $update['version'],
+            'download_url' => $update['download_url'],
+        ];
+        if (!empty($update['changelog'])) {
+            $module['changeLog'] = [$update['version'] => $update['changelog']];
+        }
+
+        return [$module];
     }
 
     /**

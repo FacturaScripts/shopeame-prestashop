@@ -23,7 +23,9 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use PrestaShop\Module\Shopeame\Form\ConfigFormManager;
+use PrestaShop\Module\Shopeame\Update\UpdateChecker;
 use PrestaShop\PrestaShop\Core\Form\FormHandlerInterface;
+use PrestaShop\PrestaShop\Core\Module\ModuleManager;
 use PrestaShopBundle\Controller\Admin\PrestaShopAdminController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpClient\HttpClient;
@@ -206,7 +208,76 @@ class ConfigController extends PrestaShopAdminController
             'shopLinkUrl' => self::serverUrl() . '/shop-link/' . rawurlencode($uuid),
             'enableGenerateApiKeyButton' => $apiKey === '',
             'registeredShop' => $registeredShop,
+            'moduleVersion' => $this->moduleVersion(),
+            // reutiliza la última consulta guardada: solo pregunta a GitHub si han pasado 12 horas
+            // (UpdateChecker::CACHE_TTL), con un tope de 8 segundos
+            'update' => UpdateChecker::getAvailableUpdate($this->moduleVersion()),
         ]);
+    }
+
+    /**
+     * Actualiza el módulo a la última versión de GitHub (botón «Actualizar ahora» del aviso).
+     *
+     * Hace lo mismo que el botón «Actualizar» del gestor de módulos: ModuleManager::upgrade()
+     * comprueba que el empleado puede actualizar módulos, descarga el zip, lo descomprime sobre la
+     * carpeta del módulo y ejecuta los upgrade/upgrade-X.Y.Z.php.
+     *
+     * @param Request $request petición con el token CSRF del formulario
+     * @param ModuleManager $moduleManager gestor de módulos de PrestaShop
+     *
+     * @return RedirectResponse
+     */
+    public function updateModule(
+        Request $request,
+        #[Autowire(service: ModuleManager::class)]
+        ModuleManager $moduleManager,
+    ): RedirectResponse {
+        if (!$this->isCsrfTokenValid('shopeame_update', (string) $request->request->get('_token'))) {
+            $this->addFlash('error', $this->trans('The request is not valid. Please try again.', [], self::DOMAIN));
+
+            return $this->redirectToRoute('shopeame_config_form');
+        }
+
+        $update = UpdateChecker::getAvailableUpdate($this->moduleVersion());
+        if (null === $update) {
+            $this->addFlash('success', $this->trans('Shopeame is up to date.', [], self::DOMAIN));
+
+            return $this->redirectToRoute('shopeame_config_form');
+        }
+
+        try {
+            $upgraded = $moduleManager->upgrade('shopeame', $update['download_url']);
+            $error = $upgraded ? '' : (string) $moduleManager->getError('shopeame');
+        } catch (\Throwable $e) {
+            $upgraded = false;
+            $error = $e->getMessage();
+        }
+
+        if ($upgraded) {
+            $this->addFlash('success', $this->trans('Shopeame was updated to version %version%.', ['%version%' => $update['version']], self::DOMAIN));
+        } else {
+            \PrestaShopLogger::addLog('Shopeame: the module could not be updated to version ' . $update['version'] . ': ' . $error, 3);
+            $this->addFlash('error', $this->trans('Shopeame could not be updated: %error%', ['%error%' => $error], self::DOMAIN));
+        }
+
+        return $this->redirectToRoute('shopeame_config_form');
+    }
+
+    /**
+     * Consulta GitHub en ese momento, sin esperar a que caduque la caché (enlace «Buscar
+     * actualizaciones»), y vuelve a la configuración, que muestra el aviso si hay versión nueva.
+     *
+     * @return RedirectResponse
+     */
+    public function checkUpdates(): RedirectResponse
+    {
+        if (!UpdateChecker::refresh()) {
+            $this->addFlash('warning', $this->trans('Could not connect to GitHub to check for updates.', [], self::DOMAIN));
+        } elseif (null === UpdateChecker::getAvailableUpdate($this->moduleVersion())) {
+            $this->addFlash('success', $this->trans('Shopeame is up to date.', [], self::DOMAIN));
+        }
+
+        return $this->redirectToRoute('shopeame_config_form');
     }
 
     /**
@@ -493,5 +564,17 @@ class ConfigController extends PrestaShopAdminController
         }
 
         return $this->trans('Store linked with shopea.me successfully.', [], self::DOMAIN);
+    }
+
+    /**
+     * Versión instalada del módulo ($this->version de shopeame.php).
+     *
+     * @return string
+     */
+    private function moduleVersion(): string
+    {
+        $module = \Module::getInstanceByName('shopeame');
+
+        return $module instanceof \Module ? (string) $module->version : '0.0.0';
     }
 }

@@ -13,6 +13,8 @@
 # - Cada release lleva dos copias del zip: «shopeame-<versión>.zip» y «shopeame.zip». La segunda tiene siempre el
 #   mismo nombre, así que el enlace https://github.com/<owner>/<repo>/releases/latest/download/shopeame.zip
 #   descarga siempre la última release.
+# - Cada release lleva también «info.json» (versión, zip de esa etiqueta, versiones de PrestaShop y PHP y changelog).
+#   El módulo lo lee desde .../releases/latest/download/info.json para que el gestor de módulos ofrezca «Actualizar».
 name: Crear Release
 
 on:
@@ -144,6 +146,41 @@ jobs:
           echo "Contenido del zip:"
           unzip -l "$ZIP_FILE"
 
+      - name: Generar info.json para el aviso de actualizaciones
+        if: steps.version.outputs.skip != 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          # El módulo lee https://github.com/<owner>/<repo>/releases/latest/download/info.json (src/Update/UpdateChecker.php)
+          # y se lo pasa al gestor de módulos con el hook actionListModules. download_url apunta al zip de esta etiqueta y
+          # tiene que terminar en «shopeame.zip»: PrestaShop saca el nombre del módulo del nombre del archivo.
+          PS_MIN=$(grep -m1 -E "'min' => '" shopeame.php | sed -E "s/.*'min' => '([^']+)'.*/\1/")
+          PS_MAX=$(grep -m1 -E "'max' => '" shopeame.php | sed -E "s/.*'max' => '([^']+)'.*/\1/")
+          PHP_MIN=$(jq -r '.require.php // ""' composer.json | sed -E 's/^[^0-9]*//')
+          BASE_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+
+          # Las líneas «- » de las notas de la release, sin el guion
+          sed -n -E 's/^- (.+)$/\1/p' "${RUNNER_TEMP}/notes.md" > "${RUNNER_TEMP}/changelog.txt"
+
+          jq -n \
+            --arg name "Shopeame" \
+            --arg slug "$MODULE_NAME" \
+            --arg version "$VERSION" \
+            --arg download_url "${BASE_URL}/releases/download/v${VERSION}/${MODULE_NAME}.zip" \
+            --arg details_url "${BASE_URL}/releases/tag/v${VERSION}" \
+            --arg homepage "$BASE_URL" \
+            --arg released "$(date -u +%Y-%m-%d)" \
+            --arg ps_min "$PS_MIN" \
+            --arg ps_max "$PS_MAX" \
+            --arg php_min "$PHP_MIN" \
+            --rawfile changelog "${RUNNER_TEMP}/changelog.txt" \
+            '{name: $name, slug: $slug, version: $version, download_url: $download_url, details_url: $details_url,
+              homepage: $homepage, released: $released, ps_min: $ps_min, ps_max: $ps_max, php_min: $php_min,
+              changelog: ($changelog | split("\n") | map(select(length > 0)))}' \
+            > "${RUNNER_TEMP}/info.json"
+          cat "${RUNNER_TEMP}/info.json"
+
       - name: Crear la release en GitHub
         if: steps.version.outputs.skip != 'true'
         env:
@@ -156,7 +193,8 @@ jobs:
             --notes-file "${RUNNER_TEMP}/notes.md" \
             --latest \
             "${RUNNER_TEMP}/${MODULE_NAME}-${VERSION}.zip" \
-            "${RUNNER_TEMP}/${MODULE_NAME}.zip"
+            "${RUNNER_TEMP}/${MODULE_NAME}.zip" \
+            "${RUNNER_TEMP}/info.json"
 
           echo "Release v${VERSION} creada."
           echo "Enlace a la última versión: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/latest/download/${MODULE_NAME}.zip"
