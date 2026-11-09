@@ -1,15 +1,20 @@
-El módulo **Shopeame** se instala como cualquier otro módulo de PrestaShop, desde el catálogo de módulos o subiendo
-el archivo zip descargado de PrestaShop Addons. Funciona en PrestaShop 9.
+El módulo **Shopeame** no está en PrestaShop Addons: se descarga de GitHub y se sube a PrestaShop como un zip. Después,
+el gestor de módulos avisa de sus versiones nuevas como con cualquier otro módulo. Funciona en PrestaShop 9.
 
 ## ⚙️ Antes de empezar
 
 - Entra en el panel de PrestaShop con un empleado que tenga permiso para gestionar módulos.
-- Ten a mano el archivo zip del módulo si lo has descargado de PrestaShop Addons.
 
-## 📥 Instalar el módulo
+## 📥 Descargar el módulo
+
+Descarga **shopeame.zip** de la última versión publicada en
+[github.com/FacturaScripts/shopeame-prestashop/releases/latest](https://github.com/FacturaScripts/shopeame-prestashop/releases/latest)
+(en el apartado **Assets**). No lo descomprimas: PrestaShop lo necesita tal cual.
+
+## 🧩 Instalar el módulo
 
 1. Ve a **Módulos** → **Gestor de módulo**.
-2. Pulsa **Subir un módulo** y arrastra el zip, o búscalo en el catálogo de módulos y pulsa **Instalar**.
+2. Pulsa **Subir un módulo** y arrastra el archivo **shopeame.zip** (o pulsa **selecciona el archivo** y elígelo).
 3. Espera al aviso de que el módulo se ha instalado correctamente.
 
 En **Módulos** → **Gestor de módulo** verás el módulo **Shopeame** (1) con el botón **Configurar** (2), que abre su
@@ -29,6 +34,7 @@ conectar 🎉** y las dos formas de vincularla.
 
 ## Ver también
 
+- [Cómo actualizar el módulo Shopeame en PrestaShop](como-actualizar-el-modulo-shopeame-en-prestashop.md)
 - [Cómo funciona el módulo Shopeame para PrestaShop](como-funciona-shopeame-para-prestashop.md)
 - [Cómo vincular PrestaShop copiando los datos en shopea.me](como-vincular-prestashop-copiando-los-datos-en-shopeame.md)
 - [Cómo vincular PrestaShop con el UUID y el token del ERP](como-vincular-prestashop-con-el-uuid-y-el-token-del-erp.md)

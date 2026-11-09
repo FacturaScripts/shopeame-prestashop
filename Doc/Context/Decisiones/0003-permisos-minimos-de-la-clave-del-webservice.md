@@ -47,7 +47,7 @@ importadores y exportadores de `Lib/PrestaShop`, los crons `MonitorShops` y `Syn
 - **Quitar también `configurations`**: GET sobre ese recurso deja leer toda la configuración, incluida
   `PS_MAIL_PASSWD` y las claves que otros módulos guardan ahí. Evitarlo exige cambiar los dos lados (por ejemplo, que
   el módulo envíe la zona horaria y el idioma por defecto en `register_prestashop` y `check_shop`). Queda pendiente en
-  [4.4](../04-publicacion-en-prestashop-addons.md).
+  [4.3](../04-distribucion-y-actualizaciones.md#43-requisitos-técnicos-que-se-mantienen).
 - **Dejar todos los permisos**: era el riesgo que marcó la revisión y lo más probable es que el revisor de Addons lo
   cuestione.
 

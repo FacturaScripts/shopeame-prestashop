@@ -5,7 +5,8 @@
 | Archivo | Qué hace |
 |---|---|
 | `shopeame.php` | Clase `Shopeame`: datos del módulo, carga de `vendor/autoload.php`, instalación (hooks y pestaña), desinstalación, hooks de pedidos y del menú, y envío de los avisos de pedido |
-| `src/Controller/ConfigController.php` | Pantalla de configuración (Symfony, extiende `PrestaShopAdminController`) y sus acciones: generar la clave del webservice, vincular, comprobar, desvincular y borrar datos. También `serverUrl()`, `webHooksUrl()` y `deleteWebserviceKey()`, que usa la desinstalación |
+| `src/Controller/ConfigController.php` | Pantalla de configuración (Symfony, extiende `PrestaShopAdminController`) y sus acciones: generar la clave del webservice, vincular, comprobar, desvincular, borrar datos, actualizar el módulo y buscar actualizaciones. También `serverUrl()`, `webHooksUrl()` y `deleteWebserviceKey()`, que usa la desinstalación |
+| `src/Update/UpdateChecker.php` | Lee y valida el `info.json` de la última release de GitHub, lo guarda 12 horas y dice si hay una versión nueva compatible (ver [4. Distribución y actualizaciones](04-distribucion-y-actualizaciones.md)) |
 | `src/Form/ConfigForm.php`, `ConfigFormProvider.php`, `ConfigFormManager.php` | Formulario de la opción 2 (UUID y token del ERP). `ConfigFormManager` define además las claves de configuración y `getString()` |
 | `controllers/front/link.php` | Controlador frontal `ShopeameLinkModuleFrontController`, que recibe la vinculación firmada de ShopeameServer |
 | `config/routes.yml`, `config/services.yml` | Rutas de la pantalla (`/shopeame/...`), servicios del formulario (con el traductor inyectado en `ConfigFormManager`) y registro de `ConfigController` como servicio (`autowire` y `autoconfigure`), que PrestaShop 9 no hace solo con los controladores que extienden `PrestaShopAdminController` |
@@ -28,6 +29,8 @@ conectores de Shopify, WooCommerce y PrestaShop.
 | `SHOPEAME_WEBHOOK_TOKEN` | Token del ERP mientras se vincula; después, el de la tienda (32 caracteres alfanuméricos) |
 | `SHOPEAME_API_KEY` | Clave del webservice de PrestaShop creada por el módulo |
 | `SHOPEAME_SHOP_REGISTERED` | Último estado de vinculación conocido; se refresca con `check_shop` cada vez que se abre la pantalla |
+| `SHOPEAME_UPDATE_INFO` | Último `info.json` válido de las releases de GitHub, en JSON (global) |
+| `SHOPEAME_UPDATE_CHECKED` | Hora (timestamp) de la última consulta del `info.json`, haya ido bien o no (global) |
 
 ## 1.3 Hooks, rutas y menú
 
@@ -36,13 +39,15 @@ conectores de Shopify, WooCommerce y PrestaShop.
 | `actionValidateOrder` | Aviso `new_order` |
 | `actionOrderStatusPostUpdate`, `actionOrderEdited` | Aviso `update_order` |
 | `actionAdminControllerSetMedia` | Carga `views/css/menu.css` en todo el back-office (logo del menú) |
+| `actionListModules` | Anuncia al gestor de módulos la versión nueva de GitHub, con su zip y su changelog |
 
 - La pestaña `Shopeame` cuelga de **Configurar** (`CONFIGURE`) y tiene `route_name = shopeame_config_form`: sin él,
   PrestaShop enlazaría la primera ruta con `_legacy_link` «Shopeame», que antes era la de generar la clave.
 - `getContent()` (botón **Configurar** del gestor de módulos) redirige a esa misma ruta.
 - Las rutas de `routes.yml` llevan el `_token` del back-office en la URL, que protege de CSRF también las de tipo GET
   (generar clave, vincular, comprobar). Desvincular y borrar datos son POST con su propio token CSRF
-  (`shopeame_shop_actions`).
+  (`shopeame_shop_actions`). **Actualizar ahora** (`shopeame_update_module`) es POST con el token
+  `shopeame_update`; **Buscar actualizaciones** (`shopeame_check_updates`) es GET.
 
 ## 1.4 Autoload
 

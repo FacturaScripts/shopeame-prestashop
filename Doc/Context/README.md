@@ -15,7 +15,7 @@ en el mismo trabajo que cambia el código.
 | [1. Arquitectura](01-arquitectura.md) | Archivos del módulo, configuración guardada, hooks, rutas, menú y relación con ShopeameServer |
 | [2. Vinculación con shopea.me](02-vinculacion.md) | La clave del webservice, las dos formas de vincular, el controlador firmado con HMAC, desvincular y borrar datos |
 | [3. Pedidos](03-pedidos.md) | Qué se envía al crear o modificar un pedido, qué hace el servidor y dónde quedan los errores |
-| [4. Publicación en PrestaShop Addons](04-publicacion-en-prestashop-addons.md) | Requisitos de la validación técnica que se cumplen, zip, release de GitHub con enlace fijo a la última versión, licencia, lo que queda por revisar al enviar, lo que aprendimos de cada pasada del Validator y los PDF y las imágenes de la ficha |
+| [4. Distribución y actualizaciones](04-distribucion-y-actualizaciones.md) | Descarga desde GitHub, cómo el gestor de módulos ofrece las versiones nuevas (`actionListModules` e `info.json`), zip y release, requisitos técnicos que se mantienen, lo aprendido del Validator y el material de la ficha de Addons, ya borrado |
 
 ## Decisiones
 
@@ -27,3 +27,4 @@ en el mismo trabajo que cambia el código.
 | [0004. Primera versión pública: 1.0.0](Decisiones/0004-primera-version-publica-1-0-0.md) | 03/11/2026 | Como nadie tenía instalado el módulo, la primera versión que se publica es la 1.0.0 y se quitan los upgrades de las versiones internas |
 | [0005. Solo PrestaShop 9](Decisiones/0005-solo-prestashop-9.md) | 03/11/2026 | Por el reporte del Validator, `ConfigController` pasa a `PrestaShopAdminController` sin `Context`, el mínimo sube a PrestaShop 9.0 y PHP 8.1, y se añaden el `.htaccess` y las cabeceras de licencia que faltaban |
 | [0006. Estándar de código de PrestaShop](Decisiones/0006-estandar-de-codigo-de-prestashop.md) | 03/11/2026 | Los PHP siguen php-cs-fixer con las reglas de `prestashop/php-dev-tools` salvo `blank_line_after_opening_tag`, porque el Validator exige la cabecera de licencia justo después de `<?php` |
+| [0007. Distribución desde GitHub con actualizaciones en el gestor de módulos](Decisiones/0007-distribucion-desde-github-con-actualizaciones.md) | 09/11/2026 | No se publica en Addons: hook `actionListModules` con el `info.json` de cada release para que el gestor de módulos ofrezca **Actualizar**, y aviso con **Actualizar ahora** en la pantalla de Shopeame |
