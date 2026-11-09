@@ -1,4 +1,4 @@
-# 0007. Facturas de los pedidos bajo demanda a través de shopea.me
+# 0008. Facturas de los pedidos bajo demanda a través de shopea.me
 
 - **Fecha**: 05/11/2026
 - **Aprobada por**: el usuario, al elegir para el plugin de WooCommerce la opción «bajo demanda» («Me gusta la opción A y

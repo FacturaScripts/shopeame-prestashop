@@ -3,8 +3,8 @@
 El módulo permite descargar las facturas que el ERP ha generado para cada pedido: al comercio, desde el listado y la
 ficha de los pedidos del back-office, y al cliente, desde Mi cuenta (si el ajuste `SHOPEAME_CUSTOMER_INVOICES` está
 activado). Es la misma función que el plugin de WooCommerce, con los mismos eventos de ShopeameServer. Por qué se hace
-así: [decisión 0007](Decisiones/0007-facturas-bajo-demanda-a-traves-de-shopeame.md). Por qué la ficha y la configuración dicen «Facturas
-del ERP» y el listado, «Facturas»: [decisión 0008](Decisiones/0008-facturas-del-erp-frente-a-las-facturas-de-prestashop.md).
+así: [decisión 0008](Decisiones/0008-facturas-bajo-demanda-a-traves-de-shopeame.md). Por qué la ficha y la configuración dicen «Facturas
+del ERP» y el listado, «Facturas»: [decisión 0009](Decisiones/0009-facturas-del-erp-frente-a-las-facturas-de-prestashop.md).
 
 ## 5.1 Recorrido
 

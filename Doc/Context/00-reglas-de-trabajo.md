@@ -4,7 +4,8 @@
 
 Cada tarea se contrasta antes con la documentación oficial de PrestaShop (https://devdocs.prestashop-project.org), no
 con la memoria: creación de módulos, buenas prácticas, hooks, traducciones, webservice y la lista de comprobación de la
-validación técnica de Addons (solo existe en la sección 1.7: `modules/sell/techvalidation-checklist`). Si la
+validación técnica de Addons, que el módulo mantiene como buenas prácticas aunque no se publique allí (solo existe en
+la sección 1.7: `modules/sell/techvalidation-checklist`). Si la
 documentación no aclara algo, se mira el código de PrestaShop de la instalación local (`/Applications/ServBay/www/prestashop`)
 o de un módulo oficial que haga lo mismo.
 
@@ -56,7 +57,9 @@ El módulo es compatible con PrestaShop 9.0 o superior y PHP 8.1 o superior (`ps
 Una versión nueva cambia `$this->version` en `shopeame.php` (siempre tres números). Si registra hooks nuevos, cambia
 pestañas, migra configuración o cambia los permisos de la clave del webservice, lleva su
 `upgrade/upgrade-X.Y.Z.php`, que PrestaShop ejecuta una vez cuando la versión instalada es menor. Para aplicarlo en
-local: `php bin/console prestashop:module upgrade shopeame`.
+local: `php bin/console prestashop:module upgrade shopeame`. La versión se publica con la acción **Crear Release**,
+que adjunta el `info.json` con el que las tiendas ven la actualización (ver
+[4. Distribución y actualizaciones](04-distribucion-y-actualizaciones.md)).
 
 ## 0.5 Entorno local
 
@@ -74,11 +77,17 @@ local: `php bin/console prestashop:module upgrade shopeame`.
 ## 0.6 Antes de dar un cambio por terminado
 
 1. `php -l` de los archivos tocados y el estándar de PrestaShop sin nada que corregir (ver 0.2).
-2. Probar con el modo debug activado (`_PS_MODE_DEV_` en `config/defines.inc.php`): los revisores de Addons lo usan
-   siempre y cualquier aviso es motivo de rechazo. En `var/logs/dev-*.log` no debe aparecer nada de
+2. Probar con el modo debug activado (`_PS_MODE_DEV_` en `config/defines.inc.php`): cualquier aviso de PHP es un
+   error que corregir (los revisores de Addons lo rechazaban). En `var/logs/dev-*.log` no debe aparecer nada de
    `modules/shopeame`.
 3. Si el cambio toca la vinculación o los pedidos, la prueba de extremo a extremo contra shopea.localhost en los dos
    sentidos (desde PrestaShop con el UUID y el token del ERP, y desde la pantalla «conectar tienda» de shopea con la
    URL y la clave del webservice), más desvincular, borrar datos y desinstalar.
-4. Pasar el zip de `build.sh` por el Validator de PrestaShop (https://validator.prestashop.com).
-5. Actualizar `Doc/Context`, las páginas de `Doc/User` o `Doc/Dev` afectadas y el XLIFF si cambian textos.
+4. Si el cambio toca las actualizaciones, la prueba con una versión mayor servida en local: `info.json` y
+   `shopeame.zip` en una carpeta de una web local y `define('SHOPEAME_UPDATE_INFO_URL', '<url del info.json>');` en
+   `config/defines_custom.inc.php` (ver la
+   [página de desarrollo](../Dev/como-desarrollar-y-publicar-shopeame-para-prestashop.md)). Al terminar se quita la
+   constante, se vuelve a copiar el módulo del repositorio, se devuelve la versión de la tabla `module` y se borran
+   `SHOPEAME_UPDATE_INFO` y `SHOPEAME_UPDATE_CHECKED`.
+5. Opcional: pasar el zip de `build.sh` por el Validator de PrestaShop (https://validator.prestashop.com).
+6. Actualizar `Doc/Context`, las páginas de `Doc/User` o `Doc/Dev` afectadas y el XLIFF si cambian textos.

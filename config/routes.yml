@@ -77,3 +77,19 @@ shopeame_order_invoice_pdf:
   defaults:
     _controller: 'PrestaShop\Module\Shopeame\Controller\InvoiceController::download'
     _legacy_controller: AdminOrders
+
+shopeame_update_module:
+  path: /shopeame/update
+  methods: [POST]
+  defaults:
+    _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::updateModule'
+    _legacy_controller: Shopeame
+    _legacy_link: Shopeame
+
+shopeame_check_updates:
+  path: /shopeame/check-updates
+  methods: [GET]
+  defaults:
+    _controller: 'PrestaShop\Module\Shopeame\Controller\ConfigController::checkUpdates'
+    _legacy_controller: Shopeame
+    _legacy_link: Shopeame

@@ -48,6 +48,12 @@ final class ConfigFormManager implements DataConfigurationInterface
     /** Si los clientes pueden descargar desde Mi cuenta las facturas del ERP de sus pedidos ('1' o '0'). */
     public const CUSTOMER_INVOICES_KEY = 'SHOPEAME_CUSTOMER_INVOICES';
 
+    /** Último info.json leído de las releases de GitHub, en JSON (ver UpdateChecker). */
+    public const UPDATE_INFO_KEY = 'SHOPEAME_UPDATE_INFO';
+
+    /** Momento (timestamp) de la última consulta del info.json, haya ido bien o no. */
+    public const UPDATE_CHECKED_KEY = 'SHOPEAME_UPDATE_CHECKED';
+
     /** Todas las claves de configuración del módulo (se borran al desinstalar). */
     public const CONFIG_KEYS = [
         self::UUID_KEY,
@@ -55,6 +61,8 @@ final class ConfigFormManager implements DataConfigurationInterface
         self::API_KEY,
         self::SHOP_REGISTERED_KEY,
         self::CUSTOMER_INVOICES_KEY,
+        self::UPDATE_INFO_KEY,
+        self::UPDATE_CHECKED_KEY,
     ];
 
     /** Longitud de los UUID de shopea.me. */

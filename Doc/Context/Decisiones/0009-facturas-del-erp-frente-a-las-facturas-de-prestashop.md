@@ -1,4 +1,4 @@
-# 0008. «Facturas del ERP» frente a las facturas de PrestaShop
+# 0009. «Facturas del ERP» frente a las facturas de PrestaShop
 
 - **Fecha**: 05/11/2026
 - **Aprobada por**: el usuario. La tarea pedía decidir con criterio el texto para que el comercio no confunda las

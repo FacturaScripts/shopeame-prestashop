@@ -2,6 +2,8 @@
 
 - **Fecha**: 03/11/2026
 - **Aprobada por**: el usuario, al pedir revisar el módulo para publicarlo en PrestaShop Addons sin rechazos.
+- **Estado**: el módulo ya no se publica en Addons ([decisión 0007](0007-distribucion-desde-github-con-actualizaciones.md)),
+  pero lo de esta decisión se mantiene como buena práctica.
 
 ## Contexto
 
@@ -41,8 +43,8 @@ eran compatibles con PHP 7 (tipo de retorno `false|array`).
   funciona hasta PrestaShop 10. Se revisará cuando se deje de dar soporte a PrestaShop 8. (La
   [decisión 0005](0005-solo-prestashop-9.md) lo cambió: el Validator lo marca como error y el módulo pasó a pedir
   PrestaShop 9.)
-- **Traducir también los comentarios al inglés**: la regla del equipo es comentar en español. Queda como riesgo
-  anotado en [4.4](../04-publicacion-en-prestashop-addons.md).
+- **Traducir también los comentarios al inglés**: la regla del equipo es comentar en español. Quedó como riesgo para
+  la revisión de Addons, que ya no se hace (ver [decisión 0007](0007-distribucion-desde-github-con-actualizaciones.md)).
 - **Limitar los permisos de la clave del webservice**: ShopeameServer escribe en varios recursos y no hay una lista
   cerrada; limitarlos sin probar toda la sincronización podía romperla. Queda anotado en 4.4. Se resolvió en la
   [decisión 0003](0003-permisos-minimos-de-la-clave-del-webservice.md).

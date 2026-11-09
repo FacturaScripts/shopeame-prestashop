@@ -54,7 +54,7 @@ Probado en PrestaShop 9.1.4 con PHP 8.5: el contenedor registra `ConfigControlle
 `controller.service_arguments`, la pantalla de configuración se abre con la URL de la tienda correcta y el formulario
 muestra traducidos los errores de validación. Ya no aparece en el log el aviso de obsolescencia de `get()`. El
 Validator dejó de dar estos errores en la segunda pasada (ver
-[4.5](../04-publicacion-en-prestashop-addons.md#45-lo-que-aprendimos-del-validator)).
+[4.4](../04-distribucion-y-actualizaciones.md#44-lo-que-aprendimos-del-validator)).
 
 Prueba de extremo a extremo contra shopea.localhost con el código final, ya en verde en el Validator (03/11/2026, modo
 debug activado):

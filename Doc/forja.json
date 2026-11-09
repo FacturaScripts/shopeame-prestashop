@@ -23,6 +23,17 @@
             "keywords": "instalar, módulo, shopeame, prestashop, gestor de módulos, subir un módulo, menú configurar",
             "visibility": true
         },
+        "como-actualizar-el-modulo-shopeame-en-prestashop.md": {
+            "title": "Cómo actualizar el módulo Shopeame en PrestaShop",
+            "title_short": "Actualizar Shopeame en PrestaShop",
+            "permalink": "como-actualizar-el-modulo-shopeame-en-prestashop",
+            "parent": "como-funciona-shopeame-para-prestashop.md",
+            "ordernum": 25,
+            "icon": "fa-solid fa-rotate",
+            "color": "info",
+            "keywords": "actualizar, versión nueva, gestor de módulos, actualizaciones, buscar actualizaciones, módulo, shopeame, prestashop",
+            "visibility": true
+        },
         "como-vincular-prestashop-copiando-los-datos-en-shopeame.md": {
             "title": "Cómo vincular PrestaShop copiando los datos en shopea.me",
             "title_short": "Vincular PrestaShop copiando los datos",
@@ -111,7 +122,7 @@
             "ordernum": 30,
             "icon": "fa-solid fa-screwdriver-wrench",
             "color": "dark",
-            "keywords": "desarrollo, pruebas, shopeame_server_url, traducciones, xliff, prestashop addons, validator, publicar versión, zip",
+            "keywords": "desarrollo, pruebas, shopeame_server_url, shopeame_update_info_url, traducciones, xliff, release, info.json, actionlistmodules, publicar versión, zip",
             "visibility": true
         }
     }
