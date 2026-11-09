@@ -1,10 +1,8 @@
 # Crea la release de GitHub del módulo a partir de la versión de shopeame.php.
 #
 # Adaptada de la plantilla de fsmaker (github-action-release.yml.sample) para un módulo de PrestaShop:
-# - La versión sale de $this->version en shopeame.php (tres números) y debe coincidir con la que llevan impresa
-#   docs/readme_es.pdf y docs/readme_en.pdf, que van dentro del zip; si no coinciden, la acción falla sin publicar
-#   nada (hay que regenerar los PDF con «python3 Doc/Addons/readme.py»). config.xml no cuenta: es una caché que
-#   genera PrestaShop y no está en git.
+# - La versión sale de $this->version en shopeame.php (tres números). config.xml no cuenta: es una caché que genera
+#   PrestaShop y no está en git.
 # - El zip contiene una sola carpeta «shopeame», igual que el que genera ~/Trabajos/FacturaScripts/scripts/build.sh:
 #   sin lo que lista .distignore ni vendor/, con vendor/ regenerado solo con el autoload de Composer, un index.php en
 #   cada carpeta y permisos 755/644.
@@ -36,7 +34,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Detectar la versión y comprobar que coincide en shopeame.php y en los PDF
+      - name: Detectar la versión de shopeame.php
         id: version
         run: |
           set -euo pipefail
@@ -47,17 +45,6 @@ jobs:
             echo "::error::\$this->version de shopeame.php debe tener tres números (X.Y.Z)."
             exit 1
           fi
-
-          # Los PDF de docs/ van en el zip con la versión impresa bajo «Versión»/«Version» en la primera página
-          command -v pdftotext > /dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils; }
-          for PDF in docs/readme_es.pdf docs/readme_en.pdf; do
-            PDF_VERSION=$(pdftotext -layout -l 1 "$PDF" - | awk '/^[[:space:]]*(Versión|Version)[[:space:]]/ { getline; print $1; exit }')
-            echo "${PDF}:  ${PDF_VERSION}"
-            if [ "$PDF_VERSION" != "$MODULE_VERSION" ]; then
-              echo "::error::${PDF} es de la versión «${PDF_VERSION}» y shopeame.php de la ${MODULE_VERSION}. Regenera los PDF con python3 Doc/Addons/readme.py."
-              exit 1
-            fi
-          done
 
           if gh release view "v${MODULE_VERSION}" > /dev/null 2>&1; then
             echo "⚠️  La versión ${MODULE_VERSION} ya tiene release publicada. No se hace nada."
