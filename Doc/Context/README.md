@@ -16,6 +16,7 @@ en el mismo trabajo que cambia el código.
 | [2. Vinculación con shopea.me](02-vinculacion.md) | La clave del webservice, las dos formas de vincular, el controlador firmado con HMAC, desvincular y borrar datos |
 | [3. Pedidos](03-pedidos.md) | Qué se envía al crear o modificar un pedido, qué hace el servidor y dónde quedan los errores |
 | [4. Distribución y actualizaciones](04-distribucion-y-actualizaciones.md) | Descarga desde GitHub, cómo el gestor de módulos ofrece las versiones nuevas (`actionListModules` e `info.json`), zip y release, requisitos técnicos que se mantienen, lo aprendido del Validator y el material de la ficha de Addons, ya borrado |
+| [5. Facturas del ERP](05-facturas.md) | Descarga bajo demanda de las facturas del ERP de cada pedido en el back-office y en Mi cuenta: recorrido, hooks, seguridad, ajuste y errores |
 
 ## Decisiones
 
@@ -28,3 +29,5 @@ en el mismo trabajo que cambia el código.
 | [0005. Solo PrestaShop 9](Decisiones/0005-solo-prestashop-9.md) | 03/11/2026 | Por el reporte del Validator, `ConfigController` pasa a `PrestaShopAdminController` sin `Context`, el mínimo sube a PrestaShop 9.0 y PHP 8.1, y se añaden el `.htaccess` y las cabeceras de licencia que faltaban |
 | [0006. Estándar de código de PrestaShop](Decisiones/0006-estandar-de-codigo-de-prestashop.md) | 03/11/2026 | Los PHP siguen php-cs-fixer con las reglas de `prestashop/php-dev-tools` salvo `blank_line_after_opening_tag`, porque el Validator exige la cabecera de licencia justo después de `<?php` |
 | [0007. Distribución desde GitHub con actualizaciones en el gestor de módulos](Decisiones/0007-distribucion-desde-github-con-actualizaciones.md) | 09/11/2026 | No se publica en Addons: hook `actionListModules` con el `info.json` de cada release para que el gestor de módulos ofrezca **Actualizar**, y aviso con **Actualizar ahora** en la pantalla de Shopeame |
+| [0008. Facturas bajo demanda a través de shopea.me](Decisiones/0008-facturas-bajo-demanda-a-traves-de-shopeame.md) | 05/11/2026 | Las facturas del ERP se piden a shopea.me al pulsar el botón o abrir la ficha y cada PDF se reenvía sin guardarlo; en Mi cuenta solo las del cliente y con un ajuste para desactivarlo |
+| [0009. «Facturas del ERP» frente a las de PrestaShop](Decisiones/0009-facturas-del-erp-frente-a-las-facturas-de-prestashop.md) | 05/11/2026 | La ficha del pedido y la configuración dicen «Facturas del ERP» para no confundirlas con las facturas nativas; el listado de pedidos y Mi cuenta, «Facturas» |

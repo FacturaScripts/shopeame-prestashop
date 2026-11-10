@@ -83,15 +83,17 @@ se publica allí):
 | Estándar de código de PrestaShop (sección «Standards» del Validator) | php-cs-fixer con la configuración de `prestashop/php-dev-tools` salvo `blank_line_after_opening_tag`, sin nada que corregir (ver [0.2](00-reglas-de-trabajo.md)) |
 | Claves de configuración con el prefijo del módulo | `SHOPEAME_*` |
 | Sin tocar tablas del núcleo ni otros módulos | Solo `Configuration`, `Tab` y `WebserviceKey` mediante sus clases |
-| Textos en inglés y traducibles | Dominio `Modules.Shopeame.Admin` y XLIFF en español (ver [0.3](00-reglas-de-trabajo.md)) |
+| Textos en inglés y traducibles | Dominios `Modules.Shopeame.Admin` (back-office) y `Modules.Shopeame.Shop` (Mi cuenta) con su XLIFF en español (ver [0.3](00-reglas-de-trabajo.md)) |
 | Sin funciones prohibidas (`serialize`, `eval`), depuración ni código comentado | Revisado |
 | Llamadas externas autenticadas | El controlador `link` exige firma HMAC con la clave del webservice y caducidad de 300 s |
+| Controladores con permisos y CSRF | Las rutas de facturas del back-office exigen lectura sobre `AdminOrders` (`#[AdminSecurity]`) y el `_token` del empleado; el controlador frontal `invoices` exige cliente con sesión (`$auth`), su token (`Tools::getToken(false)`) y que el pedido sea suyo (ver [5. Facturas](05-facturas.md)) |
+| Sin datos personales guardados de más | Las facturas del ERP no se guardan en la tienda: el PDF se reenvía al navegador |
 | Sin desactivar TLS | Se quitó `SHOPEAME_DEV`, que ponía `verify_peer => false` |
 | Composer con `prepend-autoloader: false` y `vendor/` sin dependencias de desarrollo | `composer.json`; `build.sh` ejecuta `composer dump-autoload -o --no-dev` |
 | Nada descargado tras la instalación | Todo va en el zip. Lo único que se descarga es el `info.json` de GitHub y, cuando un empleado actualiza, el zip de la release, que instala el propio `ModuleManager` |
 | `logo.png` de 32 × 32 | Sí |
 | Sin avisos en modo debug | Probado en PrestaShop 9.1.4 con PHP 8.5 (sin el aviso de obsolescencia de `get()` que dejaba `FrameworkBundleAdminController`) |
-| Desinstalación limpia (recomendado) | Borra la configuración, la clave del webservice y la pestaña |
+| Desinstalación limpia (recomendado) | Borra la configuración (también `SHOPEAME_CUSTOMER_INVOICES`), la clave del webservice y la pestaña |
 | Clave del webservice con los permisos justos | 18 recursos y solo los métodos que usa ShopeameServer, sin `DELETE` ni `PATCH` (ver [decisión 0003](Decisiones/0003-permisos-minimos-de-la-clave-del-webservice.md)) |
 
 Pendiente, aunque ya no lo vaya a revisar Addons:

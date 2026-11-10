@@ -4,16 +4,21 @@
 
 | Archivo | Qué hace |
 |---|---|
-| `shopeame.php` | Clase `Shopeame`: datos del módulo, carga de `vendor/autoload.php`, instalación (hooks y pestaña), desinstalación, hooks de pedidos y del menú, y envío de los avisos de pedido |
-| `src/Controller/ConfigController.php` | Pantalla de configuración (Symfony, extiende `PrestaShopAdminController`) y sus acciones: generar la clave del webservice, vincular, comprobar, desvincular, borrar datos, actualizar el módulo y buscar actualizaciones. También `serverUrl()`, `webHooksUrl()` y `deleteWebserviceKey()`, que usa la desinstalación |
+| `shopeame.php` | Clase `Shopeame`: datos del módulo, carga de `vendor/autoload.php`, instalación (hooks, pestaña y ajuste de facturas), desinstalación, hooks de pedidos, del menú, de las facturas del ERP y de las actualizaciones, y envío de los avisos de pedido |
+| `src/Controller/ConfigController.php` | Pantalla de configuración (Symfony, extiende `PrestaShopAdminController`) y sus acciones: generar la clave del webservice, vincular, comprobar, desvincular, borrar datos, guardar el ajuste de facturas, actualizar el módulo y buscar actualizaciones. También `serverUrl()`, `webHooksUrl()` y `deleteWebserviceKey()`, que usa la desinstalación |
+| `src/Controller/InvoiceController.php` | Facturas del ERP en el back-office: lista en JSON y descarga del PDF (rutas `shopeame_order_invoices` y `shopeame_order_invoice_pdf`, ver [5. Facturas](05-facturas.md)) |
+| `src/Invoice/InvoiceService.php` | Peticiones `order_invoices` e `invoice_pdf` a shopea.me, mensajes de error, registro y ajuste de Mi cuenta |
 | `src/Update/UpdateChecker.php` | Lee y valida el `info.json` de la última release de GitHub, lo guarda 12 horas y dice si hay una versión nueva compatible (ver [4. Distribución y actualizaciones](04-distribucion-y-actualizaciones.md)) |
 | `src/Form/ConfigForm.php`, `ConfigFormProvider.php`, `ConfigFormManager.php` | Formulario de la opción 2 (UUID y token del ERP). `ConfigFormManager` define además las claves de configuración y `getString()` |
 | `controllers/front/link.php` | Controlador frontal `ShopeameLinkModuleFrontController`, que recibe la vinculación firmada de ShopeameServer |
+| `controllers/front/invoices.php` | Controlador frontal `ShopeameInvoicesModuleFrontController`: facturas del ERP de los pedidos del cliente en Mi cuenta |
 | `config/routes.yml`, `config/services.yml` | Rutas de la pantalla (`/shopeame/...`), servicios del formulario (con el traductor inyectado en `ConfigFormManager`) y registro de `ConfigController` como servicio (`autowire` y `autoconfigure`), que PrestaShop 9 no hace solo con los controladores que extienden `PrestaShopAdminController` |
 | `views/templates/admin/form.html.twig` | Plantilla de la pantalla |
 | `views/css/admin.css`, `views/js/admin.js` | Estilos de la pantalla, botones «Copiar» y confirmaciones |
+| `views/css/invoices.css`, `views/js/invoices.js` | Desplegable y lista de las facturas del ERP, en el back-office y en Mi cuenta |
+| `views/templates/hook/*.tpl` | Cuadro de la ficha del pedido (`admin_order_invoices.tpl`) y sección del detalle del pedido en Mi cuenta (`order_detail_invoices.tpl`) |
 | `views/css/menu.css`, `views/img/menu-icon.svg` | Logo de Shopeame en el menú lateral y en la miga de pan (ver [decisión 0002](Decisiones/0002-logo-en-el-menu-lateral.md)) |
-| `translations/es-ES/ModulesShopeameAdmin.es-ES.xlf` | Traducción al español |
+| `translations/es-ES/ModulesShopeameAdmin.es-ES.xlf`, `ModulesShopeameShop.es-ES.xlf` | Traducción al español del back-office y de Mi cuenta |
 | `upgrade/upgrade-*.php` | Actualizaciones entre versiones; la 1.0.0 no tiene ninguna (ver [decisión 0004](Decisiones/0004-primera-version-publica-1-0-0.md)) |
 | `logo.png` | Icono de 32 × 32 del gestor de módulos |
 | `.htaccess` | Impide listar la carpeta del módulo y abrir sus PHP directamente (lo exige el Validator); `deploy.sh` no lo copia a la tienda local porque excluye los archivos ocultos, pero `build.sh` sí lo mete en el zip |
@@ -29,6 +34,7 @@ conectores de Shopify, WooCommerce y PrestaShop.
 | `SHOPEAME_WEBHOOK_TOKEN` | Token del ERP mientras se vincula; después, el de la tienda (32 caracteres alfanuméricos) |
 | `SHOPEAME_API_KEY` | Clave del webservice de PrestaShop creada por el módulo |
 | `SHOPEAME_SHOP_REGISTERED` | Último estado de vinculación conocido; se refresca con `check_shop` cada vez que se abre la pantalla |
+| `SHOPEAME_CUSTOMER_INVOICES` | `'1'` si los clientes pueden descargar las facturas del ERP de sus pedidos desde Mi cuenta (por defecto) o `'0'` |
 | `SHOPEAME_UPDATE_INFO` | Último `info.json` válido de las releases de GitHub, en JSON (global) |
 | `SHOPEAME_UPDATE_CHECKED` | Hora (timestamp) de la última consulta del `info.json`, haya ido bien o no (global) |
 
@@ -38,7 +44,10 @@ conectores de Shopify, WooCommerce y PrestaShop.
 |---|---|
 | `actionValidateOrder` | Aviso `new_order` |
 | `actionOrderStatusPostUpdate`, `actionOrderEdited` | Aviso `update_order` |
-| `actionAdminControllerSetMedia` | Carga `views/css/menu.css` en todo el back-office (logo del menú) |
+| `actionAdminControllerSetMedia` | Carga `views/css/menu.css` en todo el back-office (logo del menú) y, en `AdminOrders`, el script y los estilos de las facturas |
+| `actionOrderGridDefinitionModifier`, `actionOrderGridDataModifier` | Columna **Facturas** (las del ERP) del listado de pedidos |
+| `displayAdminOrderSide` | Cuadro **Facturas del ERP** de la ficha del pedido |
+| `displayOrderDetail`, `actionFrontControllerSetMedia` | Sección y botón **Facturas** de Mi cuenta |
 | `actionListModules` | Anuncia al gestor de módulos la versión nueva de GitHub, con su zip y su changelog |
 
 - La pestaña `Shopeame` cuelga de **Configurar** (`CONFIGURE`) y tiene `route_name = shopeame_config_form`: sin él,
@@ -46,8 +55,11 @@ conectores de Shopify, WooCommerce y PrestaShop.
 - `getContent()` (botón **Configurar** del gestor de módulos) redirige a esa misma ruta.
 - Las rutas de `routes.yml` llevan el `_token` del back-office en la URL, que protege de CSRF también las de tipo GET
   (generar clave, vincular, comprobar). Desvincular y borrar datos son POST con su propio token CSRF
-  (`shopeame_shop_actions`). **Actualizar ahora** (`shopeame_update_module`) es POST con el token
-  `shopeame_update`; **Buscar actualizaciones** (`shopeame_check_updates`) es GET.
+  (`shopeame_shop_actions`), igual que guardar el ajuste de facturas (`shopeame_invoice_settings`). **Actualizar
+  ahora** (`shopeame_update_module`) es POST con el token `shopeame_update`; **Buscar actualizaciones**
+  (`shopeame_check_updates`) es GET.
+- Las rutas de las facturas (`shopeame_order_invoices`, `shopeame_order_invoice_pdf`) llevan `_legacy_controller:
+  AdminOrders` y `#[AdminSecurity]` de lectura: dependen del permiso sobre los pedidos, no del de la pestaña Shopeame.
 
 ## 1.4 Autoload
 
@@ -61,7 +73,7 @@ el aviso de pedidos falla en esos contextos con «Class ConfigFormManager not fo
 El servidor es el plugin ShopeameServer de FacturaScripts (`../facturascripts/Plugins/ShopeameServer`):
 
 - `Controller/WebHooks.php` recibe en `POST /WebHooks` los eventos del módulo: `register_prestashop` (autenticado con
-  el UUID y el token del ERP), `check_shop`, `unlink_shop`, `new_order` y `update_order` (autenticados con el UUID y el
+  el UUID y el token del ERP), `check_shop`, `unlink_shop`, `new_order`, `update_order`, `order_invoices` e `invoice_pdf` (autenticados con el UUID y el
   token de la tienda).
 - `Controller/ConnectShop.php` es la pantalla «conectar tienda» de shopea (`/conectar-tienda/<uuid del ERP>`), donde el
   usuario pega la URL y la clave del webservice.

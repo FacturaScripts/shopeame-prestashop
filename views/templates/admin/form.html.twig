@@ -96,6 +96,24 @@
 
       {{ block('session_alert') }}
 
+      {# ----- Facturas del ERP: las que genera el ERP, no las facturas nativas de PrestaShop ----- #}
+      <div class="card shopeame-section">
+        <div class="card-body">
+          <h3 class="shopeame-section-title">{{ 'ERP invoices'|trans }}</h3>
+          <p>{{ 'The orders list and each order show the invoices that your ERP has generated for the order, downloaded through shopea.me. They are not the PrestaShop invoices.'|trans }}</p>
+          <form method="post" action="{{ path('shopeame_save_invoice_settings') }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('shopeame_invoice_settings') }}">
+            <div class="form-check shopeame-stack">
+              <input type="checkbox" class="form-check-input" id="shopeame-customer-invoices" name="customer_invoices" value="1"{% if customerInvoices %} checked{% endif %}>
+              <label class="form-check-label" for="shopeame-customer-invoices">
+                {{ 'Allow customers to download the invoices of their orders from My account'|trans }}
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary">{{ 'Save'|trans }}</button>
+          </form>
+        </div>
+      </div>
+
       <div class="card shopeame-section">
         <div class="card-body">
           <h3 class="shopeame-section-title">{{ 'Actions'|trans }}</h3>

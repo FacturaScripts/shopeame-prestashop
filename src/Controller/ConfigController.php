@@ -23,6 +23,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use PrestaShop\Module\Shopeame\Form\ConfigFormManager;
+use PrestaShop\Module\Shopeame\Invoice\InvoiceService;
 use PrestaShop\Module\Shopeame\Update\UpdateChecker;
 use PrestaShop\PrestaShop\Core\Form\FormHandlerInterface;
 use PrestaShop\PrestaShop\Core\Module\ModuleManager;
@@ -35,7 +36,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controlador de la página de configuración del módulo Shopeame: vinculación con shopea.me,
- * clave del webservice, comprobación de la conexión y desvinculación.
+ * clave del webservice, comprobación de la conexión, desvinculación y el ajuste de las facturas
+ * del ERP en Mi cuenta.
  *
  * Extiende PrestaShopAdminController (PrestaShop 9): se registra como servicio en
  * config/services.yml y recibe los servicios como argumentos de cada acción, sin usar Context.
@@ -208,6 +210,7 @@ class ConfigController extends PrestaShopAdminController
             'shopLinkUrl' => self::serverUrl() . '/shop-link/' . rawurlencode($uuid),
             'enableGenerateApiKeyButton' => $apiKey === '',
             'registeredShop' => $registeredShop,
+            'customerInvoices' => InvoiceService::customerSettingEnabled(),
             'moduleVersion' => $this->moduleVersion(),
             // reutiliza la última consulta guardada: solo pregunta a GitHub si han pasado 12 horas
             // (UpdateChecker::CACHE_TTL), con un tope de 8 segundos
@@ -359,6 +362,30 @@ class ConfigController extends PrestaShopAdminController
 
         $this->clearLinkData();
         $this->addFlash('success', $this->trans('The connection data saved in this module was deleted without changing shopea.me.', [], self::DOMAIN));
+
+        return $this->redirectToRoute('shopeame_config_form');
+    }
+
+    /**
+     * Guarda el ajuste «Permitir que los clientes descarguen las facturas de sus pedidos desde Mi
+     * cuenta» (sección «Facturas del ERP» de la configuración).
+     *
+     * @param Request $request petición con el token CSRF del formulario y la casilla
+     *
+     * @return RedirectResponse
+     */
+    public function saveInvoiceSettings(Request $request): RedirectResponse
+    {
+        if (!$this->isCsrfTokenValid('shopeame_invoice_settings', (string) $request->request->get('_token'))) {
+            $this->addFlash('error', $this->trans('The request is not valid. Please try again.', [], self::DOMAIN));
+
+            return $this->redirectToRoute('shopeame_config_form');
+        }
+
+        // una casilla desmarcada no se envía: sin valor, el ajuste queda desactivado
+        $enabled = $request->request->getBoolean('customer_invoices');
+        \Configuration::updateValue(ConfigFormManager::CUSTOMER_INVOICES_KEY, $enabled ? '1' : '0');
+        $this->addFlash('success', $this->trans('Settings saved.', [], self::DOMAIN));
 
         return $this->redirectToRoute('shopeame_config_form');
     }

@@ -45,6 +45,9 @@ final class ConfigFormManager implements DataConfigurationInterface
     /** Último estado de vinculación conocido (se refresca al abrir la configuración). */
     public const SHOP_REGISTERED_KEY = 'SHOPEAME_SHOP_REGISTERED';
 
+    /** Si los clientes pueden descargar desde Mi cuenta las facturas del ERP de sus pedidos ('1' o '0'). */
+    public const CUSTOMER_INVOICES_KEY = 'SHOPEAME_CUSTOMER_INVOICES';
+
     /** Último info.json leído de las releases de GitHub, en JSON (ver UpdateChecker). */
     public const UPDATE_INFO_KEY = 'SHOPEAME_UPDATE_INFO';
 
@@ -57,6 +60,7 @@ final class ConfigFormManager implements DataConfigurationInterface
         self::WEBHOOK_TOKEN_KEY,
         self::API_KEY,
         self::SHOP_REGISTERED_KEY,
+        self::CUSTOMER_INVOICES_KEY,
         self::UPDATE_INFO_KEY,
         self::UPDATE_CHECKED_KEY,
     ];

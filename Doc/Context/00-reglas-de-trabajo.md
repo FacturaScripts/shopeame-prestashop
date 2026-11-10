@@ -37,11 +37,14 @@ o de un módulo oficial que haga lo mismo.
 
 ## 0.3 Textos y traducciones
 
-- Toda cadena visible usa el sistema de traducciones nuevo con el dominio `Modules.Shopeame.Admin`:
-  `$this->trans('Text', [], 'Modules.Shopeame.Admin')` en el módulo y en `ConfigController` (firma de
-  `PrestaShopAdminController`), `|trans` en Twig con
-  `{% trans_default_domain 'Modules.Shopeame.Admin' %}`.
-- La traducción al español va en `translations/es-ES/ModulesShopeameAdmin.es-ES.xlf`; el `id` de cada `trans-unit` es
+- Toda cadena visible usa el sistema de traducciones nuevo con el dominio `Modules.Shopeame.Admin` en el back-office
+  y `Modules.Shopeame.Shop` en el front-office (Mi cuenta), las convenciones de los módulos nativos:
+  `$this->trans('Text', [], 'Modules.Shopeame.Admin')` en el módulo, en los controladores y en `InvoiceService`,
+  `|trans` en Twig con `{% trans_default_domain 'Modules.Shopeame.Admin' %}` y `{l s='Text' d='Modules.Shopeame.Shop'}`
+  en las plantillas Smarty de los hooks. Los textos de `views/js/invoices.js` llegan traducidos desde PHP con
+  `Media::addJsDef()`.
+- La traducción al español va en `translations/es-ES/ModulesShopeameAdmin.es-ES.xlf` y
+  `ModulesShopeameShop.es-ES.xlf`; el `id` de cada `trans-unit` es
   el `md5` del texto en inglés. Al añadir o cambiar un texto, se añade o cambia su entrada en el XLIFF y se vacía
   `var/cache/` para verla. PrestaShop muestra el texto en inglés si falta la traducción.
 - Los mensajes de `PrestaShopLogger` van en inglés y empiezan por `Shopeame: `.

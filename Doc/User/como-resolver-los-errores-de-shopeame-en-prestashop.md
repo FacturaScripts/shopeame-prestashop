@@ -41,6 +41,13 @@ Aviso: **No se pudo confirmar la conexión con shopea.me.**
    - **Gravedad 3** (`could not be sent`): no hubo conexión con shopea.me (sin internet, cortafuegos o tiempo de espera
      agotado). Los pedidos se recuperan en la siguiente sincronización.
 
+## 🧾 No se ven las facturas de un pedido
+
+Si la lista de facturas de un pedido muestra un aviso en lugar de las facturas, la tabla de
+[Cómo descargar las facturas del ERP de un pedido](como-descargar-las-facturas-de-un-pedido-en-prestashop.md#-si-no-aparecen-las-facturas)
+explica qué hacer con cada uno. Los fallos quedan también en **Registros/Logs** (`Shopeame: the order_invoices event
+failed…` o `the invoice_pdf event failed…`).
+
 ⚠️ Si regeneras la clave del webservice o la borras en **Parámetros Avanzados** → **Webservice**, shopea.me deja de
 poder leer los pedidos hasta que vuelvas a vincular la tienda.
 
@@ -49,3 +56,4 @@ poder leer los pedidos hasta que vuelvas a vincular la tienda.
 - [Cómo comprobar, desvincular o borrar los datos de Shopeame en PrestaShop](como-comprobar-desvincular-o-borrar-los-datos-de-shopeame-en-prestashop.md)
 - [Cómo vincular PrestaShop con el UUID y el token del ERP](como-vincular-prestashop-con-el-uuid-y-el-token-del-erp.md)
 - [Cómo funciona el módulo Shopeame para PrestaShop](como-funciona-shopeame-para-prestashop.md)
+- [Cómo descargar las facturas del ERP de un pedido en PrestaShop](como-descargar-las-facturas-de-un-pedido-en-prestashop.md)
